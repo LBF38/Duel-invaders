@@ -48,20 +48,23 @@ public abstract class Element {
         /*
          * Teste si x est dans les limites du plateau
          */
-        //todo
+        if(x<0 || x>Constant.X) {
+            throw new Error("x est en dehors des limites du plateau");
     }
 
     protected void testY(int y) {
         /*
          * Teste si y est dans les limites du plateau
          */
-        //todo
+        if(y<0 || y>Constant.Y) {
+            throw new Error("y est en dehors des limites du plateau");
     }
 
     protected void testDirection(int direction) {
         /*
          * Teste si direction est cohérente
          */
-        //todo
+        if(direction!=1 && direction!=2 && direction!=3 && direction!=4) {
+            throw new Error("direction doit être 1 ou 2 ou 3 ou 4");
     }
 }
