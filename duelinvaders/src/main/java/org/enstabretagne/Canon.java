@@ -1,14 +1,14 @@
 package org.enstabretagne;
 
 public class Canon extends Element{
-    private int direction_vaiseau; // 1: vers la droite, -1: vers la gauche
+    private int directionVaisseau; // 1: vers la droite, -1: vers la gauche
 
-    public int getDirection_vaiseau() {
-        return direction_vaiseau;
+    public int getDirectionVaisseau() {
+        return directionVaisseau;
     }
-    public void setDirection_vaiseau(int direction_vaiseau) {
+    public void setDirectionVaisseau(int directionVaisseau) {
         //todo test si =1 ou -1
-        this.direction_vaiseau = direction_vaiseau;
+        this.directionVaisseau = directionVaisseau;
     }
 
     //constructeur
@@ -24,17 +24,18 @@ public class Canon extends Element{
 
 
     public void deplacer() {
+
         /*
         Le vaisseau se déplace vers la gauche ou la droite (direction_vaiseau) d'un nombre de case déterminé
          */
-        int direction_vaiseau=getDirection_vaiseau();
-        int vitesse_vaiseau =1;
+        int directionVaisseau=getDirectionVaisseau();
+        int vitesseVaisseau =1;
         int X=getX();
-        if(direction_vaiseau==1) {
-            X=X+vitesse_vaiseau;
+        if(directionVaisseau==1) {
+            X=X+vitesseVaisseau;
         }
-        else if(direction_vaiseau==-1) {
-            X=X-vitesse_vaiseau;
+        else if(directionVaisseau==-1) {
+            X=X-vitesseVaisseau;
         }
         super.testX(X);
         setX(X);
