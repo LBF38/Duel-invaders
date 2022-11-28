@@ -36,35 +36,52 @@ public abstract class Element {
 
     //constructeur
     public Element(int x, int y, int direction) {
-        this.x = x;
-        this.y = y;
-        this.direction = direction;
+        if(testDirection(direction)==false || testX(x)==false || testY(y)==false) {
+            throw new Error("Erreur dans les paramètres du constructeur");
+        }
+        else {
+            this.x = x;
+            this.y = y;
+            this.direction = direction;
+        }
     }
 
     //méthode abstraite pour déplacer l'élément
     abstract public void deplacer();
 
-    protected void testX(int x) {
+    protected boolean testX(int x) {
         /*
          * Teste si x est dans les limites du plateau
          */
-        if(x<0 || x>Constant.X) {
-            throw new Error("x est en dehors des limites du plateau");
+        if (x < 0 || x > Constant.X) {
+            return false;
+        }
+        else {
+            return true;
+        }
     }
 
-    protected void testY(int y) {
+    protected boolean testY(int y) {
         /*
          * Teste si y est dans les limites du plateau
          */
         if(y<0 || y>Constant.Y) {
-            throw new Error("y est en dehors des limites du plateau");
+            return false;
+        }
+        else{
+            return true;
+        }
     }
 
-    protected void testDirection(int direction) {
+    protected boolean testDirection(int direction) {
         /*
          * Teste si direction est cohérente
          */
         if(direction!=1 && direction!=2 && direction!=3 && direction!=4) {
-            throw new Error("direction doit être 1 ou 2 ou 3 ou 4");
+            return false;
+        }
+        else{
+            return true;
+        }
     }
 }

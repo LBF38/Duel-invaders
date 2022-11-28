@@ -14,20 +14,17 @@ public class Tir extends Element {
         /*
         Le missile se déplace vers l'avant d'un nombre de case déterminé
         */
-        int vitesseTir =1;
-        int Y=getY();
-        int direction=getDirection();
-        if (direction>0) {
-            Y=Y+vitesseTir;
+        int vitesseTir = 1;
+        int Y = getY();
+        int direction = getDirection();
+        if (direction > 0) {
+            Y = Y + vitesseTir;
+        } else if (direction < 0) {
+            Y = Y - vitesseTir;
         }
-        else if (direction<0) {
-            Y=Y-vitesseTir;
+        if (super.testY(Y) == true) {
+            setY(Y);
         }
-        super.testY(getY());
-        //Todo supprimer si il sort du plateau
-        setY(Y);
     }
-
-
-
+    
 }

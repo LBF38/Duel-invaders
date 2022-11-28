@@ -31,7 +31,6 @@ public class Canon extends Element{
 
 
     public void deplacer() {
-
         /*
         Le vaisseau se déplace vers la gauche ou la droite (direction_vaiseau) d'un nombre de case déterminé
          */
@@ -44,8 +43,10 @@ public class Canon extends Element{
         else if(directionVaisseau==-1) {
             X=X-vitesseVaisseau;
         }
-        super.testX(X);
-        setX(X);
+
+        if(super.testX(X)==true) {
+            setX(X);
+        }
     }
 
     public Tir tirer() {
@@ -57,6 +58,7 @@ public class Canon extends Element{
         LocalDate now = LocalDate.now();
         if(true) { //todo vérifier le delay (now - this.lastShoot) > delayBetweenShoot
             Tir tir = new Tir(getX(), getY(), getDirection());
+            tir.deplacer();
             this.lastShoot = now;
             return tir;
         }
