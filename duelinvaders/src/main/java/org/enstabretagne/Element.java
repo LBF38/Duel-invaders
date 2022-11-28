@@ -1,6 +1,6 @@
 package org.enstabretagne;
 
-public class Element {
+public abstract class Element {
     private int x;
     private int y;
     private int direction;
@@ -16,21 +16,21 @@ public class Element {
         return x;
     }
     public void setX(int x) {
-        //faire un test pour vérifier que x est dans les limites du plateau
+        //Todo faire un test pour vérifier que x est dans les limites du plateau
         this.x = x;
     }
     public int getY() {
         return y;
     }
     public void setY(int y) {
-        //faire un test pour vérifier que y est dans les limites du plateau
+        //Todo faire un test pour vérifier que y est dans les limites du plateau
         this.y = y;
     }
     public int getDirection() {
         return direction;
     }
     public void setDirection(int direction) {
-        //faire un test pour vérifier que direction est cohérente
+        //Todo faire un test pour vérifier que direction est cohérente
         this.direction = direction;
     }
 
@@ -41,10 +41,27 @@ public class Element {
         this.direction = direction;
     }
 
-    //méthode pour déplacer l'élément
-    public void deplacer(int x,int y, int direction) { //suppimer les set et garder que deplacement??????
-        setX(x);
-        setY(y);
-        setDirection(direction);
+    //méthode abstraite pour déplacer l'élément
+    abstract public void deplacer();
+
+    protected void testX(int x) {
+        /*
+         * Teste si x est dans les limites du plateau
+         */
+        //todo
+    }
+
+    protected void testY(int y) {
+        /*
+         * Teste si y est dans les limites du plateau
+         */
+        //todo
+    }
+
+    protected void testDirection(int direction) {
+        /*
+         * Teste si direction est cohérente
+         */
+        //todo
     }
 }
