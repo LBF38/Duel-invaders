@@ -50,6 +50,7 @@ Modélisation du projet
 
 ```mermaid
 classDiagram
+direction TB
     class Element{
         <<Abstract>>
         -Number position_x
@@ -80,3 +81,35 @@ classDiagram
         +start()
     }
 ```
+
+Notre objectif est de séparer la partie logique de la partie graphique. Pour cela, on va donc devoir faire en sorte que le moteur de jeu, représenté par la classe `MoteurJeu`, renvoie les informations ou objets, à chaque opération effectuée, vers l'interface graphique afin que cela soit utilisable.
+
+Pour cela, on peut envisager créer une interface entre le moteur de jeu et l'interface visuelle ?
+
+```mermaid
+classDiagram
+direction BT
+    class Jeu{
+        <<Interface>>
+        +List Elements
+        +Number Aliens
+    }
+    GraphicsInterface --|> Jeu
+    Jeu <|-- MoteurJeu
+```
+
+L'interface `Jeu` est un contrat entre le moteur du jeu et l'interface graphique. Ainsi, cela permet de certifier que l'interface graphique a accès à toutes les informations du moteur de jeu et inversement.
+
+A voir si le nombre d'aliens est utile car on pourrait le calculer à partir de la liste des éléments de la partie en cours. C'est une première proposition qui nécessite plus de réflexions.
+
+## Tests
+
+### Comment tester toutes les fonctionnalités du code ?
+
+Il existe plusieurs types de tests. Nous allons au maximum essayer d'appliquer une stratégie de TDD : Test-Driven Development.
+Une vidéo simple (en anglais) permet d'expliquer ce concept [ici](https://www.youtube.com/watch?v=Jv2uxzhPFl4&pp=ugMICgJmchABGAE%3D), même si c'est dans un autre langage (Javascript en l'occurrence), le concept des tests est le même.
+
+D'abord, on va réaliser des tests unitaires sur toutes les classes.
+
+Par exemple, on peut tester les cas des limites de jeu. Ainsi, un élément ne peut pas se déplacer hors du jeu, selon les contraintes de ces déplacements.
+La gestion des limites de position se gère donc dans les setters de ces derniers, en vérifiant avant assignation, que les nouvelles coordonnées sont bien dans les limites du plateau de jeu (ou fenêtre de jeu ici).
