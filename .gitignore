@@ -1,7 +1,8 @@
-# Compiled class file
+# Java configuration
 *.class
-# Compiled target folder
 target/
+# For JavaFX and FXGL
+system/
 
 # Log file
 *.log

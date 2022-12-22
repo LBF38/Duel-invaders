@@ -1,7 +1,3 @@
-module org.enstabretagne {
-    requires javafx.controls;
-    requires javafx.fxml;
-
-    opens org.enstabretagne to javafx.fxml;
-    exports org.enstabretagne;
+open module org.enstabretagne {
+    requires com.almasb.fxgl.all;
 }
