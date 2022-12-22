@@ -10,6 +10,14 @@ Les attentes du projet et le sujet venant des professeurs de l'ENSTA Bretagne es
 
 Le rendu du projet est prévu pour le 4 et 5 janvier 2023. (selon planification AURION)
 
+## Dépendances
+
+Ce projet utilise [FXGL](https://github.com/almasb/FXGL) pour la partie graphique afin de simplifier l'implémentation de la logique du jeu. Cette librairie basée sur JavaFX permet de créer des jeux vidéo 2D plus facilement que JavaFX seul.
+
+## Références
+
+- [Introduction to FXGL](https://github.com/AlmasB/IntroductionToFXGL) : projet simple de démonstration de FXGL
+
 ## Auteurs
 
 - [@jufch](https://github.com/jufch)
