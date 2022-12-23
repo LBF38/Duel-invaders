@@ -24,6 +24,13 @@
             <artifactId>fxgl</artifactId>
             <version>17.2</version>
         </dependency>
+    
+      <dependency>
+        <groupId>org.testfx</groupId>
+        <artifactId>testfx-junit5</artifactId>
+        <version>4.0.16-alpha</version>
+        <scope>test</scope>
+      </dependency>
     </dependencies>
     <build>
         <plugins>

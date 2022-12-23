@@ -1,11 +1,12 @@
 package org.enstabretagne;
 
 import org.junit.jupiter.api.*;
-
 public class GameLauncherTest {
 
     @BeforeAll
-    public void setup() {
+    public static void beforeClass() {
+        // GameApplication.launch(GameLauncher.class);
+        // GameApplication.embeddedLaunch(GameLauncher.class);
     }
 
     @Test

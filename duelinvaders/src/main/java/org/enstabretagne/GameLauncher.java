@@ -14,7 +14,7 @@ import static com.almasb.fxgl.dsl.FXGL.*;
 public class GameLauncher extends GameApplication {
     @Override
     protected void initSettings(GameSettings settings) {
-        settings.setWidth(600);
+        settings.setWidth(800);
         settings.setHeight(600);
         settings.setTitle("Basic Game App");
         settings.setVersion("0.1");
