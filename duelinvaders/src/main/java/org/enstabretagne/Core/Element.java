@@ -1,5 +1,7 @@
 package org.enstabretagne.Core;
 
+import org.enstabretagne.Core.Constant.Direction;
+
 public abstract class Element {
     private int x;
     private int y;
@@ -51,7 +53,7 @@ public abstract class Element {
     }
 
     // méthode abstraite pour déplacer l'élément
-    abstract public void deplacer();
+    public abstract void move(Direction direction);
 
     protected boolean testX(int x) {
         /*

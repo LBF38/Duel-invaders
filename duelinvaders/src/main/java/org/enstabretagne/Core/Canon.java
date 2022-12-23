@@ -2,6 +2,8 @@ package org.enstabretagne.Core;
 
 import java.util.Date;
 
+import org.enstabretagne.Core.Constant.Direction;
+
 public class Canon extends Element {
     private int directionVaisseau; // 1: vers la droite, -1: vers la gauche
     private Date lastShoot = new Date();
@@ -29,7 +31,7 @@ public class Canon extends Element {
         return "Canon [x=" + getX() + ", y=" + getY() + ", direction=" + getDirection() + "]";
     }
 
-    public void deplacer() {
+    public void move(Direction direction) {
         /*
          * Le vaisseau se déplace vers la gauche ou la droite (direction_vaiseau) d'un
          * nombre de case déterminé
@@ -58,7 +60,7 @@ public class Canon extends Element {
         if (now.compareTo(this.lastShoot) > delayBetweenShoot) { // todo vérifier le delay (now - this.lastShoot) >
                                                                  // delayBetweenShoot
             Tir tir = new Tir(getX(), getY(), getDirection());
-            tir.deplacer();
+            tir.move(Constant.Direction.UP); // TODO: change for direction of the canon
             this.lastShoot = now;
             return tir;
         }

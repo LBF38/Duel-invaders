@@ -1,13 +1,17 @@
 package org.enstabretagne.Core;
 
-public class Alien extends Element {
-    // Defines an alien with a life, speed, etc.
+import org.enstabretagne.Core.Constant.Direction;
 
+public class Alien extends Element {
     public Alien() {
         super(0, 0, 0);
     }
 
-    public void deplacer() {
+    public Alien(int x, int y, int direction) {
+        super(x, y, direction);
+    }
+
+    public void move(Direction direction) {
         // TODO
     }
 }

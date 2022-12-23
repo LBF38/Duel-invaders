@@ -1,5 +1,7 @@
 package org.enstabretagne.Core;
 
+import org.enstabretagne.Core.Constant.Direction;
+
 public class Player extends Element {
     // Defines a player with a canon, life, score, etc.
 
@@ -13,7 +15,7 @@ public class Player extends Element {
     /**
      * Abstract method to redefine.
      */
-    public void deplacer() {
+    public void move(Direction direction) {
         // TODO
     }
 }
