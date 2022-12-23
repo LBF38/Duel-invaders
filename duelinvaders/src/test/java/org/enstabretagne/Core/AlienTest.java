@@ -10,7 +10,7 @@ public class AlienTest {
 
     @BeforeEach
     public void setup() {
-        alien = new Alien(0.0, 0.0, Constant.Direction.DOWN);
+        alien = new Alien(0, 0, Constant.Direction.DOWN);
     }
 
     // Test sur les méthodes et propriétés d'un Element
@@ -18,33 +18,55 @@ public class AlienTest {
     @DisplayName("Test de la propriété x")
     public void testX() {
         assertTrue(alien.getX() != null);
-        alien.setX(5.0);
-        assertTrue(alien.getX() == 5.0);
+        alien.setX(5);
+        assertTrue(alien.getX() == 5);
     }
 
     @Test
     @DisplayName("Test de la propriété y")
     public void testY() {
         assertTrue(alien.getY() != null);
-        alien.setY(5.0);
-        assertTrue(alien.getY() == 5.0);
+        alien.setY(5);
+        assertTrue(alien.getY() == 5);
     }
 
     @Test
     @DisplayName("Tests des limites de jeu")
     public void testExceptions() {
-        assertThrows(IllegalArgumentException.class, () -> alien.setX(-1.0));
-        assertThrows(IllegalArgumentException.class, () -> alien.setX(Constant.BOARD_WIDTH + 1.0));
-        assertThrows(IllegalArgumentException.class, () -> alien.setY(-1.0));
-        assertThrows(IllegalArgumentException.class, () -> alien.setY(Constant.BOARD_HEIGHT + 1.0));
+        assertThrows(IllegalArgumentException.class, () -> alien.setX(-1));
+        assertThrows(IllegalArgumentException.class, () -> alien.setX(Constant.BOARD_WIDTH + 1));
+        assertThrows(IllegalArgumentException.class, () -> alien.setY(-1));
+        assertThrows(IllegalArgumentException.class, () -> alien.setY(Constant.BOARD_HEIGHT + 1));
     }
 
     @Test
     @DisplayName("Déplacement de l'alien")
-    public void movement() {
+    public void moveRight() {
         assertTrue(alien.getX() == 0);
-        alien.move(Constant.Direction.RIGHT);
-        assertTrue(alien.getX() == 5); // to change with decision on the movement
+        alien.moveRight();
+        assertTrue(alien.getX() == 1); // to change with decision on the movement
+    }
+
+    @Test
+    public void moveLeft() {
+        alien.setX(1);
+        alien.moveLeft();
+        assertTrue(alien.getX() == 0); // to change with decision on the movement
+    }
+
+    @Test
+    public void move() {
+        assertTrue(alien.getX() == 0);
+        for (int i = 0; i < Constant.BOARD_WIDTH; i++) {
+            alien.move();
+            assertTrue(alien.getX() == i + 1);
+        }
+        assertTrue(alien.getY() == 1);
+        for (int i = 0; i < Constant.BOARD_WIDTH; i++) {
+            alien.move();
+            assertTrue(alien.getX() == Constant.BOARD_WIDTH - i - 1);
+        }
+        assertTrue(alien.getY() == 2);
     }
 }
 
