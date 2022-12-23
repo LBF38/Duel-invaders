@@ -1,4 +1,4 @@
-package org.enstabretagne;
+package org.enstabretagne.Core;
 
 import java.util.Date;
 

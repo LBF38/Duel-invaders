@@ -1,4 +1,4 @@
-package org.enstabretagne;
+package org.enstabretagne.Core;
 
 public class Tir extends Element {
     public Tir(int x, int y, int direction) {

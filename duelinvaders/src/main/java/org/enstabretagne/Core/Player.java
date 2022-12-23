@@ -1,4 +1,4 @@
-package org.enstabretagne;
+package org.enstabretagne.Core;
 
 public class Player extends Element {
     // Defines a player with a canon, life, score, etc.

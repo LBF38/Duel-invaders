@@ -1,4 +1,4 @@
-package org.enstabretagne;
+package org.enstabretagne.Core;
 
 public class Constant {
     public static final int BOARD_WIDTH=10;

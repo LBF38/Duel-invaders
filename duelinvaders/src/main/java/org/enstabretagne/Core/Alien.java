@@ -1,4 +1,4 @@
-package org.enstabretagne;
+package org.enstabretagne.Core;
 
 public class Alien extends Element {
     // Defines an alien with a life, speed, etc.
