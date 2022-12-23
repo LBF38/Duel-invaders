@@ -3,8 +3,8 @@ package org.enstabretagne.Core;
 import org.enstabretagne.Core.Constant.Direction;
 
 public abstract class Element {
-    private Double x;
-    private Double y;
+    private Integer x;
+    private Integer y;
     private Direction direction;
 
     @Override
@@ -13,11 +13,11 @@ public abstract class Element {
     }
 
     // Getters and setters
-    public Double getX() {
+    public Integer getX() {
         return x;
     }
 
-    public Element setX(Double x) throws IllegalArgumentException {
+    public Element setX(Integer x) throws IllegalArgumentException {
         if (x < 0 || x > Constant.BOARD_WIDTH) {
             throw new IllegalArgumentException("x is out of the board");
         }
@@ -25,11 +25,11 @@ public abstract class Element {
         return this;
     }
 
-    public Double getY() {
+    public Integer getY() {
         return y;
     }
 
-    public Element setY(Double y) throws IllegalArgumentException {
+    public Element setY(Integer y) throws IllegalArgumentException {
         if (y < 0 || y > Constant.BOARD_HEIGHT) {
             throw new IllegalArgumentException("y is out of the board");
         }
@@ -49,11 +49,11 @@ public abstract class Element {
         return this;
     }
 
-    public Element(Double x, Double y, Direction direction) {
+    public Element(Integer x, Integer y, Direction direction) {
         this.x = x;
         this.y = y;
         this.direction = direction;
     }
 
-    public abstract void move(Direction direction);
+    public abstract void move();
 }

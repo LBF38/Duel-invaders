@@ -9,13 +9,13 @@ public class Player extends Element {
      * Constructor
      */
     public Player() {
-        super(0.0, 0.0, Direction.UP);
+        super(0, 0, Direction.UP);
     }
 
     /**
      * Abstract method to redefine.
      */
-    public void move(Direction direction) {
+    public void move() {
         // TODO
     }
 }

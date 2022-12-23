@@ -23,7 +23,7 @@ public class Cannon extends Element {
 
     // constructeur
     public Cannon() {
-        super(new Random().nextDouble(), new Random().nextDouble(), Direction.UP);
+        super(new Random().nextInt(), new Random().nextInt(), Direction.UP);
     }
 
     // Print
@@ -32,7 +32,7 @@ public class Cannon extends Element {
         return "Canon [x=" + getX() + ", y=" + getY() + ", direction=" + getDirection() + "]";
     }
 
-    public void move(Direction direction) {
+    public void move() {
         /*
          * Le vaisseau se déplace vers la gauche ou la droite (direction_vaiseau) d'un
          * nombre de case déterminé
@@ -61,7 +61,7 @@ public class Cannon extends Element {
         if (now.compareTo(this.lastShoot) > delayBetweenShoot) { // todo vérifier le delay (now - this.lastShoot) >
                                                                  // delayBetweenShoot
             Shot tir = new Shot(getX(), getY(), getDirection());
-            tir.move(Constant.Direction.UP); // TODO: change for direction of the canon
+            // tir.move(Constant.Direction.UP); // TODO: change for direction of the canon
             this.lastShoot = now;
             return tir;
         }

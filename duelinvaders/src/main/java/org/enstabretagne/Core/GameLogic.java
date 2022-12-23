@@ -17,13 +17,19 @@ public class GameLogic {
         }
         for (int i = 0; i < NB_ALIENS; i++) {
             Random rand = new Random();
-            gameElements.add(new Alien(rand.nextDouble(), rand.nextDouble(), Direction.RIGHT));
+            gameElements.add(new Alien(rand.nextInt(), rand.nextInt(), Direction.RIGHT));
         }
     }
 
     public void start() {
         this.PLAY = true;
         while (PLAY) {
+            for (Element element : gameElements) {
+                System.out.println(element);
+                if (element instanceof Alien) {
+                    ((Alien) element).move();
+                }
+            }
 
             // TODO
             // todo prendre les éléments rentrant
