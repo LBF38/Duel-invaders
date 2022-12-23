@@ -1,9 +1,12 @@
 package org.enstabretagne.Core;
 
 import java.util.ArrayList;
+import java.util.Random;
+
+import org.enstabretagne.Core.Constant.Direction;
 
 public class GameLogic {
-    private boolean play = false;
+    private boolean PLAY = false;
     private final Integer NB_PLAYERS = 2;
     private final Integer NB_ALIENS = 10;
     private ArrayList<Element> gameElements = new ArrayList<Element>();
@@ -13,13 +16,14 @@ public class GameLogic {
             gameElements.add(new Player());
         }
         for (int i = 0; i < NB_ALIENS; i++) {
-            gameElements.add(new Alien());
+            Random rand = new Random();
+            gameElements.add(new Alien(rand.nextDouble(), rand.nextDouble(), Direction.RIGHT));
         }
     }
 
     public void start() {
-        this.play = true;
-        while (play) {
+        this.PLAY = true;
+        while (PLAY) {
 
             // TODO
             // todo prendre les éléments rentrant

@@ -3,11 +3,7 @@ package org.enstabretagne.Core;
 import org.enstabretagne.Core.Constant.Direction;
 
 public class Alien extends Element {
-    public Alien() {
-        super(0, 0, 0);
-    }
-
-    public Alien(int x, int y, int direction) {
+    public Alien(Double x, Double y, Direction direction) {
         super(x, y, direction);
     }
 

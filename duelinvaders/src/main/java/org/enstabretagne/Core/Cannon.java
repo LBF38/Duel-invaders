@@ -1,6 +1,7 @@
 package org.enstabretagne.Core;
 
 import java.util.Date;
+import java.util.Random;
 
 import org.enstabretagne.Core.Constant.Direction;
 
@@ -21,8 +22,8 @@ public class Cannon extends Element {
     }
 
     // constructeur
-    public Cannon(int x, int y, int direction) {
-        super(x, y, direction);
+    public Cannon() {
+        super(new Random().nextDouble(), new Random().nextDouble(), Direction.UP);
     }
 
     // Print
@@ -36,18 +37,18 @@ public class Cannon extends Element {
          * Le vaisseau se déplace vers la gauche ou la droite (direction_vaiseau) d'un
          * nombre de case déterminé
          */
-        int directionVaisseau = getDirectionVaisseau();
-        int vitesseVaisseau = Constant.SPEED_SPACESHIP;
-        int X = getX();
-        if (directionVaisseau == 1) {
-            X = X + vitesseVaisseau;
-        } else if (directionVaisseau == -1) {
-            X = X - vitesseVaisseau;
-        }
+        // int directionVaisseau = getDirectionVaisseau();
+        // int vitesseVaisseau = Constant.SPEED_SPACESHIP;
+        // int X = getX();
+        // if (directionVaisseau == 1) {
+        //     X = X + vitesseVaisseau;
+        // } else if (directionVaisseau == -1) {
+        //     X = X - vitesseVaisseau;
+        // }
 
-        if (super.testX(X) == true) {
-            setX(X);
-        }
+        // if (super.testX(X) == true) {
+        //     setX(X);
+        // }
     }
 
     public Shot tirer() {

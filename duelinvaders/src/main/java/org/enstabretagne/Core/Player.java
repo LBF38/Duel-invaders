@@ -9,7 +9,7 @@ public class Player extends Element {
      * Constructor
      */
     public Player() {
-        super(0, 0, 0);
+        super(0.0, 0.0, Direction.UP);
     }
 
     /**

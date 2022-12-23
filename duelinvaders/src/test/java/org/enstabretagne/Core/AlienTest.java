@@ -9,7 +9,16 @@ public class AlienTest {
 
     @BeforeEach
     public void setup() {
-        alien = new Alien(0, 0, 1);
+        alien = new Alien(0.0, 0.0, Constant.Direction.DOWN);
+    }
+
+    // Test sur les méthodes et propriétés d'un Element
+    @Test
+    @DisplayName("Test de la propriété x")
+    public void testX() {
+        assertTrue(alien.x != null);
+        alien.x = 5.0;
+        assertTrue(alien.x == 5.0);
     }
 
     @Test

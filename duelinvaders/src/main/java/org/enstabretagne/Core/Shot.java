@@ -3,7 +3,7 @@ package org.enstabretagne.Core;
 import org.enstabretagne.Core.Constant.Direction;
 
 public class Shot extends Element {
-    public Shot(int x, int y, int direction) {
+    public Shot(Double x, Double y, Direction direction) {
         super(x, y, direction);
     }
 
@@ -14,19 +14,17 @@ public class Shot extends Element {
 
     public void move(Direction direction) {
         /*
-        Le missile se déplace vers l'avant d'un nombre de case déterminé
-        */
-        int vitesseTir = 1;
-        int Y = getY();
-        int direction2 = getDirection();
-        if (direction2 > 0) {
+         * Le missile se déplace vers l'avant d'un nombre de case déterminé
+         */
+        Double vitesseTir = 1.0;
+        Double Y = getY();
+        Direction direction2 = getDirection();
+        if (direction2 == Direction.UP) {
             Y = Y + vitesseTir;
-        } else if (direction2 < 0) {
+        } else if (direction2 == Direction.DOWN) {
             Y = Y - vitesseTir;
         }
-        if (super.testY(Y) == true) {
-            setY(Y);
-        }
+        this.y = Y;
     }
-    
+
 }

@@ -3,56 +3,53 @@ package org.enstabretagne.Core;
 import org.enstabretagne.Core.Constant.Direction;
 
 public abstract class Element {
-    private int x;
-    private int y;
-    private int direction;
+    protected Double x;
+    protected Double y;
+    protected Direction direction;
 
-    // print
     @Override
     public String toString() {
         return "Element [x=" + x + ", y=" + y + ", direction=" + direction + "]";
     }
 
     // Getters and setters
-    public int getX() {
+    public Double getX() {
         return x;
     }
 
-    public void setX(int x) {
-        // Todo faire un test pour vérifier que x est dans les limites du plateau
+    public Element x(Double x) throws IllegalArgumentException {
+        if (x < 0 || x > Constant.BOARD_WIDTH) {
+            throw new IllegalArgumentException("x is out of the board");
+        }
         this.x = x;
+        return this;
     }
 
-    public int getY() {
+    public Double getY() {
         return y;
     }
 
-    public void setY(int y) {
-        // Todo faire un test pour vérifier que y est dans les limites du plateau
+    public void setY(Double y) throws IllegalArgumentException {
+        if (y < 0 || y > Constant.BOARD_HEIGHT) {
+            throw new IllegalArgumentException("y is out of the board");
+        }
         this.y = y;
     }
 
-    public int getDirection() {
+    public Direction getDirection() {
         return direction;
     }
 
-    public void setDirection(int direction) {
-        // Todo faire un test pour vérifier que direction est cohérente
+    public void setDirection(Direction direction) {
         this.direction = direction;
     }
 
-    // constructeur
-    public Element(int x, int y, int direction) {
-        if (testDirection(direction) == false || testX(x) == false || testY(y) == false) {
-            throw new Error("Erreur dans les paramètres du constructeur");
-        } else {
-            this.x = x;
-            this.y = y;
-            this.direction = direction;
-        }
+    public Element(Double x, Double y, Direction direction) {
+        this.x = x;
+        this.y = y;
+        this.direction = direction;
     }
 
-    // méthode abstraite pour déplacer l'élément
     public abstract void move(Direction direction);
 
     protected boolean testX(int x) {
@@ -71,17 +68,6 @@ public abstract class Element {
          * Teste si y est dans les limites du plateau
          */
         if (y < 0 || y > Constant.BOARD_HEIGHT) {
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-    protected boolean testDirection(int direction) {
-        /*
-         * Teste si direction est cohérente
-         */
-        if (direction != 1 && direction != 2 && direction != 3 && direction != 4) {
             return false;
         } else {
             return true;
