@@ -32,6 +32,14 @@ public class Cannon extends Element {
         return "Canon [x=" + getX() + ", y=" + getY() + ", direction=" + getDirection() + "]";
     }
 
+    public Element setDirection(Direction direction) throws IllegalArgumentException {
+        if (direction != Direction.DOWN || direction != Direction.UP) {
+            throw new IllegalArgumentException("Illegal direction : The Cannon can only be UP or DOWN");
+        }
+        this.direction = direction;
+        return this;
+    }
+
     public void move(Direction direction) {
         /*
          * Le vaisseau se déplace vers la gauche ou la droite (direction_vaiseau) d'un
@@ -41,13 +49,13 @@ public class Cannon extends Element {
         // int vitesseVaisseau = Constant.SPEED_SPACESHIP;
         // int X = getX();
         // if (directionVaisseau == 1) {
-        //     X = X + vitesseVaisseau;
+        // X = X + vitesseVaisseau;
         // } else if (directionVaisseau == -1) {
-        //     X = X - vitesseVaisseau;
+        // X = X - vitesseVaisseau;
         // }
 
         // if (super.testX(X) == true) {
-        //     setX(X);
+        // setX(X);
         // }
     }
 

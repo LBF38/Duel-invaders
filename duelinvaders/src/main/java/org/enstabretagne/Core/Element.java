@@ -29,20 +29,20 @@ public abstract class Element {
         return y;
     }
 
-    public void setY(Double y) throws IllegalArgumentException {
+    public Element setY(Double y) throws IllegalArgumentException {
         if (y < 0 || y > Constant.BOARD_HEIGHT) {
             throw new IllegalArgumentException("y is out of the board");
         }
         this.y = y;
+        return this;
     }
 
     public Direction getDirection() {
         return direction;
     }
 
-    public void setDirection(Direction direction) {
-        this.direction = direction;
-    }
+    // La direction est propre à chaque élément. Il faut la redéfinir.
+    public abstract Element setDirection(Direction direction) throws IllegalArgumentException;
 
     public Element(Double x, Double y, Direction direction) {
         this.x = x;
@@ -51,26 +51,4 @@ public abstract class Element {
     }
 
     public abstract void move(Direction direction);
-
-    protected boolean testX(int x) {
-        /*
-         * Teste si x est dans les limites du plateau
-         */
-        if (x < 0 || x > Constant.BOARD_WIDTH) {
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-    protected boolean testY(int y) {
-        /*
-         * Teste si y est dans les limites du plateau
-         */
-        if (y < 0 || y > Constant.BOARD_HEIGHT) {
-            return false;
-        } else {
-            return true;
-        }
-    }
 }
