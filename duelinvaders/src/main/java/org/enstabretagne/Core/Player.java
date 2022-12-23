@@ -12,14 +12,6 @@ public class Player extends Element {
         super(0.0, 0.0, Direction.UP);
     }
 
-    public Element setDirection(Direction direction) throws IllegalArgumentException {
-        if (direction != Direction.DOWN || direction != Direction.UP) {
-            throw new IllegalArgumentException("Illegal direction for Player : can only be UP or DOWN.");
-        }
-        this.direction = direction;
-        return this;
-    }
-
     /**
      * Abstract method to redefine.
      */

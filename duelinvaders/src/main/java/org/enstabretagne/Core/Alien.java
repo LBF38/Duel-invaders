@@ -7,14 +7,16 @@ public class Alien extends Element {
         super(x, y, direction);
     }
 
-    public Element setDirection(Direction direction) throws IllegalArgumentException {
-        if (direction != Direction.DOWN || direction != Direction.UP)
-            throw new IllegalArgumentException("Illegal Alien direction : can only be UP or DOWN");
-        this.direction = direction;
-        return this;
-    }
-
     public void move(Direction direction) {
         // TODO
+    }
+
+    public static void main(String[] args) {
+        Alien alien = new Alien(0.0, 0.0, Direction.DOWN);
+        System.out.println(alien);
+        // alien.setX(-1.0);
+        // alien.y = -1.0;
+        // alien.setY(-1.0);
+        System.out.println(alien);
     }
 }
