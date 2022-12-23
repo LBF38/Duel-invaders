@@ -2,13 +2,13 @@ package org.enstabretagne.Core;
 
 import java.util.ArrayList;
 
-public class MoteurJeu {
+public class GameLogic {
     private boolean play = false;
     private final Integer NB_PLAYERS = 2;
     private final Integer NB_ALIENS = 10;
     private ArrayList<Element> gameElements = new ArrayList<Element>();
 
-    public MoteurJeu() {
+    public GameLogic() {
         for (int i = 0; i < NB_PLAYERS; i++) {
             gameElements.add(new Player());
         }

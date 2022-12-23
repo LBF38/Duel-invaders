@@ -4,7 +4,7 @@ import java.util.Date;
 
 import org.enstabretagne.Core.Constant.Direction;
 
-public class Canon extends Element {
+public class Cannon extends Element {
     private int directionVaisseau; // 1: vers la droite, -1: vers la gauche
     private Date lastShoot = new Date();
 
@@ -21,7 +21,7 @@ public class Canon extends Element {
     }
 
     // constructeur
-    public Canon(int x, int y, int direction) {
+    public Cannon(int x, int y, int direction) {
         super(x, y, direction);
     }
 
@@ -50,7 +50,7 @@ public class Canon extends Element {
         }
     }
 
-    public Tir tirer() {
+    public Shot tirer() {
         /*
          * Le vaisseau tire un missile
          * Le missile part de la position du vaiseau dans la direction du vaisseau
@@ -59,7 +59,7 @@ public class Canon extends Element {
         Date now = new Date();
         if (now.compareTo(this.lastShoot) > delayBetweenShoot) { // todo vérifier le delay (now - this.lastShoot) >
                                                                  // delayBetweenShoot
-            Tir tir = new Tir(getX(), getY(), getDirection());
+            Shot tir = new Shot(getX(), getY(), getDirection());
             tir.move(Constant.Direction.UP); // TODO: change for direction of the canon
             this.lastShoot = now;
             return tir;

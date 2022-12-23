@@ -2,8 +2,8 @@ package org.enstabretagne.Core;
 
 import org.enstabretagne.Core.Constant.Direction;
 
-public class Tir extends Element {
-    public Tir(int x, int y, int direction) {
+public class Shot extends Element {
+    public Shot(int x, int y, int direction) {
         super(x, y, direction);
     }
 
