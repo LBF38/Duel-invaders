@@ -7,4 +7,5 @@ public class Constant {
     public static final int SPEED_SHOOT=1;
     public static final int SPEED_ALIEN=1;
     public static final int RATE_ALIEN_SHOOT=1;
+    public static final int DELAY_BETWEEN_SHOOT=1;
 }
