@@ -1,7 +1,6 @@
 package org.enstabretagne.Core;
 
 import java.util.Date;
-import java.util.Random;
 
 import org.enstabretagne.Core.Constant.Direction;
 
@@ -23,7 +22,7 @@ public class Cannon extends Element {
 
     // constructeur
     public Cannon() {
-        super(new Random().nextInt(), new Random().nextInt(), Direction.UP);
+        super(Constant.random.nextInt(), Constant.random.nextInt(), Direction.UP);
     }
 
     // Print

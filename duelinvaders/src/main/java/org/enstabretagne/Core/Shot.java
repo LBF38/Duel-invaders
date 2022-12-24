@@ -20,9 +20,9 @@ public class Shot extends Element {
         // Integer Y = getY();
         // Direction direction2 = getDirection();
         // if (direction2 == Direction.UP) {
-        //     Y = Y + vitesseTir;
+        // Y = Y + vitesseTir;
         // } else if (direction2 == Direction.DOWN) {
-        //     Y = Y - vitesseTir;
+        // Y = Y - vitesseTir;
         // }
         // this.setY(Y);
     }

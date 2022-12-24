@@ -1,5 +1,7 @@
 package org.enstabretagne.Core;
 
+import java.util.Random;
+
 public class Constant {
     public static final Integer BOARD_WIDTH=10;
     public static final Integer BOARD_HEIGHT=10;
@@ -12,4 +14,6 @@ public class Constant {
     public enum Direction {
         UP, DOWN, LEFT, RIGHT
     }
+
+    public static final Random random = new Random();
 }
