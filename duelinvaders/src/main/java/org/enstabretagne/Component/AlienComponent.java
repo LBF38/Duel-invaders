@@ -3,7 +3,7 @@ package org.enstabretagne.Component;
 import org.enstabretagne.Core.Alien;
 
 import com.almasb.fxgl.entity.component.Component;
-
+//test new organization
 public class AlienComponent extends Component {
     private Alien alien;
 
