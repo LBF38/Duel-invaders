@@ -9,19 +9,30 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import java.util.Map;
 
+import org.enstabretagne.Component.AlienComponent;
+import org.enstabretagne.Component.PlayerComponent;
+import org.enstabretagne.Core.Alien;
+import org.enstabretagne.Core.Constant;
+import org.enstabretagne.Core.EntityType;
+import org.enstabretagne.Core.Constant.Direction;
+
 import static com.almasb.fxgl.dsl.FXGL.*;
 
 public class GameLauncher extends GameApplication {
     @Override
     protected void initSettings(GameSettings settings) {
-        settings.setWidth(800);
-        settings.setHeight(600);
+        settings.setWidth(Constant.BOARD_WIDTH);
+        settings.setHeight(Constant.BOARD_HEIGHT);
         settings.setTitle("Basic Game App");
         settings.setVersion("0.1");
     }
 
     @Override
     protected void initInput() {
+        onKey(KeyCode.N, () -> {
+            getNotificationService().pushNotification("Hello World!");
+        });
+
         onKey(KeyCode.RIGHT, () -> {
             player.translateX(5); // move right 5 pixels
             inc("pixelsMoved", +5);
@@ -41,6 +52,11 @@ public class GameLauncher extends GameApplication {
             player.translateY(5); // move down 5 pixels
             inc("pixelsMoved", +5);
         });
+
+        onKeyDown(KeyCode.SPACE, () -> {
+            // player.getComponent(EntityType.PLAYER).shoot();
+            System.out.println("Shoot");
+        });
     }
 
     @Override
@@ -55,6 +71,13 @@ public class GameLauncher extends GameApplication {
         player = entityBuilder()
                 .at(300, 300)
                 .view(new Rectangle(25, 25, Color.BLUE))
+                .with(new PlayerComponent())
+                .type(EntityType.PLAYER)
+                .buildAndAttach();
+        entityBuilder()
+                .at(300, 300)
+                .viewWithBBox(new Rectangle(25, 25, Color.RED))
+                .with(new AlienComponent(new Alien(5, 5, Direction.DOWN)))
                 .buildAndAttach();
     }
 

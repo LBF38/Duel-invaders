@@ -26,9 +26,7 @@ public class GameLogic {
         while (PLAY) {
             for (Element element : gameElements) {
                 System.out.println(element);
-                if (element instanceof Alien) {
-                    ((Alien) element).move();
-                }
+                element.move();
             }
 
             // TODO
