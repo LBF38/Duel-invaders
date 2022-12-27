@@ -32,4 +32,15 @@ public class SpaceInvadersFactory implements EntityFactory {
                 .collidable()
                 .build();
     }
+
+    @Spawns("bullet")
+    public Entity newBullet(SpawnData data) {
+        return entityBuilder()
+                .type(EntityType.BULLET)
+                .at(data.getX(), data.getY())
+                .viewWithBBox(new Rectangle(5, 20, Color.BLACK))
+                .with(new BulletComponent())
+                .collidable()
+                .build();
+    }
 }

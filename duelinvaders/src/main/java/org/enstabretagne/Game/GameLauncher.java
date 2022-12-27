@@ -54,7 +54,8 @@ public class GameLauncher extends GameApplication {
 
         onKeyDown(KeyCode.SPACE, () -> {
             // player.getComponent(EntityType.PLAYER).shoot();
-            System.out.println("Shoot");
+            // System.out.println("Shoot");
+            getGameWorld().addEntity(playerComponent.shoot());
         });
     }
 
@@ -68,6 +69,8 @@ public class GameLauncher extends GameApplication {
         getGameWorld().addEntityFactory(new SpaceInvadersFactory());
         spawn("alien");
         player = spawn("player");
+        player.setX(Constant.BOARD_WIDTH / 2);
+        player.setY(Constant.BOARD_HEIGHT - player.getHeight());
         playerComponent = player.getComponent(PlayerComponent.class);
     }
 

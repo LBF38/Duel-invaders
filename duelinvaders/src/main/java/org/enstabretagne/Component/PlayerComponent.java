@@ -2,7 +2,9 @@ package org.enstabretagne.Component;
 
 import org.enstabretagne.Core.Constant;
 
+import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.Component;
+import static com.almasb.fxgl.dsl.FXGL.spawn;
 
 public class PlayerComponent extends Component {
     private Double dx;
@@ -24,7 +26,10 @@ public class PlayerComponent extends Component {
         }
     }
 
-    public void shoot() {
+    public Entity shoot() {
         System.out.println("Player Shoot");
+        Entity bullet = spawn("bullet", entity.getX() + (entity.getWidth() / 2), entity.getY() - 20);
+        bullet.getComponent(BulletComponent.class).initialize();
+        return bullet;
     }
 }
