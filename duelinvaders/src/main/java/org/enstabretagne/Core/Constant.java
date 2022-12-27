@@ -7,7 +7,7 @@ public class Constant {
     public static final Double BOARD_HEIGHT = 600.0;
     public static final Double SPEED_SPACESHIP = 1.0;
     public static final Double SPEED_SHOOT = 1.0;
-    public static final Double SPEED_ALIEN = 1.0;
+    public static final Double SPEED_ALIEN = 0.2;
     public static final Double RATE_ALIEN_SHOOT = 1.0;
     public static final Double DELAY_BETWEEN_SHOOT = 1.0;
 
