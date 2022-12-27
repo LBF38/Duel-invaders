@@ -1,80 +1,100 @@
 package org.enstabretagne.Component;
 
 import org.enstabretagne.Core.Constant;
-import org.enstabretagne.Core.Constant.Direction;
 import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+import static com.almasb.fxgl.dsl.FXGL.*;
+
 public class AlienComponentTest {
     private AlienComponent alienComponent;
-    private Double dx = 1.0;
-    // private Double dy = 1.0;
+    private Double dx = 100.0;
 
     @BeforeEach
     public void setup() {
-        this.alienComponent = new AlienComponent(0.0, 0.0, Constant.Direction.DOWN);
+        alienComponent = new AlienComponent(Constant.Direction.DOWN);
+        entityBuilder()
+                .type(EntityType.ALIEN)
+                .at(0, 0)
+                .with(alienComponent)
+                .build();
+
     }
 
     @Test
     public void initializationTest() {
-        assertEquals(0.0, this.alienComponent.getX());
-        assertEquals(0.0, this.alienComponent.getY());
+        assertEquals(0.0, alienComponent.getEntity().getX());
+        assertEquals(0.0, alienComponent.getEntity().getY());
     }
 
     @Test
-    @DisplayName("Test de la propriété x")
+    @DisplayName("Proriété x de l'entité")
     public void testX() {
-        assertNotEquals(null, alienComponent.getX());
-        alienComponent.setX(5);
-        assertEquals(5, alienComponent.getX());
+        assertNotEquals(null, alienComponent.getEntity().getX());
+        alienComponent.getEntity().setX(5);
+        assertEquals(5, alienComponent.getEntity().getX());
     }
 
     @Test
-    @DisplayName("Test de la propriété y")
+    @DisplayName("Proriété y de l'entité")
     public void testY() {
-        assertNotEquals(null, alienComponent.getY());
-        alienComponent.setY(5);
-        assertEquals(5, alienComponent.getY());
+        assertNotEquals(null, alienComponent.getEntity().getY());
+        alienComponent.getEntity().setY(5);
+        assertEquals(5, alienComponent.getEntity().getY());
     }
 
     @Test
-    @DisplayName("Tests des limites de jeu")
-    public void testExceptions() {
-        assertThrows(IllegalArgumentException.class, () -> alienComponent.setX(-1));
-        assertThrows(IllegalArgumentException.class, () -> alienComponent.setX(Constant.BOARD_WIDTH + 1));
-        assertThrows(IllegalArgumentException.class, () -> alienComponent.setY(-1));
-        assertThrows(IllegalArgumentException.class, () -> alienComponent.setY(Constant.BOARD_HEIGHT + 1));
-    }
-
-    @Test
-    @DisplayName("Déplacement de l'alienComponent")
+    @DisplayName("Déplacement vers la droite")
     public void moveRight() {
-        assertEquals(0, alienComponent.getX());
+        alienComponent.getEntity().setX(0);
+        assertEquals(0, alienComponent.getEntity().getX());
         alienComponent.moveRight(dx);
-        assertEquals(dx, alienComponent.getX()); // to change with decision on the movement
+        assertEquals(dx, alienComponent.getEntity().getX()); // to change with decision on the movement
     }
 
     @Test
+    @DisplayName("Déplacement vers la gauche")
     public void moveLeft() {
-        alienComponent.setX(dx);
+        alienComponent.getEntity().setX(dx);
+        assertEquals(dx, alienComponent.getEntity().getX()); // to change with decision on the movement
         alienComponent.moveLeft(dx);
-        assertEquals(0, alienComponent.getX()); // to change with decision on the movement
+        assertEquals(0, alienComponent.getEntity().getX()); // to change with decision on the movement
     }
 
-    @Test
-    public void move() {
-        // TODO: vérifier le test. Il ne passe pas pour le moment.
-        assertEquals(0, alienComponent.getX());
-        assertEquals(alienComponent.movementDirection, Direction.RIGHT);
-        for (double i = 0; i < Constant.BOARD_WIDTH; i++) {
-            alienComponent.move(dx);
-            assertEquals(dx * i + 1, alienComponent.getX());
-        }
-        assertEquals(1, alienComponent.getY());
-        for (double i = 1; i < Constant.BOARD_WIDTH; i++) {
-            alienComponent.move(i);
-            assertEquals(Constant.BOARD_WIDTH - i, alienComponent.getX());
-        }
-        assertEquals(2, alienComponent.getY());
-    }
+    // Test d'intégration pour move (à voir si on le garde)
+    // @Test
+    // public void testMove() {
+    // double x = alienComponent.getEntity().getX();
+    // double y = alienComponent.getEntity().getY();
+    // double tpf = 1.0;
+    // double dx = tpf * Constant.SPEED_ALIEN;
+    // double dy = 0.5 * Constant.SPEED_ALIEN;
+
+    // // Déplacement à droite
+    // for (int i = 0; i < Constant.BOARD_WIDTH / dx; i++) {
+    // alienComponent.onUpdate(tpf);
+    // x += dx;
+    // assertEquals(x, alienComponent.getEntity().getX(), 0.001);
+    // assertEquals(y, alienComponent.getEntity().getY(), 0.001);
+    // }
+
+    // assertEquals(Direction.LEFT, alienComponent.movementDirection);
+
+    // // Changement de direction et déplacement vers la gauche
+    // for (int i = 0; i < 5; i++) {
+    // alienComponent.onUpdate(tpf);
+    // x -= dx;
+    // y += dy;
+    // assertEquals(x, alienComponent.getEntity().getX(), 0.001);
+    // assertEquals(y, alienComponent.getEntity().getY(), 0.001);
+    // }
+
+    // // Déplacement vers la droite
+    // for (int i = 0; i < 5; i++) {
+    // alienComponent.onUpdate(tpf);
+    // x += dx;
+    // assertEquals(x, alienComponent.getEntity().getX(), 0.001);
+    // assertEquals(y, alienComponent.getEntity().getY(), 0.001);
+    // }
+    // }
 }

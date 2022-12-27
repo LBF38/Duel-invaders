@@ -4,16 +4,24 @@ import static com.almasb.fxgl.dsl.FXGL.*;
 
 import java.util.Map;
 
+import org.enstabretagne.Component.PlayerComponent;
 import org.enstabretagne.Component.SpaceInvadersFactory;
+import org.enstabretagne.Core.Collision_EnemyShoot_player;
+import org.enstabretagne.Core.Collision_bullet_alien;
 import org.enstabretagne.Core.Constant;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.entity.Entity;
+import org.enstabretagne.Core.Collision_alien_player;
+import org.enstabretagne.Component.EntityType;
 
 import javafx.scene.input.KeyCode;
 import javafx.scene.text.Text;
 
 public class GameLauncher extends GameApplication {
+    private PlayerComponent playerComponent;
+    private Entity player;
+
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setWidth(Constant.BOARD_WIDTH.intValue());
@@ -29,29 +37,27 @@ public class GameLauncher extends GameApplication {
         });
 
         onKey(KeyCode.RIGHT, () -> {
-            player.translateX(5); // move right 5 pixels
+            playerComponent.moveRight();// move right 5 pixels
             inc("pixelsMoved", +5);
         });
 
         onKey(KeyCode.LEFT, () -> {
-            player.translateX(-5); // move left 5 pixels
+            playerComponent.moveLeft(); // move left 5 pixels
             inc("pixelsMoved", -5);
         });
 
         onKey(KeyCode.UP, () -> {
-            player.translateY(-5); // move up 5 pixels
-            inc("pixelsMoved", +5);
+            // player.translateY(-5); // move up 5 pixels
+            // inc("pixelsMoved", -5);
         });
 
         onKey(KeyCode.DOWN, () -> {
-            player.translateY(5); // move down 5 pixels
-            inc("pixelsMoved", +5);
+            // player.translateY(5); // move down 5 pixels
+            // inc("pixelsMoved", +5);
         });
 
         onKeyDown(KeyCode.SPACE, () -> {
-            // player.getComponent(EntityType.PLAYER).shoot();
-            System.out.println("Shoot");
-            spawn("shot", player.getX(), player.getY());
+            getGameWorld().addEntity(playerComponent.shoot());
         });
     }
 
@@ -60,13 +66,22 @@ public class GameLauncher extends GameApplication {
         vars.put("pixelsMoved", 0);
     }
 
-    private Entity player;
-
     @Override
     protected void initGame() {
         getGameWorld().addEntityFactory(new SpaceInvadersFactory());
-        spawn("alien");
         player = spawn("player");
+        spawn("alien");
+        player.setX(Constant.BOARD_WIDTH / 2);
+        player.setY(Constant.BOARD_HEIGHT - player.getHeight());
+        playerComponent = player.getComponent(PlayerComponent.class);
+    }
+
+    @Override
+    protected void initPhysics() {
+        getPhysicsWorld().addCollisionHandler(new Collision_alien_player(EntityType.PLAYER, EntityType.ALIEN));
+        getPhysicsWorld().addCollisionHandler(new Collision_bullet_alien(EntityType.BULLET, EntityType.ALIEN));
+        getPhysicsWorld()
+                .addCollisionHandler(new Collision_EnemyShoot_player(EntityType.ENEMY_SHOOT, EntityType.PLAYER));
     }
 
     @Override
