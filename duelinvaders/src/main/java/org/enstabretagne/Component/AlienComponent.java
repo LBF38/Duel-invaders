@@ -5,7 +5,6 @@ import org.enstabretagne.Core.Constant.Direction;
 
 import com.almasb.fxgl.entity.component.Component;
 
-//test new organization
 public class AlienComponent extends Component {
     private Double x, y;
     private Direction direction;
@@ -20,6 +19,14 @@ public class AlienComponent extends Component {
             this.movementDirection = Direction.RIGHT;
         else
             this.movementDirection = Direction.DOWN;
+    }
+
+    public AlienComponent(Double x, Double y) {
+        this(x, y, Direction.DOWN);
+    }
+
+    public AlienComponent() {
+        this(0.0, 0.0);
     }
 
     @Override

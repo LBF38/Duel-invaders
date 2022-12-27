@@ -4,19 +4,13 @@ import static com.almasb.fxgl.dsl.FXGL.*;
 
 import java.util.Map;
 
-import org.enstabretagne.Component.AlienComponent;
-import org.enstabretagne.Component.PlayerComponent;
+import org.enstabretagne.Component.SpaceInvadersFactory;
 import org.enstabretagne.Core.Constant;
-import org.enstabretagne.Core.Constant.Direction;
-import org.enstabretagne.Core.EntityType;
-
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.entity.Entity;
 
 import javafx.scene.input.KeyCode;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
 public class GameLauncher extends GameApplication {
@@ -69,17 +63,9 @@ public class GameLauncher extends GameApplication {
 
     @Override
     protected void initGame() {
-        player = entityBuilder()
-                .at(300, 300)
-                .view(new Rectangle(25, 25, Color.BLUE))
-                .with(new PlayerComponent())
-                .type(EntityType.PLAYER)
-                .buildAndAttach();
-        entityBuilder()
-                .at(300, 300)
-                .viewWithBBox(new Rectangle(25, 25, Color.RED))
-                .with(new AlienComponent(300.0, 300.0, Direction.RIGHT))
-                .buildAndAttach();
+        getGameWorld().addEntityFactory(new SpaceInvadersFactory());
+        spawn("alien");
+        player = spawn("player");
     }
 
     @Override
