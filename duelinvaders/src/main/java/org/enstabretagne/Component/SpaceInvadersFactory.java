@@ -10,6 +10,7 @@ import com.almasb.fxgl.entity.components.CollidableComponent;
 
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import org.enstabretagne.Core.Constant;
 
 public class SpaceInvadersFactory implements EntityFactory {
     @Spawns("player")
@@ -43,6 +44,17 @@ public class SpaceInvadersFactory implements EntityFactory {
                 .at(data.getX(), data.getY())
                 .viewWithBBox(new Rectangle(5, 20, Color.BLACK))
                 .with(new BulletComponent())
+                .collidable()
+                .build();
+    }
+
+    @Spawns("shot")
+    public Entity newShot(SpawnData data) {
+        return entityBuilder()
+                .type(EntityType.SHOT)
+                .at(data.getX(), data.getY())
+                .viewWithBBox(new Rectangle(5, 15, Color.BLACK))
+                .with(new ShotComponent(data.getX(), data.getY(), Constant.Direction.UP))
                 .collidable()
                 .build();
     }

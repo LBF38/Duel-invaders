@@ -57,8 +57,6 @@ public class GameLauncher extends GameApplication {
         });
 
         onKeyDown(KeyCode.SPACE, () -> {
-            // player.getComponent(EntityType.PLAYER).shoot();
-            // System.out.println("Shoot");
             getGameWorld().addEntity(playerComponent.shoot());
         });
     }
