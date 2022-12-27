@@ -1,28 +1,29 @@
 package org.enstabretagne.Game;
 
-import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.app.GameSettings;
-import com.almasb.fxgl.entity.Entity;
-import javafx.scene.input.KeyCode;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Text;
+import static com.almasb.fxgl.dsl.FXGL.*;
+
 import java.util.Map;
 
 import org.enstabretagne.Component.AlienComponent;
 import org.enstabretagne.Component.PlayerComponent;
-import org.enstabretagne.Core.Alien;
 import org.enstabretagne.Core.Constant;
-import org.enstabretagne.Core.EntityType;
 import org.enstabretagne.Core.Constant.Direction;
+import org.enstabretagne.Core.EntityType;
 
-import static com.almasb.fxgl.dsl.FXGL.*;
+import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.app.GameSettings;
+import com.almasb.fxgl.entity.Entity;
+
+import javafx.scene.input.KeyCode;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
 
 public class GameLauncher extends GameApplication {
     @Override
     protected void initSettings(GameSettings settings) {
-        settings.setWidth(Constant.BOARD_WIDTH);
-        settings.setHeight(Constant.BOARD_HEIGHT);
+        settings.setWidth(Constant.BOARD_WIDTH.intValue());
+        settings.setHeight(Constant.BOARD_HEIGHT.intValue());
         settings.setTitle("Basic Game App");
         settings.setVersion("0.1");
     }
@@ -77,7 +78,7 @@ public class GameLauncher extends GameApplication {
         entityBuilder()
                 .at(300, 300)
                 .viewWithBBox(new Rectangle(25, 25, Color.RED))
-                .with(new AlienComponent(new Alien(5, 5, Direction.DOWN)))
+                .with(new AlienComponent(300.0, 300.0, Direction.RIGHT))
                 .buildAndAttach();
     }
 

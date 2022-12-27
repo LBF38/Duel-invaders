@@ -3,13 +3,13 @@ package org.enstabretagne.Core;
 import java.util.Random;
 
 public class Constant {
-    public static final Integer BOARD_WIDTH = 800;
-    public static final Integer BOARD_HEIGHT = 600;
-    public static final Integer SPEED_SPACESHIP = 1;
-    public static final Integer SPEED_SHOOT = 1;
-    public static final Integer SPEED_ALIEN = 1;
-    public static final Integer RATE_ALIEN_SHOOT = 1;
-    public static final Integer DELAY_BETWEEN_SHOOT = 1;
+    public static final Double BOARD_WIDTH = 800.0;
+    public static final Double BOARD_HEIGHT = 600.0;
+    public static final Double SPEED_SPACESHIP = 1.0;
+    public static final Double SPEED_SHOOT = 1.0;
+    public static final Double SPEED_ALIEN = 1.0;
+    public static final Double RATE_ALIEN_SHOOT = 1.0;
+    public static final Double DELAY_BETWEEN_SHOOT = 1.0;
 
     public enum Direction {
         UP, DOWN, LEFT, RIGHT

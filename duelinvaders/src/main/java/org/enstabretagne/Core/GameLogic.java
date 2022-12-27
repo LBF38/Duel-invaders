@@ -1,9 +1,7 @@
 package org.enstabretagne.Core;
 
 import java.util.ArrayList;
-import java.util.Random;
-
-import org.enstabretagne.Core.Constant.Direction;
+// import java.util.Random;
 
 public class GameLogic {
     private boolean PLAY = false;
@@ -16,8 +14,8 @@ public class GameLogic {
             gameElements.add(new Player());
         }
         for (int i = 0; i < NB_ALIENS; i++) {
-            Random rand = new Random();
-            gameElements.add(new Alien(rand.nextInt(), rand.nextInt(), Direction.RIGHT));
+            // Random rand = new Random();
+            // gameElements.add(new Alien(rand.nextInt(), rand.nextInt(), Direction.RIGHT));
         }
     }
 

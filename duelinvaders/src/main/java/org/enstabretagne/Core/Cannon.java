@@ -1,12 +1,12 @@
 package org.enstabretagne.Core;
 
-import java.util.Date;
+// import java.util.Date;
 
 import org.enstabretagne.Core.Constant.Direction;
 
 public class Cannon extends Element {
     private int directionVaisseau; // 1: vers la droite, -1: vers la gauche
-    private Date lastShoot = new Date();
+    // private Date lastShoot = new Date();
 
     public int getDirectionVaisseau() {
         return directionVaisseau;
@@ -50,20 +50,20 @@ public class Cannon extends Element {
         // }
     }
 
-    public Shot tirer() {
-        /*
-         * Le vaisseau tire un missile
-         * Le missile part de la position du vaiseau dans la direction du vaisseau
-         */
-        int delayBetweenShoot = Constant.DELAY_BETWEEN_SHOOT;
-        Date now = new Date();
-        if (now.compareTo(this.lastShoot) > delayBetweenShoot) { // todo vérifier le delay (now - this.lastShoot) >
-                                                                 // delayBetweenShoot
-            Shot tir = new Shot(getX(), getY(), getDirection());
-            // tir.move(Constant.Direction.UP); // TODO: change for direction of the canon
-            this.lastShoot = now;
-            return tir;
-        }
-        return null;
-    }
+    // public Shot tirer() {
+    //     /*
+    //      * Le vaisseau tire un missile
+    //      * Le missile part de la position du vaiseau dans la direction du vaisseau
+    //      */
+    //     int delayBetweenShoot = Constant.DELAY_BETWEEN_SHOOT;
+    //     Date now = new Date();
+    //     if (now.compareTo(this.lastShoot) > delayBetweenShoot) { // todo vérifier le delay (now - this.lastShoot) >
+    //                                                              // delayBetweenShoot
+    //         Shot tir = new Shot(getX(), getY(), getDirection());
+    //         // tir.move(Constant.Direction.UP); // TODO: change for direction of the canon
+    //         this.lastShoot = now;
+    //         return tir;
+    //     }
+    //     return null;
+    // }
 }
