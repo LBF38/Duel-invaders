@@ -6,10 +6,14 @@ import java.util.Map;
 
 import org.enstabretagne.Component.PlayerComponent;
 import org.enstabretagne.Component.SpaceInvadersFactory;
+import org.enstabretagne.Core.Collision_EnemyShoot_player;
+import org.enstabretagne.Core.Collision_bullet_alien;
 import org.enstabretagne.Core.Constant;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.entity.Entity;
+import org.enstabretagne.Core.Collision_alien_player;
+import org.enstabretagne.Component.EntityType;
 
 import javafx.scene.input.KeyCode;
 import javafx.scene.text.Text;
@@ -67,11 +71,19 @@ public class GameLauncher extends GameApplication {
     @Override
     protected void initGame() {
         getGameWorld().addEntityFactory(new SpaceInvadersFactory());
-        spawn("alien");
         player = spawn("player");
+        spawn("alien");
         player.setX(Constant.BOARD_WIDTH / 2);
         player.setY(Constant.BOARD_HEIGHT - player.getHeight());
         playerComponent = player.getComponent(PlayerComponent.class);
+    }
+
+    @Override
+    protected void initPhysics() {
+        getPhysicsWorld().addCollisionHandler(new Collision_alien_player(EntityType.PLAYER, EntityType.ALIEN));
+        getPhysicsWorld().addCollisionHandler(new Collision_bullet_alien(EntityType.BULLET, EntityType.ALIEN));
+        getPhysicsWorld()
+                .addCollisionHandler(new Collision_EnemyShoot_player(EntityType.ENEMY_SHOOT, EntityType.PLAYER));
     }
 
     @Override
