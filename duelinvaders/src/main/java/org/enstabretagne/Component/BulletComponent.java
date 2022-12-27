@@ -16,9 +16,6 @@ public class BulletComponent extends Component {
 
     public BulletComponent() {
         super();
-
-        // this.entity.addComponent(new ProjectileComponent(direction, speed));
-        // this.entity.addComponent(new ExpireCleanComponent(duration));
     }
 
     public void initialize() {
