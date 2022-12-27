@@ -4,6 +4,64 @@ Pour le moment, ce document est en cours de rédaction. Il ne contient pas beauc
 
 La documentation du code Java sera automatiquement générée. Cette documentation se concentrera sur la partie logique métier et fonctionnement du code $i.e.$ les réflexions et décisions que l'on a pris pour réaliser le jeu.
 
+## Nouvelle organisation du projet
+
+Après de multiples réflexions, nous avons décidé de changer l'organisation du projet. Ainsi, vous trouverez ci-dessous la définition de la nouvelle organisation.
+
+Le projet est composé de 3 packages principaux :
+
+- [Component](#package-component): Définit toutes les classes des différents éléments avec leur caractéristiques individuelles.
+- [Core](#package-core): Définit les interactions entre les components notamments les collisions.
+- [Game](#package-game): Définit le déroulé d'une partie et l'initialise.
+
+### Package Component
+
+Ce package est composé des classes suivantes :
+
+- Alien
+- Player
+- Bullet
+- EnemyShoot
+
+Exemple :
+
+```mermaid
+classDiagram
+    class Alien{
+        +move()
+        +shoot()
+        +spawn()
+        +die()
+    }
+```
+
+:warning: Il faut définir la vie du player.
+
+### Package Core
+
+Ce package est composé des classes suivantes, qui définissent les collisions possibles :
+
+- Alien_Player
+- Bullet_Alien
+- EnemyShoot_Player
+- (...)
+
+A chaque collision, soit la vie du player diminue, soit l'alien disparaît. (dépend de nos choix de conception et de nos règles de jeu)
+
+### Package Game
+
+Ce package est composé des classes suivantes :
+
+- Page d'accueil
+  - Jouer
+  - Règles du jeu
+  - A propos
+- Initialisation du plateau avec Alien et Player.
+- Définition de la fin de partie
+  - Vie du player à 0
+  - 0 Alien
+  - Alien touche la ligne du player
+
 ## Logique du jeu
 
 Deux joueurs à l'extrémité de l'écran.
