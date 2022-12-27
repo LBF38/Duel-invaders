@@ -17,6 +17,7 @@ import org.enstabretagne.Component.EntityType;
 
 import javafx.scene.input.KeyCode;
 import javafx.scene.text.Text;
+import javafx.util.Duration;
 
 public class GameLauncher extends GameApplication {
     private PlayerComponent playerComponent;
@@ -70,7 +71,9 @@ public class GameLauncher extends GameApplication {
     protected void initGame() {
         getGameWorld().addEntityFactory(new SpaceInvadersFactory());
         player = spawn("player");
-        spawn("alien");
+        run(() -> {
+            spawn("alien");
+        }, Duration.seconds(2));
         player.setX(Constant.BOARD_WIDTH / 2);
         player.setY(Constant.BOARD_HEIGHT - player.getHeight());
         playerComponent = player.getComponent(PlayerComponent.class);
