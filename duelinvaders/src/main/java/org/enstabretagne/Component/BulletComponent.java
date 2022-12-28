@@ -27,4 +27,8 @@ public class BulletComponent extends Component {
     public void rotate(double angle) {
         this.entity.rotateBy(angle);
     }
+
+    public void setDirection(Point2D direction) {
+        this.direction = direction;
+    }
 }

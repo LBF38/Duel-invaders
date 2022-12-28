@@ -43,4 +43,15 @@ public class SpaceInvadersFactory implements EntityFactory {
                 .collidable()
                 .build();
     }
+
+    @Spawns("alienBullet")
+    public Entity newAlienBullet(SpawnData data) {
+        return entityBuilder()
+                .type(EntityType.ENEMY_SHOOT)
+                .at(data.getX(), data.getY())
+                .viewWithBBox(new Rectangle(5, 20, Color.BLACK))
+                .with(new BulletComponent())
+                .collidable()
+                .build();
+    }
 }
