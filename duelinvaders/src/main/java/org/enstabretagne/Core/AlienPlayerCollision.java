@@ -16,5 +16,6 @@ public class AlienPlayerCollision extends CollisionHandler {
     protected void onCollisionBegin(Entity player, Entity alien) {
         player.removeFromWorld();
         set(GameVariableNames.isGameOver, true);
+        play("Explosion/finalExplosion.wav");//son explosion du vaiseau
     }
 }

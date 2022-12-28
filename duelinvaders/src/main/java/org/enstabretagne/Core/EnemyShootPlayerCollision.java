@@ -16,8 +16,12 @@ public class EnemyShootPlayerCollision extends CollisionHandler {
     @Override
     protected void onCollisionBegin(Entity enemy_shoot, Entity player) {
         enemy_shoot.removeFromWorld();
+
         inc(GameVariableNames.PLAYER1_LIVES, -1);
         if (geti(GameVariableNames.PLAYER1_LIVES) == 0)
             set(GameVariableNames.isGameOver, true);
+            play("Explosion/finalExplosion.wav");//son explosion du vaiseau
+
+        play("Explosion/strongExplosion.wav"); //son de l'explosion fort lorsque le joueur est touché
     }
 }

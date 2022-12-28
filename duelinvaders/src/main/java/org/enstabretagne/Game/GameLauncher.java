@@ -68,6 +68,12 @@ public class GameLauncher extends GameApplication {
 
     @Override
     protected void initGame() {
+        play("autre/claironStart.wav");
+        try {
+            TimeUnit.SECONDS.sleep(Constant.WAITING_TIME_BEFORE_START);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         getGameWorld().addEntityFactory(new SpaceInvadersFactory());
         player = spawn("player");
         spawn("alien");
@@ -129,6 +135,12 @@ public class GameLauncher extends GameApplication {
     }
 
     private void gameOverScreen() {
+        try { //todo je ne suis pas sur de cette feature
+            TimeUnit.SECONDS.sleep(Constant.WAITING_TIME_BEFORE_END);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        play("autre/claironDefeat.wav");
         getDialogService().showMessageBox("Game Over!", () -> {
             getDialogService().showConfirmationBox("Do you want to play again?", (yes) -> playAgain(yes));
         });
@@ -142,6 +154,12 @@ public class GameLauncher extends GameApplication {
     }
 
     private void winScreen() {
+        try {
+            TimeUnit.SECONDS.sleep(Constant.WAITING_TIME_BEFORE_END);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        play("autre/claironVictory.wav");
         getDialogService().showMessageBox("You win!", () -> {
             getDialogService().showConfirmationBox("Do you want to play again?", (yes) -> playAgain(yes));
         });
