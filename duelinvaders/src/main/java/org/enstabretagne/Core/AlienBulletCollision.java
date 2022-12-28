@@ -17,5 +17,7 @@ public class AlienBulletCollision extends CollisionHandler {
         inc(GameVariableNames.PLAYER1_SCORE, +1);
         bullet.removeFromWorld();
         alien.removeFromWorld();
+
+        set(GameVariableNames.isGameWon, getGameWorld().getEntitiesByType(EntityType.ALIEN).isEmpty());
     }
 }

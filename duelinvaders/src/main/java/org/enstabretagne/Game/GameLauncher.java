@@ -59,6 +59,7 @@ public class GameLauncher extends GameApplication {
         vars.put(GameVariableNames.PLAYER1_SCORE, 0);
         vars.put(GameVariableNames.PLAYER1_LIVES, Constant.START_LIVES.intValue());
         vars.put(GameVariableNames.isGameOver, false);
+        vars.put(GameVariableNames.isGameWon, false);
     }
 
     @Override
@@ -101,6 +102,8 @@ public class GameLauncher extends GameApplication {
     protected void onUpdate(double tpf) {
         if (getb(GameVariableNames.isGameOver))
             gameOverScreen();
+        if(getb(GameVariableNames.isGameWon))
+            winScreen();
         run(() -> {
             getGameWorld().getEntitiesByType(EntityType.ALIEN).forEach((alien) -> {
                 if (FXGLMath.randomBoolean(0.01))
@@ -120,6 +123,12 @@ public class GameLauncher extends GameApplication {
             getGameController().startNewGame();
         else
             getGameController().exit();
+    }
+
+    private void winScreen() {
+        getDialogService().showMessageBox("You win!", () -> {
+            getDialogService().showConfirmationBox("Do you want to play again?", (yes) -> playAgain(yes));
+        });
     }
 
     public static void main(String[] args) {
