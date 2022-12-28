@@ -25,7 +25,7 @@ import org.enstabretagne.Core.Constant;
 public class SpaceInvadersFactory implements EntityFactory {
     @Spawns("player")
     public Entity newPlayer(SpawnData data) {
-        var texture = FXGL.texture("Space_ship_5.png", 100, 100);
+        var texture = FXGL.texture("SpaceShip.png", 100, 100);
         return entityBuilder()
                 .type(EntityType.PLAYER)
                 .at(data.getX(), data.getY())
@@ -43,11 +43,10 @@ public class SpaceInvadersFactory implements EntityFactory {
         //la convertit en couleur JavaFX
         Color color = Color.valueOf(randomColor.name());
 
-        var texture = FXGL.texture("alien2.png", 60, 60).multiplyColor(color);
+        var texture = FXGL.texture("Alien.png", 60, 60).multiplyColor(color);
         return entityBuilder()
                 .type(EntityType.ALIEN)
                 .at(data.getX(), data.getY())
-                //.viewWithBBox(new Rectangle(40, 40, Color.RED))
                 .viewWithBBox(texture)
                 .with(new AlienComponent())
                 .collidable()
@@ -56,11 +55,14 @@ public class SpaceInvadersFactory implements EntityFactory {
 
     @Spawns("bullet")
     public Entity newBullet(SpawnData data) {
+        var bulletWidth = 20;
+        var bulletHeight = 20;
+        var texture = FXGL.texture("rocket.png", bulletWidth, bulletHeight);
         spawn("shooting_start", data.getX(), data.getY());
         return entityBuilder()
                 .type(EntityType.BULLET)
-                .at(data.getX(), data.getY())
-                .viewWithBBox(new Rectangle(5, 20, Color.BLACK))
+                .at(data.getX()-bulletWidth/2, data.getY())
+                .viewWithBBox(texture)
                 .with(new BulletComponent())
                 .with(new OffscreenCleanComponent())
                 .collidable()
@@ -72,7 +74,7 @@ public class SpaceInvadersFactory implements EntityFactory {
         return entityBuilder()
                 .at(-10, -10)
                 // bigger than game size to account for camera shake
-                .view(texture("background_1.png", Constant.BOARD_WIDTH + 20, Constant.BOARD_HEIGHT + 20))
+                .view(texture("Background.png", Constant.BOARD_WIDTH + 20, Constant.BOARD_HEIGHT + 20))
                 .zIndex(-500) //todo a tester a quoi ca sert
                 .build();
     }
@@ -83,7 +85,7 @@ public class SpaceInvadersFactory implements EntityFactory {
         var bullet_width = 20;
         var bullet_height = 40;
 
-        var texture = texture("fire.png", bullet_width, bullet_height);
+        var texture = texture("Fire.png", bullet_width, bullet_height);
         //tourne la texture de 180°
         texture.setRotate(180);
 
@@ -101,7 +103,7 @@ public class SpaceInvadersFactory implements EntityFactory {
     public Entity shooting_smoke(SpawnData data) {
         var smoke_width = 40;
         var smoke_height = 40;
-        var texture = texture("smoke.png", smoke_width, smoke_height);
+        var texture = texture("Smoke.png", smoke_width, smoke_height);
         var e = entityBuilder()
                 .at(data.getX()-smoke_width/2, data.getY()-30)
                 .view(texture)
