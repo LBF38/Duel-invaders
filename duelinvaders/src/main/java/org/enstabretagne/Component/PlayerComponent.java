@@ -10,6 +10,7 @@ import static com.almasb.fxgl.dsl.FXGL.*;
 public class PlayerComponent extends Component {
     private Double dx;
     private Double last_shot = 0.0;
+    private int side_shoot = 0;
 
     @Override
     public void onUpdate(double tpf) {
@@ -30,8 +31,17 @@ public class PlayerComponent extends Component {
 
     public void shoot() {
         Boolean canShoot = getGameTimer().getNow() - last_shot.doubleValue() >= DELAY_BETWEEN_SHOOT.toSeconds();
+        var decalage = 0;
+
         if (canShoot || last_shot == null) {
-            Entity bullet = spawn("bullet", entity.getX() + (entity.getWidth() / 2), entity.getY() - 20);
+            if (side_shoot == 0) {
+                side_shoot = 1;
+                decalage = 22;
+            } else {
+                side_shoot = 0;
+                decalage = -18;
+            }
+            Entity bullet = spawn("bullet", entity.getX() + (entity.getWidth() / 2) + decalage, entity.getY() - 20);
             bullet.getComponent(BulletComponent.class).initialize();
             last_shot = getGameTimer().getNow();
         }

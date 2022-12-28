@@ -67,6 +67,7 @@ public class GameLauncher extends GameApplication {
         getGameWorld().addEntityFactory(new SpaceInvadersFactory());
         player = spawn("player");
         spawn("alien");
+        spawn("background");
         run(() -> {
             spawn("alien");
         }, Duration.seconds(2));
@@ -102,7 +103,7 @@ public class GameLauncher extends GameApplication {
     protected void onUpdate(double tpf) {
         if (getb(GameVariableNames.isGameOver))
             gameOverScreen();
-        if(getb(GameVariableNames.isGameWon))
+        if (getb(GameVariableNames.isGameWon))
             winScreen();
         run(() -> {
             getGameWorld().getEntitiesByType(EntityType.ALIEN).forEach((alien) -> {

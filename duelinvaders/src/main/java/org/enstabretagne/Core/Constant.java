@@ -22,5 +22,9 @@ public class Constant {
         UP, DOWN, LEFT, RIGHT
     }
 
+    public enum AlienColor {
+        RED, GREEN, BLUE, YELLOW, PURPLE, ORANGE
+    }
+
     public static final Random random = new Random();
 }
