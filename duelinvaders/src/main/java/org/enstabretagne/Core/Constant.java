@@ -13,9 +13,14 @@ public class Constant {
     public static final Duration DELAY_BETWEEN_SHOOT = Duration.seconds(1);
     public static final Duration BULLET_DURATION = Duration.seconds(2);
 
+
+
     public enum Direction {
         UP, DOWN, LEFT, RIGHT
     }
 
+    public enum  AlienColor {
+        RED, GREEN, BLUE, YELLOW, PURPLE, ORANGE
+    }
     public static final Random random = new Random();
 }

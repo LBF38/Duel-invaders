@@ -4,6 +4,9 @@ import static com.almasb.fxgl.dsl.FXGL.*;
 
 import java.util.Map;
 
+import com.almasb.fxgl.dsl.FXGL;
+import com.almasb.fxgl.texture.Texture;
+import javafx.scene.image.ImageView;
 import org.enstabretagne.Component.PlayerComponent;
 import org.enstabretagne.Component.SpaceInvadersFactory;
 import org.enstabretagne.Core.Collision_EnemyShoot_player;
@@ -71,6 +74,7 @@ public class GameLauncher extends GameApplication {
     protected void initGame() {
         getGameWorld().addEntityFactory(new SpaceInvadersFactory());
         player = spawn("player");
+        spawn("background");
         run(() -> {
             spawn("alien");
         }, Duration.seconds(2));
