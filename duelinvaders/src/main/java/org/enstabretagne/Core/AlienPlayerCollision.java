@@ -15,6 +15,6 @@ public class AlienPlayerCollision extends CollisionHandler {
     @Override
     protected void onCollisionBegin(Entity player, Entity alien) {
         player.removeFromWorld();
-        set("isGameOver", true);
+        set(GameVariableNames.isGameOver, true);
     }
 }

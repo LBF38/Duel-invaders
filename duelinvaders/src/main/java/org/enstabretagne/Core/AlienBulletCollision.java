@@ -14,7 +14,7 @@ public class AlienBulletCollision extends CollisionHandler {
 
     @Override
     protected void onCollisionBegin(Entity bullet, Entity alien) {
-        inc("Player1_score", +1);
+        inc(GameVariableNames.PLAYER1_SCORE, +1);
         bullet.removeFromWorld();
         alien.removeFromWorld();
     }

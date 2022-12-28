@@ -4,16 +4,18 @@ import static com.almasb.fxgl.dsl.FXGL.*;
 
 import java.util.Map;
 
+import org.enstabretagne.Component.EntityType;
 import org.enstabretagne.Component.PlayerComponent;
 import org.enstabretagne.Component.SpaceInvadersFactory;
-import org.enstabretagne.Core.EnemyShootPlayerCollision;
 import org.enstabretagne.Core.AlienBulletCollision;
+import org.enstabretagne.Core.AlienPlayerCollision;
 import org.enstabretagne.Core.Constant;
+import org.enstabretagne.Core.EnemyShootPlayerCollision;
+import org.enstabretagne.Core.GameVariableNames;
+
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.entity.Entity;
-import org.enstabretagne.Core.AlienPlayerCollision;
-import org.enstabretagne.Component.EntityType;
 
 import javafx.scene.input.KeyCode;
 import javafx.scene.text.Text;
@@ -38,23 +40,11 @@ public class GameLauncher extends GameApplication {
         });
 
         onKey(KeyCode.RIGHT, () -> {
-            playerComponent.moveRight();// move right 5 pixels
-            inc("pixelsMoved", +5);
+            playerComponent.moveRight();
         });
 
         onKey(KeyCode.LEFT, () -> {
-            playerComponent.moveLeft(); // move left 5 pixels
-            inc("pixelsMoved", -5);
-        });
-
-        onKey(KeyCode.UP, () -> {
-            // player.translateY(-5); // move up 5 pixels
-            // inc("pixelsMoved", -5);
-        });
-
-        onKey(KeyCode.DOWN, () -> {
-            // player.translateY(5); // move down 5 pixels
-            // inc("pixelsMoved", +5);
+            playerComponent.moveLeft();
         });
 
         onKey(KeyCode.SPACE, () -> {
@@ -64,9 +54,9 @@ public class GameLauncher extends GameApplication {
 
     @Override
     protected void initGameVars(Map<String, Object> vars) {
-        vars.put("pixelsMoved", 0);
-        vars.put("Player1_score", 0);
-        vars.put("isGameOver", false);
+        vars.put(GameVariableNames.PLAYER1_SCORE, 0);
+        vars.put(GameVariableNames.PLAYER1_LIVES, Constant.START_LIVES.intValue());
+        vars.put(GameVariableNames.isGameOver, false);
     }
 
     @Override
@@ -92,24 +82,22 @@ public class GameLauncher extends GameApplication {
 
     @Override
     protected void initUI() {
-        Text textPixels = new Text();
-        textPixels.setTranslateX(50); // x = 50
-        textPixels.setTranslateY(100); // y = 100
-
-        textPixels.textProperty().bind(getWorldProperties().intProperty("pixelsMoved").asString());
-
-        getGameScene().addUINode(textPixels); // add to the scene graph
-
         Text textScore = new Text();
         textScore.setX(getAppWidth() - 100);
         textScore.setY(100);
-        textScore.textProperty().bind(getWorldProperties().intProperty("Player1_score").asString());
+        textScore.textProperty().bind(getWorldProperties().intProperty(GameVariableNames.PLAYER1_SCORE).asString());
         getGameScene().addUINode(textScore);
+
+        Text textLives = new Text();
+        textLives.setX(getAppWidth() - 100);
+        textLives.setY(200);
+        textLives.textProperty().bind(getWorldProperties().intProperty(GameVariableNames.PLAYER1_LIVES).asString());
+        getGameScene().addUINode(textLives);
     }
 
     @Override
     protected void onUpdate(double tpf) {
-        if (getb("isGameOver"))
+        if (getb(GameVariableNames.isGameOver))
             gameOverScreen();
     }
 

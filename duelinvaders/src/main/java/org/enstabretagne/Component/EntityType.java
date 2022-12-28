@@ -1,5 +1,5 @@
 package org.enstabretagne.Component;
 
 public enum EntityType {
-    ALIEN, PLAYER, BULLET, ENEMY_SHOOT, SHOT
+    ALIEN, PLAYER, BULLET, ENEMY_SHOOT
 }
