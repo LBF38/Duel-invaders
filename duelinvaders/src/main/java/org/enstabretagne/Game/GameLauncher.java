@@ -4,6 +4,7 @@ import static com.almasb.fxgl.dsl.FXGL.*;
 
 import java.util.Map;
 
+import com.almasb.fxgl.dsl.FXGL;
 import org.enstabretagne.Component.AlienComponent;
 import org.enstabretagne.Component.EntityType;
 import org.enstabretagne.Component.PlayerComponent;
@@ -74,6 +75,8 @@ public class GameLauncher extends GameApplication {
         player.setX(Constant.BOARD_WIDTH / 2);
         player.setY(Constant.BOARD_HEIGHT - player.getHeight());
         playerComponent = player.getComponent(PlayerComponent.class);
+
+        loopBGM("Across_the_Universe_-_Oleg_O._Kachanko.mp3");//lance la musique todo: sélectionner la musique
     }
 
     @Override
