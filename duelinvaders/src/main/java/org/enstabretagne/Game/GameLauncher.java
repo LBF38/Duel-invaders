@@ -4,6 +4,7 @@ import static com.almasb.fxgl.dsl.FXGL.*;
 
 import java.util.Map;
 
+import org.enstabretagne.Component.AlienComponent;
 import org.enstabretagne.Component.EntityType;
 import org.enstabretagne.Component.PlayerComponent;
 import org.enstabretagne.Component.SpaceInvadersFactory;
@@ -15,6 +16,7 @@ import org.enstabretagne.Core.GameVariableNames;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
+import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.entity.Entity;
 
 import javafx.scene.input.KeyCode;
@@ -99,6 +101,12 @@ public class GameLauncher extends GameApplication {
     protected void onUpdate(double tpf) {
         if (getb(GameVariableNames.isGameOver))
             gameOverScreen();
+        run(() -> {
+            getGameWorld().getEntitiesByType(EntityType.ALIEN).forEach((alien) -> {
+                if (FXGLMath.randomBoolean(0.01))
+                    alien.getComponent(AlienComponent.class).randomShoot(Constant.ALIEN_SHOOT_CHANCE);
+            });
+        }, Duration.seconds(Constant.random.nextDouble() * 10));
     }
 
     private void gameOverScreen() {

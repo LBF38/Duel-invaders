@@ -16,7 +16,8 @@ public class EnemyShootPlayerCollision extends CollisionHandler {
     @Override
     protected void onCollisionBegin(Entity enemy_shoot, Entity player) {
         enemy_shoot.removeFromWorld();
-        player.removeFromWorld();
         inc(GameVariableNames.PLAYER1_LIVES, -1);
+        if (geti(GameVariableNames.PLAYER1_LIVES) == 0)
+            set(GameVariableNames.isGameOver, true);
     }
 }
