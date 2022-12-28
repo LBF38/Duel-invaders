@@ -5,15 +5,16 @@ import com.almasb.fxgl.physics.CollisionHandler;
 
 import org.enstabretagne.Component.EntityType;
 
-public class Collision_alien_player extends CollisionHandler {
-    public Collision_alien_player(EntityType player, EntityType alien) {
+import static com.almasb.fxgl.dsl.FXGL.*;
+
+public class AlienPlayerCollision extends CollisionHandler {
+    public AlienPlayerCollision(EntityType player, EntityType alien) {
         super(EntityType.PLAYER, EntityType.ALIEN);
     }
 
     @Override
     protected void onCollisionBegin(Entity player, Entity alien) {
-        System.out.println("Collision player alien");
         player.removeFromWorld();
-        // Lancer la fin du jeu
+        set(GameVariableNames.isGameOver, true);
     }
 }

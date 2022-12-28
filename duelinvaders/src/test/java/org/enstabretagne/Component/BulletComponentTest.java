@@ -14,7 +14,7 @@ public class BulletComponentTest {
 
         bulletComponent = new BulletComponent();
         entityBuilder()
-                .type(EntityType.SHOT)
+                .type(EntityType.BULLET)
                 .at(0, 0)
                 .with(bulletComponent)
                 .build();

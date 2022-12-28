@@ -1,22 +1,24 @@
 package org.enstabretagne.Component;
 
-import org.enstabretagne.Core.Constant;
+import static org.enstabretagne.Core.Constant.*;
 
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.Component;
-import static com.almasb.fxgl.dsl.FXGL.spawn;
+
+import static com.almasb.fxgl.dsl.FXGL.*;
 
 public class PlayerComponent extends Component {
     private Double dx;
-    private int side_shoot =0 ;
+    private Double last_shot = 0.0;
+    private int side_shoot = 0;
 
     @Override
     public void onUpdate(double tpf) {
-        dx = tpf * Constant.SPEED_SPACESHIP;
+        dx = tpf * SPEED_SPACESHIP;
     }
 
     public void moveRight() {
-        if (this.entity.getRightX() + dx <= Constant.BOARD_WIDTH) {
+        if (this.entity.getRightX() + dx <= BOARD_WIDTH) {
             this.entity.translateX(dx);
         }
     }
@@ -27,19 +29,21 @@ public class PlayerComponent extends Component {
         }
     }
 
-    public Entity shoot() {
+    public void shoot() {
+        Boolean canShoot = getGameTimer().getNow() - last_shot.doubleValue() >= DELAY_BETWEEN_SHOOT.toSeconds();
         var decalage = 0;
-        //System.out.println("Player Shoot");
-        if (side_shoot== 0) {
-            side_shoot = 1;
-            decalage = 22;
+
+        if (canShoot || last_shot == null) {
+            if (side_shoot == 0) {
+                side_shoot = 1;
+                decalage = 22;
+            } else {
+                side_shoot = 0;
+                decalage = -18;
+            }
+            Entity bullet = spawn("bullet", entity.getX() + (entity.getWidth() / 2) + decalage, entity.getY() - 20);
+            bullet.getComponent(BulletComponent.class).initialize();
+            last_shot = getGameTimer().getNow();
         }
-        else {
-            side_shoot = 0;
-            decalage = -18;
-        }
-        Entity bullet = spawn("bullet", entity.getX() + (entity.getWidth() / 2)+ decalage, entity.getY() - 20);
-        bullet.getComponent(BulletComponent.class).initialize();
-        return bullet;
     }
 }

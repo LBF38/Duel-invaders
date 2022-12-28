@@ -3,11 +3,18 @@ package org.enstabretagne.Component;
 import org.enstabretagne.Core.Constant;
 import org.enstabretagne.Core.Constant.Direction;
 
+import com.almasb.fxgl.core.math.FXGLMath;
+import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.Component;
+
+import javafx.geometry.Point2D;
+
+import static com.almasb.fxgl.dsl.FXGL.*;
 
 public class AlienComponent extends Component {
     private Double dx, dy;
     protected Direction movementDirection;
+    private Double last_shot = 0.0;
 
     public AlienComponent(Direction direction) {
         super();
@@ -56,5 +63,22 @@ public class AlienComponent extends Component {
             this.entity.translateY(dy);
             this.movementDirection = Direction.RIGHT;
         }
+    }
+
+    public void shoot() {
+        Boolean canShoot = getGameTimer().getNow() - last_shot.doubleValue() >= Constant.RATE_ALIEN_SHOOT.doubleValue();
+        if (canShoot || last_shot == null) {
+            Entity bullet = spawn("alienBullet", this.entity.getX() + this.entity.getWidth() / 2,
+                    this.entity.getY() + this.entity.getHeight());
+            BulletComponent bulletComponent = bullet.getComponent(BulletComponent.class);
+            bulletComponent.setDirection(new Point2D(0, 1));
+            bulletComponent.initialize();
+            last_shot = getGameTimer().getNow();
+        }
+    }
+
+    public void randomShoot(double chance) {
+        if (FXGLMath.randomBoolean(chance))
+            shoot();
     }
 }
