@@ -15,9 +15,11 @@ public class AlienBulletCollision extends CollisionHandler {
     @Override
     protected void onCollisionBegin(Entity bullet, Entity alien) {
         inc(GameVariableNames.PLAYER1_SCORE, +1);
+        spawn("explosion_alien", alien.getPosition());
         bullet.removeFromWorld();
         alien.removeFromWorld();
-
+        play("Explosion/mediumExplosion.wav"); //son de l'explosion moyen lorsque l'alien est touché
         set(GameVariableNames.isGameWon, getGameWorld().getEntitiesByType(EntityType.ALIEN).isEmpty());
+
     }
 }

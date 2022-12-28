@@ -1,8 +1,14 @@
 package org.enstabretagne.Component;
 
-import static com.almasb.fxgl.dsl.FXGL.*;
 
+import com.almasb.fxgl.audio.Sound;
+import com.almasb.fxgl.core.math.FXGLMath;
+import com.almasb.fxgl.dsl.components.ProjectileComponent;
+import javafx.geometry.Point2D;
 import org.enstabretagne.Core.Constant;
+import static com.almasb.fxgl.dsl.FXGL.entityBuilder;
+import static com.almasb.fxgl.dsl.FXGLForKtKt.play;
+import static com.almasb.fxgl.dsl.FXGLForKtKt.spawn;
 
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.dsl.components.OffscreenCleanComponent;
@@ -51,7 +57,11 @@ public class SpaceInvadersFactory implements EntityFactory {
         var bulletWidth = 20;
         var bulletHeight = 20;
         var texture = FXGL.texture("rocket.png", bulletWidth, bulletHeight);
-        spawn("shooting_start", data.getX(), data.getY());
+        FXGL.spawn("shooting_start", data.getX(), data.getY());
+        play("Tir/canon.wav");
+
+
+
         return entityBuilder()
                 .type(EntityType.BULLET)
                 .at(data.getX() - bulletWidth / 2, data.getY())
@@ -64,13 +74,34 @@ public class SpaceInvadersFactory implements EntityFactory {
 
     @Spawns("alienBullet")
     public Entity newAlienBullet(SpawnData data) {
+        FXGL.runOnce(() -> spawn("eclat",data.getX(), data.getY()), Duration.seconds(0.5));
+
+        var laserWidth = 20;
+        var laserHeight = 20;
+        var texture = FXGL.texture("laser.png", laserWidth, laserHeight);
+        play("Tir/laser" + (int)(Math.random() * 4 + 1) + ".wav");
+
         return entityBuilder()
                 .type(EntityType.ENEMY_SHOOT)
-                .at(data.getX(), data.getY())
-                .viewWithBBox(new Rectangle(5, 20, Color.BLACK))
+                .at(data.getX()- laserWidth / 2, data.getY())
+                .viewWithBBox(texture)
                 .with(new BulletComponent())
                 .collidable()
                 .build();
+    }
+
+    @Spawns("eclat")
+    public Entity newEclat(SpawnData data) {
+        var eclatWidth = 150;
+        var eclatHeight = 150;
+        var texture = FXGL.texture("eclat2.png", eclatWidth, eclatHeight);
+        texture.setRotate(180);
+        var e = entityBuilder()
+                .at(data.getX()-eclatWidth/2, data.getY()- eclatHeight/2)
+                .viewWithBBox(texture)
+                .build();
+        FXGL.runOnce(() -> e.removeFromWorld(), Duration.seconds(0.05));
+        return e;
     }
 
     @Spawns("background")
@@ -78,18 +109,17 @@ public class SpaceInvadersFactory implements EntityFactory {
         return entityBuilder()
                 .at(-10, -10)
                 // bigger than game size to account for camera shake
-                .view(texture("Background.png", Constant.BOARD_WIDTH + 20, Constant.BOARD_HEIGHT + 20))
+                .view(FXGL.texture("Background.png", Constant.BOARD_WIDTH + 20, Constant.BOARD_HEIGHT + 20))
                 .zIndex(-500) // todo a tester a quoi ca sert
                 .build();
     }
 
     @Spawns("shooting_start")
     public Entity shooting_start(SpawnData data) {
-        // play("shooting_start.wav");
         var bullet_width = 20;
         var bullet_height = 40;
 
-        var texture = texture("Fire.png", bullet_width, bullet_height);
+        var texture = FXGL.texture("Fire.png", bullet_width, bullet_height);
         // tourne la texture de 180°
         texture.setRotate(180);
 
@@ -99,7 +129,7 @@ public class SpaceInvadersFactory implements EntityFactory {
                 .build();
 
         FXGL.runOnce(() -> e.removeFromWorld(), Duration.seconds(0.2));
-        FXGL.runOnce(() -> spawn("shooting_smoke", data.getX(), data.getY()), Duration.seconds(0.2));
+        FXGL.runOnce(() -> FXGL.spawn("shooting_smoke", data.getX(), data.getY()), Duration.seconds(0.2));
         return e;
     }
 
@@ -107,13 +137,56 @@ public class SpaceInvadersFactory implements EntityFactory {
     public Entity shooting_smoke(SpawnData data) {
         var smoke_width = 40;
         var smoke_height = 40;
-        var texture = texture("Smoke.png", smoke_width, smoke_height);
+        var texture = FXGL.texture("Smoke.png", smoke_width, smoke_height);
         var e = entityBuilder()
                 .at(data.getX() - smoke_width / 2, data.getY() - 30)
                 .view(texture)
                 .build();
 
         FXGL.runOnce(() -> e.removeFromWorld(), Duration.seconds(0.2));
+        return e;
+    }
+
+    @Spawns("explosion_alien")
+    public Entity explosion_alien(SpawnData data) {
+        var explosion_width = 60;
+        var explosion_height = 60;
+
+        var texture = FXGL.texture("explosion"+ FXGLMath.random(1,7) +".png", explosion_width, explosion_height);
+        var e = entityBuilder()
+                .at(data.getX() , data.getY())
+                .view(texture)
+                .build();
+
+        FXGL.runOnce(() -> e.removeFromWorld(), Duration.seconds(0.3));
+        return e;
+    }
+
+    @Spawns("explosion_player_bullet")
+    public Entity explosion_player_bullet(SpawnData data) {
+        var explosion_width = 70;
+        var explosion_height = 60;
+        var texture = FXGL.texture("explosion_player.png", explosion_width, explosion_height);
+        var e = entityBuilder()
+                .at(data.getX() - explosion_width / 2, data.getY() - explosion_height / 2)
+                .view(texture)
+                .build();
+
+        FXGL.runOnce(() -> e.removeFromWorld(), Duration.seconds(0.3));
+        return e;
+    }
+
+    @Spawns("explosion_player_death")
+    public Entity explosion_player_death(SpawnData data) {
+        var explosion_width = 200;
+        var explosion_height = 200;
+        var texture = FXGL.texture("finalExplosion.png", explosion_width, explosion_height);
+        var e = entityBuilder()
+                .at(data.getX(), data.getY())
+                .view(texture)
+                .build();
+        for (int i = 0; i < 10; i++) {
+            FXGL.spawn("explosion_alien",data.getX() + FXGLMath.random(-100,100), data.getY()+ FXGLMath.random(-100,100));}
         return e;
     }
 }
