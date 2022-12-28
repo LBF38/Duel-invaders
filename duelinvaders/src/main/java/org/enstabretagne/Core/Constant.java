@@ -27,4 +27,10 @@ public class Constant {
     }
 
     public static final Random random = new Random();
+
+    //Constance pour les sons d'ambiance
+    public static final int AMBIENT_SOUND_DELAY_MAX = 15000;
+    public static final int AMBIENT_SOUND_DELAY_MIN = 5000;
+    public static final int AMBIENT_SOUND_VOLUME = 1;//non implémenté
+    public static final int NUMBER_OF_AMBIENT_SOUND = 22;
 }
