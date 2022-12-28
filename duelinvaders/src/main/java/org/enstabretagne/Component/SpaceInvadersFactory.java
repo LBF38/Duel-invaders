@@ -3,9 +3,12 @@ package org.enstabretagne.Component;
 
 import com.almasb.fxgl.audio.Sound;
 import com.almasb.fxgl.core.math.FXGLMath;
+import com.almasb.fxgl.dsl.components.ProjectileComponent;
+import javafx.geometry.Point2D;
 import org.enstabretagne.Core.Constant;
 import static com.almasb.fxgl.dsl.FXGL.entityBuilder;
 import static com.almasb.fxgl.dsl.FXGLForKtKt.play;
+import static com.almasb.fxgl.dsl.FXGLForKtKt.spawn;
 
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.dsl.components.OffscreenCleanComponent;
@@ -71,14 +74,34 @@ public class SpaceInvadersFactory implements EntityFactory {
 
     @Spawns("alienBullet")
     public Entity newAlienBullet(SpawnData data) {
+        FXGL.runOnce(() -> spawn("eclat",data.getX(), data.getY()), Duration.seconds(0.5));
+
+        var laserWidth = 20;
+        var laserHeight = 20;
+        var texture = FXGL.texture("laser.png", laserWidth, laserHeight);
         play("Tir/laser" + (int)(Math.random() * 4 + 1) + ".wav");
+
         return entityBuilder()
                 .type(EntityType.ENEMY_SHOOT)
-                .at(data.getX(), data.getY())
-                .viewWithBBox(new Rectangle(5, 20, Color.BLACK))
+                .at(data.getX()- laserWidth / 2, data.getY())
+                .viewWithBBox(texture)
                 .with(new BulletComponent())
                 .collidable()
                 .build();
+    }
+
+    @Spawns("eclat")
+    public Entity newEclat(SpawnData data) {
+        var eclatWidth = 150;
+        var eclatHeight = 150;
+        var texture = FXGL.texture("eclat2.png", eclatWidth, eclatHeight);
+        texture.setRotate(180);
+        var e = entityBuilder()
+                .at(data.getX()-eclatWidth/2, data.getY()- eclatHeight/2)
+                .viewWithBBox(texture)
+                .build();
+        FXGL.runOnce(() -> e.removeFromWorld(), Duration.seconds(0.05));
+        return e;
     }
 
     @Spawns("background")

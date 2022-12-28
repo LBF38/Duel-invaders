@@ -4,6 +4,7 @@ import static org.enstabretagne.Core.Constant.*;
 
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.Component;
+import javafx.util.Duration;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
 
@@ -44,6 +45,10 @@ public class PlayerComponent extends Component {
             Entity bullet = spawn("bullet", entity.getX() + (entity.getWidth() / 2) + decalage, entity.getY() - 20);
             bullet.getComponent(BulletComponent.class).initialize();
             last_shot = getGameTimer().getNow();
+
+            //fait reculer le vaisseau pendant le tir
+            entity.translateY(10);
+            runOnce(() -> entity.translateY(-10), Duration.seconds(0.1));
         }
     }
 }
