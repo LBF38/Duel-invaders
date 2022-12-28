@@ -65,12 +65,15 @@ public class GameLauncher extends GameApplication {
     @Override
     protected void initGameVars(Map<String, Object> vars) {
         vars.put("pixelsMoved", 0);
+        vars.put("Player1_score", 0);
+        vars.put("isGameOver", false);
     }
 
     @Override
     protected void initGame() {
         getGameWorld().addEntityFactory(new SpaceInvadersFactory());
         player = spawn("player");
+        spawn("alien");
         run(() -> {
             spawn("alien");
         }, Duration.seconds(2));
@@ -96,6 +99,31 @@ public class GameLauncher extends GameApplication {
         textPixels.textProperty().bind(getWorldProperties().intProperty("pixelsMoved").asString());
 
         getGameScene().addUINode(textPixels); // add to the scene graph
+
+        Text textScore = new Text();
+        textScore.setX(getAppWidth() - 100);
+        textScore.setY(100);
+        textScore.textProperty().bind(getWorldProperties().intProperty("Player1_score").asString());
+        getGameScene().addUINode(textScore);
+    }
+
+    @Override
+    protected void onUpdate(double tpf) {
+        if (getb("isGameOver"))
+            gameOverScreen();
+    }
+
+    private void gameOverScreen() {
+        getDialogService().showMessageBox("Game Over!", () -> {
+            getDialogService().showConfirmationBox("Do you want to play again?", (yes) -> playAgain(yes));
+        });
+    }
+
+    private void playAgain(Boolean yes) {
+        if (yes)
+            getGameController().startNewGame();
+        else
+            getGameController().exit();
     }
 
     public static void main(String[] args) {
