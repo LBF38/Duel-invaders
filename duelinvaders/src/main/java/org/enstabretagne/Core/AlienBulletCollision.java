@@ -6,9 +6,9 @@ import org.enstabretagne.Component.EntityType;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
 
-public class Collision_bullet_alien extends CollisionHandler {
+public class AlienBulletCollision extends CollisionHandler {
 
-    public Collision_bullet_alien(EntityType bullet, EntityType alien) {
+    public AlienBulletCollision(EntityType bullet, EntityType alien) {
         super(EntityType.BULLET, EntityType.ALIEN);
     }
 

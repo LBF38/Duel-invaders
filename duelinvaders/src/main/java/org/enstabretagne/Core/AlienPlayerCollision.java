@@ -7,8 +7,8 @@ import org.enstabretagne.Component.EntityType;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
 
-public class Collision_alien_player extends CollisionHandler {
-    public Collision_alien_player(EntityType player, EntityType alien) {
+public class AlienPlayerCollision extends CollisionHandler {
+    public AlienPlayerCollision(EntityType player, EntityType alien) {
         super(EntityType.PLAYER, EntityType.ALIEN);
     }
 
