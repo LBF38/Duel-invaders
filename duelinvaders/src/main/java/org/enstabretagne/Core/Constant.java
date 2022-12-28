@@ -37,5 +37,5 @@ public class Constant {
     //constance d'attente (permet aux clairons de se jouer sans empiéter sur les autres sons)
 
     public static final int WAITING_TIME_BEFORE_START = 1;
-    public static final int WAITING_TIME_BEFORE_END = 1;
+    public static final int WAITING_TIME_BEFORE_END = 1; //fonctionnalité supprimée
 }

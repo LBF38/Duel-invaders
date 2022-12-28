@@ -14,6 +14,7 @@ public class AlienPlayerCollision extends CollisionHandler {
 
     @Override
     protected void onCollisionBegin(Entity player, Entity alien) {
+        spawn("explosion_player_death", player.getPosition());
         player.removeFromWorld();
         set(GameVariableNames.isGameOver, true);
         play("Explosion/finalExplosion.wav");//son explosion du vaiseau

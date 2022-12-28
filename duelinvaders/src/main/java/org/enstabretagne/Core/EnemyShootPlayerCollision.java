@@ -18,10 +18,15 @@ public class EnemyShootPlayerCollision extends CollisionHandler {
         enemy_shoot.removeFromWorld();
 
         inc(GameVariableNames.PLAYER1_LIVES, -1);
-        if (geti(GameVariableNames.PLAYER1_LIVES) == 0)
+        if (geti(GameVariableNames.PLAYER1_LIVES) == 0) {
+            spawn("explosion_player_death", player.getPosition());
+            play("Explosion/finalExplosion.wav");//son explosion du vaisseau
             set(GameVariableNames.isGameOver, true);
-            play("Explosion/finalExplosion.wav");//son explosion du vaiseau
-
-        play("Explosion/strongExplosion.wav"); //son de l'explosion fort lorsque le joueur est touché
+            player.removeFromWorld();
+        }
+        else{
+            spawn("explosion_player_bullet", enemy_shoot.getPosition());
+            play("Explosion/strongExplosion.wav"); //son de l'explosion fort lorsque le joueur est touché
+        }
     }
 }

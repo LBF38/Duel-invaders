@@ -2,6 +2,7 @@ package org.enstabretagne.Component;
 
 
 import com.almasb.fxgl.audio.Sound;
+import com.almasb.fxgl.core.math.FXGLMath;
 import org.enstabretagne.Core.Constant;
 import static com.almasb.fxgl.dsl.FXGL.entityBuilder;
 import static com.almasb.fxgl.dsl.FXGLForKtKt.play;
@@ -120,6 +121,49 @@ public class SpaceInvadersFactory implements EntityFactory {
                 .build();
 
         FXGL.runOnce(() -> e.removeFromWorld(), Duration.seconds(0.2));
+        return e;
+    }
+
+    @Spawns("explosion_alien")
+    public Entity explosion_alien(SpawnData data) {
+        var explosion_width = 60;
+        var explosion_height = 60;
+
+        var texture = FXGL.texture("explosion"+ FXGLMath.random(1,7) +".png", explosion_width, explosion_height);
+        var e = entityBuilder()
+                .at(data.getX() , data.getY())
+                .view(texture)
+                .build();
+
+        FXGL.runOnce(() -> e.removeFromWorld(), Duration.seconds(0.3));
+        return e;
+    }
+
+    @Spawns("explosion_player_bullet")
+    public Entity explosion_player_bullet(SpawnData data) {
+        var explosion_width = 70;
+        var explosion_height = 60;
+        var texture = FXGL.texture("explosion_player.png", explosion_width, explosion_height);
+        var e = entityBuilder()
+                .at(data.getX() - explosion_width / 2, data.getY() - explosion_height / 2)
+                .view(texture)
+                .build();
+
+        FXGL.runOnce(() -> e.removeFromWorld(), Duration.seconds(0.3));
+        return e;
+    }
+
+    @Spawns("explosion_player_death")
+    public Entity explosion_player_death(SpawnData data) {
+        var explosion_width = 200;
+        var explosion_height = 200;
+        var texture = FXGL.texture("finalExplosion.png", explosion_width, explosion_height);
+        var e = entityBuilder()
+                .at(data.getX(), data.getY())
+                .view(texture)
+                .build();
+        for (int i = 0; i < 10; i++) {
+            FXGL.spawn("explosion_alien",data.getX() + FXGLMath.random(-100,100), data.getY()+ FXGLMath.random(-100,100));}
         return e;
     }
 }
