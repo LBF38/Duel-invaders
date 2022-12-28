@@ -8,6 +8,7 @@ import static com.almasb.fxgl.dsl.FXGL.spawn;
 
 public class PlayerComponent extends Component {
     private Double dx;
+    private int side_shoot =0 ;
 
     @Override
     public void onUpdate(double tpf) {
@@ -27,8 +28,17 @@ public class PlayerComponent extends Component {
     }
 
     public Entity shoot() {
-        System.out.println("Player Shoot");
-        Entity bullet = spawn("bullet", entity.getX() + (entity.getWidth() / 2), entity.getY() - 20);
+        var decalage = 0;
+        //System.out.println("Player Shoot");
+        if (side_shoot== 0) {
+            side_shoot = 1;
+            decalage = 22;
+        }
+        else {
+            side_shoot = 0;
+            decalage = -18;
+        }
+        Entity bullet = spawn("bullet", entity.getX() + (entity.getWidth() / 2)+ decalage, entity.getY() - 20);
         bullet.getComponent(BulletComponent.class).initialize();
         return bullet;
     }
