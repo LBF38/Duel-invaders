@@ -17,6 +17,7 @@ public class AlienPlayerCollisionTest {
     void initialization() {
         assert collision_alien_player != null;
 
+
     }
 
 
