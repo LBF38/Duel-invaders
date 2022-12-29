@@ -1,10 +1,15 @@
 package org.enstabretagne.Core;
 
-import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.physics.CollisionHandler;
+import static com.almasb.fxgl.dsl.FXGL.getGameWorld;
+import static com.almasb.fxgl.dsl.FXGL.inc;
+import static com.almasb.fxgl.dsl.FXGL.play;
+import static com.almasb.fxgl.dsl.FXGL.set;
+import static com.almasb.fxgl.dsl.FXGL.spawn;
+
 import org.enstabretagne.Component.EntityType;
 
-import static com.almasb.fxgl.dsl.FXGL.*;
+import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.physics.CollisionHandler;
 
 public class AlienBulletCollision extends CollisionHandler {
 
@@ -18,7 +23,7 @@ public class AlienBulletCollision extends CollisionHandler {
         spawn("explosion_alien", alien.getPosition());
         bullet.removeFromWorld();
         alien.removeFromWorld();
-        play("Explosion/mediumExplosion.wav"); //son de l'explosion moyen lorsque l'alien est touché
+        play("Explosion/mediumExplosion.wav");
         set(GameVariableNames.isGameWon, getGameWorld().getEntitiesByType(EntityType.ALIEN).isEmpty());
 
     }

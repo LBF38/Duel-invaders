@@ -1,15 +1,12 @@
 package org.enstabretagne.Component;
 
-
-import com.almasb.fxgl.audio.Sound;
-import com.almasb.fxgl.core.math.FXGLMath;
-import com.almasb.fxgl.dsl.components.ProjectileComponent;
-import javafx.geometry.Point2D;
-import org.enstabretagne.Core.Constant;
 import static com.almasb.fxgl.dsl.FXGL.entityBuilder;
-import static com.almasb.fxgl.dsl.FXGLForKtKt.play;
-import static com.almasb.fxgl.dsl.FXGLForKtKt.spawn;
+import static com.almasb.fxgl.dsl.FXGL.play;
+import static com.almasb.fxgl.dsl.FXGL.spawn;
 
+import org.enstabretagne.Core.Constant;
+
+import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.dsl.components.OffscreenCleanComponent;
 import com.almasb.fxgl.entity.Entity;
@@ -18,7 +15,6 @@ import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.Spawns;
 
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
 public class SpaceInvadersFactory implements EntityFactory {
@@ -42,7 +38,7 @@ public class SpaceInvadersFactory implements EntityFactory {
         // la convertit en couleur JavaFX
         Color color = Color.valueOf(randomColor.name());
 
-        var texture = FXGL.texture("Alien.png", 60, 60).multiplyColor(color);
+        var texture = FXGL.texture("alien.png", 60, 60).multiplyColor(color);
         return entityBuilder()
                 .type(EntityType.ALIEN)
                 .at(data.getX(), data.getY())
@@ -60,8 +56,6 @@ public class SpaceInvadersFactory implements EntityFactory {
         FXGL.spawn("shooting_start", data.getX(), data.getY());
         play("Tir/canon.wav");
 
-
-
         return entityBuilder()
                 .type(EntityType.BULLET)
                 .at(data.getX() - bulletWidth / 2, data.getY())
@@ -74,16 +68,16 @@ public class SpaceInvadersFactory implements EntityFactory {
 
     @Spawns("alienBullet")
     public Entity newAlienBullet(SpawnData data) {
-        FXGL.runOnce(() -> spawn("eclat",data.getX(), data.getY()), Duration.seconds(0.5));
+        FXGL.runOnce(() -> spawn("eclat", data.getX(), data.getY()), Duration.seconds(0.5));
 
         var laserWidth = 20;
         var laserHeight = 20;
         var texture = FXGL.texture("laser.png", laserWidth, laserHeight);
-        play("Tir/laser" + (int)(Math.random() * 4 + 1) + ".wav");
+        play("Tir/laser" + (int) (Math.random() * 4 + 1) + ".wav");
 
         return entityBuilder()
                 .type(EntityType.ENEMY_SHOOT)
-                .at(data.getX()- laserWidth / 2, data.getY())
+                .at(data.getX() - laserWidth / 2, data.getY())
                 .viewWithBBox(texture)
                 .with(new BulletComponent())
                 .collidable()
@@ -97,7 +91,7 @@ public class SpaceInvadersFactory implements EntityFactory {
         var texture = FXGL.texture("eclat2.png", eclatWidth, eclatHeight);
         texture.setRotate(180);
         var e = entityBuilder()
-                .at(data.getX()-eclatWidth/2, data.getY()- eclatHeight/2)
+                .at(data.getX() - eclatWidth / 2, data.getY() - eclatHeight / 2)
                 .viewWithBBox(texture)
                 .build();
         FXGL.runOnce(() -> e.removeFromWorld(), Duration.seconds(0.05));
@@ -152,9 +146,9 @@ public class SpaceInvadersFactory implements EntityFactory {
         var explosion_width = 60;
         var explosion_height = 60;
 
-        var texture = FXGL.texture("explosion"+ FXGLMath.random(1,7) +".png", explosion_width, explosion_height);
+        var texture = FXGL.texture("explosion" + FXGLMath.random(1, 7) + ".png", explosion_width, explosion_height);
         var e = entityBuilder()
-                .at(data.getX() , data.getY())
+                .at(data.getX(), data.getY())
                 .view(texture)
                 .build();
 
@@ -186,7 +180,9 @@ public class SpaceInvadersFactory implements EntityFactory {
                 .view(texture)
                 .build();
         for (int i = 0; i < 10; i++) {
-            FXGL.spawn("explosion_alien",data.getX() + FXGLMath.random(-100,100), data.getY()+ FXGLMath.random(-100,100));}
+            FXGL.spawn("explosion_alien", data.getX() + FXGLMath.random(-100, 100),
+                    data.getY() + FXGLMath.random(-100, 100));
+        }
         return e;
     }
 }

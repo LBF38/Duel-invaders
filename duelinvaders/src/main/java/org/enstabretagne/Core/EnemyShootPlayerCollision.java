@@ -1,11 +1,16 @@
 
 package org.enstabretagne.Core;
 
-import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.physics.CollisionHandler;
+import static com.almasb.fxgl.dsl.FXGL.geti;
+import static com.almasb.fxgl.dsl.FXGL.inc;
+import static com.almasb.fxgl.dsl.FXGL.play;
+import static com.almasb.fxgl.dsl.FXGL.set;
+import static com.almasb.fxgl.dsl.FXGL.spawn;
+
 import org.enstabretagne.Component.EntityType;
 
-import static com.almasb.fxgl.dsl.FXGL.*;
+import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.physics.CollisionHandler;
 
 public class EnemyShootPlayerCollision extends CollisionHandler {
 
@@ -20,13 +25,12 @@ public class EnemyShootPlayerCollision extends CollisionHandler {
         inc(GameVariableNames.PLAYER1_LIVES, -1);
         if (geti(GameVariableNames.PLAYER1_LIVES) == 0) {
             spawn("explosion_player_death", player.getPosition());
-            play("Explosion/finalExplosion.wav");//son explosion du vaisseau
+            play("Explosion/finalExplosion.wav");
             set(GameVariableNames.isGameOver, true);
             player.removeFromWorld();
-        }
-        else{
+        } else {
             spawn("explosion_player_bullet", enemy_shoot.getPosition());
-            play("Explosion/strongExplosion.wav"); //son de l'explosion fort lorsque le joueur est touché
+            play("Explosion/strongExplosion.wav");
         }
     }
 }

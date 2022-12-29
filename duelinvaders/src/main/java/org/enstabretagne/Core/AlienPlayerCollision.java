@@ -1,11 +1,13 @@
 package org.enstabretagne.Core;
 
-import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.physics.CollisionHandler;
+import static com.almasb.fxgl.dsl.FXGL.play;
+import static com.almasb.fxgl.dsl.FXGL.set;
+import static com.almasb.fxgl.dsl.FXGL.spawn;
 
 import org.enstabretagne.Component.EntityType;
 
-import static com.almasb.fxgl.dsl.FXGL.*;
+import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.physics.CollisionHandler;
 
 public class AlienPlayerCollision extends CollisionHandler {
     public AlienPlayerCollision(EntityType player, EntityType alien) {
@@ -17,6 +19,6 @@ public class AlienPlayerCollision extends CollisionHandler {
         spawn("explosion_player_death", player.getPosition());
         player.removeFromWorld();
         set(GameVariableNames.isGameOver, true);
-        play("Explosion/finalExplosion.wav");//son explosion du vaiseau
+        play("Explosion/finalExplosion.wav");
     }
 }

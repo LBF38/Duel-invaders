@@ -1,11 +1,23 @@
 package org.enstabretagne.Game;
 
-import static com.almasb.fxgl.dsl.FXGL.*;
+import static com.almasb.fxgl.dsl.FXGL.getAppWidth;
+import static com.almasb.fxgl.dsl.FXGL.getDialogService;
+import static com.almasb.fxgl.dsl.FXGL.getGameController;
+import static com.almasb.fxgl.dsl.FXGL.getGameScene;
+import static com.almasb.fxgl.dsl.FXGL.getGameWorld;
+import static com.almasb.fxgl.dsl.FXGL.getNotificationService;
+import static com.almasb.fxgl.dsl.FXGL.getPhysicsWorld;
+import static com.almasb.fxgl.dsl.FXGL.getWorldProperties;
+import static com.almasb.fxgl.dsl.FXGL.getb;
+import static com.almasb.fxgl.dsl.FXGL.loopBGM;
+import static com.almasb.fxgl.dsl.FXGL.onKey;
+import static com.almasb.fxgl.dsl.FXGL.play;
+import static com.almasb.fxgl.dsl.FXGL.run;
+import static com.almasb.fxgl.dsl.FXGL.spawn;
 
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import com.almasb.fxgl.dsl.FXGL;
 import org.enstabretagne.Component.AlienComponent;
 import org.enstabretagne.Component.EntityType;
 import org.enstabretagne.Component.PlayerComponent;
@@ -28,8 +40,9 @@ import javafx.util.Duration;
 public class GameLauncher extends GameApplication {
     private PlayerComponent playerComponent;
     private Entity player;
-    private long last_ambient_sound =  System.currentTimeMillis();;
-    private int delay_ambient_sound = FXGLMath.random(Constant.AMBIENT_SOUND_DELAY_MIN, Constant.AMBIENT_SOUND_DELAY_MAX);
+    private long last_ambient_sound = System.currentTimeMillis();;
+    private int delay_ambient_sound = FXGLMath.random(Constant.AMBIENT_SOUND_DELAY_MIN,
+            Constant.AMBIENT_SOUND_DELAY_MAX);
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -84,9 +97,8 @@ public class GameLauncher extends GameApplication {
         player.setY(Constant.BOARD_HEIGHT - player.getHeight());
         playerComponent = player.getComponent(PlayerComponent.class);
 
-
-        spawn("background"); //ajout de l'arrière plan
-        loopBGM("Across_the_Universe_-_Oleg_O._Kachanko.mp3");//lance la musique todo: sélectionner la musique
+        spawn("background");
+        loopBGM("Across_the_Universe_-_Oleg_O._Kachanko.mp3"); // TODO: sélectionner la musique via les paramètres
     }
 
     @Override
@@ -119,10 +131,10 @@ public class GameLauncher extends GameApplication {
         if (getb(GameVariableNames.isGameWon))
             winScreen();
 
-        //test le temps écoulé depuis la dernière fois que le son d'ambiance a été joué
-        if (( System.currentTimeMillis() - last_ambient_sound) > delay_ambient_sound) {
+        // teste le temps écoulé depuis la dernière fois que le son d'ambiance a été joué
+        if ((System.currentTimeMillis() - last_ambient_sound) > delay_ambient_sound) {
             ambientSound();
-            last_ambient_sound =  System.currentTimeMillis();
+            last_ambient_sound = System.currentTimeMillis();
             delay_ambient_sound = FXGLMath.random(Constant.AMBIENT_SOUND_DELAY_MIN, Constant.AMBIENT_SOUND_DELAY_MAX);
         }
 
@@ -157,10 +169,11 @@ public class GameLauncher extends GameApplication {
 
     private void ambientSound() {
         /*
-            Joue un son d'ambiance aléatoire parmi ceux disponibles
-        */
-    	play("ambiance/ambientSound" + FXGLMath.random(1, Constant.NUMBER_OF_AMBIENT_SOUND) + ".wav");
+         * Joue un son d'ambiance aléatoire parmi ceux disponibles
+         */
+        play("ambiance/ambientSound" + FXGLMath.random(1, Constant.NUMBER_OF_AMBIENT_SOUND) + ".wav");
     }
+
     public static void main(String[] args) {
         launch(args);
     }
