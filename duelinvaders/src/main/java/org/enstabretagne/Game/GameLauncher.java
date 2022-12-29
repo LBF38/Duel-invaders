@@ -2,10 +2,11 @@ package org.enstabretagne.Game;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
 
+import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import com.almasb.fxgl.dsl.FXGL;
 import org.enstabretagne.Component.AlienComponent;
 import org.enstabretagne.Component.EntityType;
 import org.enstabretagne.Component.PlayerComponent;
@@ -16,8 +17,10 @@ import org.enstabretagne.Core.Constant;
 import org.enstabretagne.Core.EnemyShootPlayerCollision;
 import org.enstabretagne.Core.GameVariableNames;
 
+import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
+import com.almasb.fxgl.app.MenuItem;
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.entity.Entity;
 
@@ -28,15 +31,29 @@ import javafx.util.Duration;
 public class GameLauncher extends GameApplication {
     private PlayerComponent playerComponent;
     private Entity player;
-    private long last_ambient_sound =  System.currentTimeMillis();;
-    private int delay_ambient_sound = FXGLMath.random(Constant.AMBIENT_SOUND_DELAY_MIN, Constant.AMBIENT_SOUND_DELAY_MAX);
+    private long last_ambient_sound = System.currentTimeMillis();;
+    private int delay_ambient_sound = FXGLMath.random(Constant.AMBIENT_SOUND_DELAY_MIN,
+            Constant.AMBIENT_SOUND_DELAY_MAX);
 
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setWidth(Constant.BOARD_WIDTH.intValue());
         settings.setHeight(Constant.BOARD_HEIGHT.intValue());
-        settings.setTitle("Basic Game App");
-        settings.setVersion("0.1");
+        settings.setTitle("Duel Invaders");
+        settings.setAppIcon("duelinvaders_icon2.png");
+        settings.setVersion("0.1.0");
+        settings.setMainMenuEnabled(true);
+        settings.setGameMenuEnabled(true);
+        settings.setFullScreenAllowed(true);
+        settings.setFullScreenFromStart(true);
+        settings.setCredits(Arrays.asList(
+                "Duel Invaders project by:",
+                "@MathieuDFS",
+                "@jufch",
+                "@LBF38"));
+        settings.setEnabledMenuItems(EnumSet.of(MenuItem.EXTRA));
+
+        settings.setApplicationMode(ApplicationMode.RELEASE);
     }
 
     @Override
@@ -84,9 +101,8 @@ public class GameLauncher extends GameApplication {
         player.setY(Constant.BOARD_HEIGHT - player.getHeight());
         playerComponent = player.getComponent(PlayerComponent.class);
 
-
-        spawn("background"); //ajout de l'arrière plan
-        loopBGM("Across_the_Universe_-_Oleg_O._Kachanko.mp3");//lance la musique todo: sélectionner la musique
+        spawn("background"); // ajout de l'arrière plan
+        loopBGM("Across_the_Universe_-_Oleg_O._Kachanko.mp3");// lance la musique TODO: sélectionner la musique
     }
 
     @Override
@@ -119,10 +135,10 @@ public class GameLauncher extends GameApplication {
         if (getb(GameVariableNames.isGameWon))
             winScreen();
 
-        //test le temps écoulé depuis la dernière fois que le son d'ambiance a été joué
-        if (( System.currentTimeMillis() - last_ambient_sound) > delay_ambient_sound) {
+        // test le temps écoulé depuis la dernière fois que le son d'ambiance a été joué
+        if ((System.currentTimeMillis() - last_ambient_sound) > delay_ambient_sound) {
             ambientSound();
-            last_ambient_sound =  System.currentTimeMillis();
+            last_ambient_sound = System.currentTimeMillis();
             delay_ambient_sound = FXGLMath.random(Constant.AMBIENT_SOUND_DELAY_MIN, Constant.AMBIENT_SOUND_DELAY_MAX);
         }
 
@@ -145,7 +161,7 @@ public class GameLauncher extends GameApplication {
         if (yes)
             getGameController().startNewGame();
         else
-            getGameController().exit();
+            getGameController().gotoMainMenu();
     }
 
     private void winScreen() {
@@ -157,10 +173,11 @@ public class GameLauncher extends GameApplication {
 
     private void ambientSound() {
         /*
-            Joue un son d'ambiance aléatoire parmi ceux disponibles
-        */
-    	play("ambiance/ambientSound" + FXGLMath.random(1, Constant.NUMBER_OF_AMBIENT_SOUND) + ".wav");
+         * Joue un son d'ambiance aléatoire parmi ceux disponibles
+         */
+        play("ambiance/ambientSound" + FXGLMath.random(1, Constant.NUMBER_OF_AMBIENT_SOUND) + ".wav");
     }
+
     public static void main(String[] args) {
         launch(args);
     }
