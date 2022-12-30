@@ -45,4 +45,6 @@ public class Constant {
     // Constantes d'attente (permet aux clairons de se jouer sans empiéter sur les
     // autres sons)
     public static final int WAITING_TIME_BEFORE_START = 1;
+    public static final int NUMBER_OF_EXPLOSIONS = 7;
+    public static final int NUMBER_OF_LASER_SOUNDS = 4;
 }

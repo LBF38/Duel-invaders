@@ -27,6 +27,7 @@ import org.enstabretagne.Core.AlienPlayerCollision;
 import org.enstabretagne.Core.Constant;
 import org.enstabretagne.Core.EnemyShootPlayerCollision;
 import org.enstabretagne.Core.GameVariableNames;
+import org.enstabretagne.Utils.assetNames;
 import org.enstabretagne.Utils.entityNames;
 
 import com.almasb.fxgl.app.GameApplication;
@@ -89,7 +90,7 @@ public class GameLauncher extends GameApplication {
 
     @Override
     protected void initGame() {
-        play("autre/claironStart.wav");
+        play(assetNames.sounds.START_CLAIRON);
         try {
             TimeUnit.SECONDS.sleep(Constant.WAITING_TIME_BEFORE_START);
         } catch (InterruptedException e) {
@@ -106,7 +107,7 @@ public class GameLauncher extends GameApplication {
         playerComponent = player.getComponent(PlayerComponent.class);
 
         spawn(entityNames.BACKGROUND);
-        loopBGM("Across_the_Universe_-_Oleg_O._Kachanko.mp3"); // TODO: sélectionner la musique via les paramètres
+        loopBGM(assetNames.music.BACKGROUND_MUSIC); // TODO: sélectionner la musique via les paramètres
     }
 
     @Override
@@ -156,7 +157,7 @@ public class GameLauncher extends GameApplication {
     }
 
     private void gameOverScreen() {
-        play("autre/claironDefeat.wav");
+        play(assetNames.sounds.DEFEAT_CLAIRON);
         getDialogService().showMessageBox("Game Over!", () -> {
             getDialogService().showConfirmationBox("Do you want to play again?", (yes) -> playAgain(yes));
         });
@@ -170,17 +171,19 @@ public class GameLauncher extends GameApplication {
     }
 
     private void winScreen() {
-        play("autre/claironVictory.wav");
+        play(assetNames.sounds.VICTORY_CLAIRON);
         getDialogService().showMessageBox("You win!", () -> {
             getDialogService().showConfirmationBox("Do you want to play again?", (yes) -> playAgain(yes));
         });
     }
 
+    /**
+     * Joue un son d'ambiance aléatoire parmi ceux disponibles
+     */
     private void ambientSound() {
-        /*
-         * Joue un son d'ambiance aléatoire parmi ceux disponibles
-         */
-        play("ambiance/ambientSound" + FXGLMath.random(1, Constant.NUMBER_OF_AMBIENT_SOUND) + ".wav");
+        String ambientMusic = assetNames.sounds.AMBIENT_SOUNDS
+                .get(FXGLMath.random(0, Constant.NUMBER_OF_AMBIENT_SOUND - 1));
+        play(ambientMusic);
     }
 
     public static void main(String[] args) {
