@@ -12,12 +12,26 @@ import org.enstabretagne.Component.EntityType;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.physics.CollisionHandler;
 
+/**
+ * Gestion des collisions entre les tirs des aliens et le joueur
+ * 
+ * @author @jufch, @LBF38, @MathieuDFS
+ * @since 0.1.0
+ */
 public class EnemyShootPlayerCollision extends CollisionHandler {
-
+    /**
+     * Constructeur de la classe EnemyShootPlayerCollision
+     * 
+     * @param enemy_shoot
+     * @param player
+     */
     public EnemyShootPlayerCollision(EntityType enemy_shoot, EntityType player) {
         super(EntityType.ENEMY_SHOOT, EntityType.PLAYER);
     }
 
+    /**
+     * Gestion des collisions entre les tirs des aliens et le joueur
+     */
     @Override
     protected void onCollisionBegin(Entity enemy_shoot, Entity player) {
         enemy_shoot.removeFromWorld();
