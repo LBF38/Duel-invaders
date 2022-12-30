@@ -46,8 +46,8 @@ public class GameLauncher extends GameApplication {
 
     @Override
     protected void initSettings(GameSettings settings) {
-        settings.setWidth(Constant.BOARD_WIDTH.intValue());
-        settings.setHeight(Constant.BOARD_HEIGHT.intValue());
+        settings.setWidth(Constant.GAME_WIDTH.intValue());
+        settings.setHeight(Constant.GAME_HEIGHT.intValue());
         settings.setTitle("Basic Game App");
         settings.setVersion("0.1");
     }
@@ -93,8 +93,8 @@ public class GameLauncher extends GameApplication {
         run(() -> {
             spawn("alien");
         }, Duration.seconds(2));
-        player.setX(Constant.BOARD_WIDTH / 2);
-        player.setY(Constant.BOARD_HEIGHT - player.getHeight());
+        player.setX(Constant.GAME_WIDTH / 2);
+        player.setY(Constant.GAME_HEIGHT - player.getHeight());
         playerComponent = player.getComponent(PlayerComponent.class);
 
         spawn("background");

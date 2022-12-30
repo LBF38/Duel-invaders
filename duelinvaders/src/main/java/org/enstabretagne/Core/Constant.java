@@ -3,9 +3,14 @@ package org.enstabretagne.Core;
 import javafx.util.Duration;
 import java.util.Random;
 
+/**
+ * Classe contenant les constantes du jeu
+ * Cela permet de centraliser les constantes et configurer le jeu dans son
+ * ensemble.
+ */
 public class Constant {
-    public static final Double BOARD_WIDTH = 800.0;
-    public static final Double BOARD_HEIGHT = 600.0;
+    public static final Double GAME_WIDTH = 800.0;
+    public static final Double GAME_HEIGHT = 600.0;
 
     public static final Double SPEED_SPACESHIP = 200.0;
     public static final Double SPEED_SHOOT = 500.0;
@@ -36,6 +41,5 @@ public class Constant {
 
     // Constantes d'attente (permet aux clairons de se jouer sans empiéter sur les
     // autres sons)
-
     public static final int WAITING_TIME_BEFORE_START = 1;
 }

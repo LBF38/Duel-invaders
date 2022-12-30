@@ -150,7 +150,7 @@ public class SpaceInvadersFactory implements EntityFactory {
     public Entity newBackground(SpawnData data) {
         return entityBuilder()
                 .at(-10, -10)
-                .view(texture("Background.png", Constant.BOARD_WIDTH + 20, Constant.BOARD_HEIGHT + 20))
+                .view(texture("Background.png", Constant.GAME_WIDTH + 20, Constant.GAME_HEIGHT + 20))
                 .zIndex(-500)
                 .build();
     }

@@ -32,7 +32,7 @@ public class PlayerComponent extends Component {
      * Cette méthode est appelée par le système de contrôle
      */
     public void moveRight() {
-        if (this.entity.getRightX() + dx <= BOARD_WIDTH) {
+        if (this.entity.getRightX() + dx <= GAME_WIDTH) {
             this.entity.translateX(dx);
         }
     }

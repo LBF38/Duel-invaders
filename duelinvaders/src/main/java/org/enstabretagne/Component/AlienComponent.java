@@ -67,7 +67,7 @@ public class AlienComponent extends Component {
      * @param dx
      */
     public void move(Double dx) {
-        if (this.entity.getBottomY() >= Constant.BOARD_HEIGHT) {
+        if (this.entity.getBottomY() >= Constant.GAME_HEIGHT) {
             // TODO: to remove if unnecessary
             System.out.println("Game Over");
             return;
@@ -85,7 +85,7 @@ public class AlienComponent extends Component {
      * @param dx
      */
     public void moveRight(Double dx) {
-        if (this.entity.getRightX() + dx <= Constant.BOARD_WIDTH) {
+        if (this.entity.getRightX() + dx <= Constant.GAME_WIDTH) {
             this.entity.translateX(dx);
         } else {
             this.entity.translateY(dy);
