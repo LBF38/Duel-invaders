@@ -15,6 +15,8 @@ import static com.almasb.fxgl.dsl.FXGL.play;
 import static com.almasb.fxgl.dsl.FXGL.run;
 import static com.almasb.fxgl.dsl.FXGL.spawn;
 
+import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -30,8 +32,10 @@ import org.enstabretagne.Core.GameVariableNames;
 import org.enstabretagne.Utils.assetNames;
 import org.enstabretagne.Utils.entityNames;
 
+import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
+import com.almasb.fxgl.app.MenuItem;
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.entity.Entity;
 
@@ -57,8 +61,21 @@ public class GameLauncher extends GameApplication {
     protected void initSettings(GameSettings settings) {
         settings.setWidth(Constant.GAME_WIDTH.intValue());
         settings.setHeight(Constant.GAME_HEIGHT.intValue());
-        settings.setTitle("Basic Game App");
-        settings.setVersion("0.1");
+        settings.setTitle("Duel Invaders");
+        settings.setAppIcon("duelinvaders_icon2.png");
+        settings.setVersion("0.1.0");
+        settings.setMainMenuEnabled(true);
+        settings.setGameMenuEnabled(true);
+        settings.setFullScreenAllowed(true);
+        settings.setFullScreenFromStart(true);
+        settings.setCredits(Arrays.asList(
+                "Duel Invaders project by:",
+                "@MathieuDFS",
+                "@jufch",
+                "@LBF38"));
+        settings.setEnabledMenuItems(EnumSet.of(MenuItem.EXTRA));
+
+        settings.setApplicationMode(ApplicationMode.RELEASE);
     }
 
     @Override
@@ -167,7 +184,7 @@ public class GameLauncher extends GameApplication {
         if (yes)
             getGameController().startNewGame();
         else
-            getGameController().exit();
+            getGameController().gotoMainMenu();
     }
 
     private void winScreen() {
