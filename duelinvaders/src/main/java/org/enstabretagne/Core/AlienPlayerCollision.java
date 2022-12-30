@@ -5,6 +5,7 @@ import static com.almasb.fxgl.dsl.FXGL.set;
 import static com.almasb.fxgl.dsl.FXGL.spawn;
 
 import org.enstabretagne.Component.EntityType;
+import org.enstabretagne.Utils.entityNames;
 
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.physics.CollisionHandler;
@@ -32,7 +33,7 @@ public class AlienPlayerCollision extends CollisionHandler {
      */
     @Override
     protected void onCollisionBegin(Entity player, Entity alien) {
-        spawn("explosion_player_death", player.getPosition());
+        spawn(entityNames.EXPLOSION_PLAYER_DEATH, player.getPosition());
         player.removeFromWorld();
         set(GameVariableNames.isGameOver, true);
         play("Explosion/finalExplosion.wav");

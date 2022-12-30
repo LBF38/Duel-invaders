@@ -7,6 +7,7 @@ import static com.almasb.fxgl.dsl.FXGL.spawn;
 import static com.almasb.fxgl.dsl.FXGL.texture;
 
 import org.enstabretagne.Core.Constant;
+import org.enstabretagne.Utils.entityNames;
 
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.dsl.components.ExpireCleanComponent;
@@ -28,14 +29,13 @@ import javafx.util.Duration;
  * @since 0.1.0
  */
 public class SpaceInvadersFactory implements EntityFactory {
-
     /**
      * Définition de l'entité joueur, nommé player
      * 
      * @param data
      * @return Entity
      */
-    @Spawns("player")
+    @Spawns(entityNames.PLAYER)
     public Entity newPlayer(SpawnData data) {
         Texture texture = texture("SpaceShip.png", 100, 100);
         return entityBuilder()
@@ -53,7 +53,7 @@ public class SpaceInvadersFactory implements EntityFactory {
      * @param data
      * @return Entity
      */
-    @Spawns("alien")
+    @Spawns(entityNames.ALIEN)
     public Entity newAlien(SpawnData data) {
         int randomIndex = Constant.random.nextInt(Constant.AlienColor.values().length);
         Constant.AlienColor randomColor = Constant.AlienColor.values()[randomIndex];
@@ -76,7 +76,7 @@ public class SpaceInvadersFactory implements EntityFactory {
      * @param data
      * @return Entity
      */
-    @Spawns("bullet")
+    @Spawns(entityNames.BULLET)
     public Entity newBullet(SpawnData data) {
         int bulletWidth = 20;
         int bulletHeight = 20;
@@ -101,7 +101,7 @@ public class SpaceInvadersFactory implements EntityFactory {
      * @param data
      * @return Entity
      */
-    @Spawns("alienBullet")
+    @Spawns(entityNames.BULLET_ALIEN)
     public Entity newAlienBullet(SpawnData data) {
         runOnce(() -> spawn("eclat", data.getX(), data.getY()), Duration.seconds(0.5));
 
@@ -126,7 +126,7 @@ public class SpaceInvadersFactory implements EntityFactory {
      * @param data
      * @return Entity
      */
-    @Spawns("eclat")
+    @Spawns(entityNames.ECLAT)
     public Entity newEclat(SpawnData data) {
         int eclatWidth = 150;
         int eclatHeight = 150;
@@ -146,7 +146,7 @@ public class SpaceInvadersFactory implements EntityFactory {
      * @param data
      * @return Entity
      */
-    @Spawns("background")
+    @Spawns(entityNames.BACKGROUND)
     public Entity newBackground(SpawnData data) {
         return entityBuilder()
                 .at(-10, -10)
@@ -162,7 +162,7 @@ public class SpaceInvadersFactory implements EntityFactory {
      * @param data
      * @return Entity
      */
-    @Spawns("shooting_start")
+    @Spawns(entityNames.SHOOTING_START)
     public Entity shooting_start(SpawnData data) {
         int bullet_width = 20;
         int bullet_height = 40;
@@ -185,7 +185,7 @@ public class SpaceInvadersFactory implements EntityFactory {
      * @param data
      * @return Entity
      */
-    @Spawns("shooting_smoke")
+    @Spawns(entityNames.SHOOTING_SMOKE)
     public Entity shooting_smoke(SpawnData data) {
         int smoke_width = 40;
         int smoke_height = 40;
@@ -204,7 +204,7 @@ public class SpaceInvadersFactory implements EntityFactory {
      * @param data
      * @return Entity
      */
-    @Spawns("explosion_alien")
+    @Spawns(entityNames.EXPLOSION_ALIEN)
     public Entity explosion_alien(SpawnData data) {
         int explosion_width = 60;
         int explosion_height = 60;
@@ -224,7 +224,7 @@ public class SpaceInvadersFactory implements EntityFactory {
      * @param data
      * @return Entity
      */
-    @Spawns("explosion_player_bullet")
+    @Spawns(entityNames.EXPLOSION_PLAYER_BULLET)
     public Entity explosion_player_bullet(SpawnData data) {
         int explosion_width = 70;
         int explosion_height = 60;
@@ -243,16 +243,18 @@ public class SpaceInvadersFactory implements EntityFactory {
      * @param data
      * @return Entity
      */
-    @Spawns("explosion_player_death")
+    @Spawns(entityNames.EXPLOSION_PLAYER_DEATH)
     public Entity explosion_player_death(SpawnData data) {
         int explosion_width = 200;
         int explosion_height = 200;
         Texture texture = texture("finalExplosion.png", explosion_width, explosion_height);
+
         for (int i = 0; i < 10; i++) {
             double x = data.getX() + FXGLMath.random(-100, 100);
             double y = data.getY() + FXGLMath.random(-100, 100);
-            spawn("explosion_alien", x, y);
+            spawn(entityNames.EXPLOSION_ALIEN, x, y);
         }
+
         return entityBuilder()
                 .at(data.getX(), data.getY())
                 .view(texture)

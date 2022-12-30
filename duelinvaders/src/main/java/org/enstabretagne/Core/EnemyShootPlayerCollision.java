@@ -8,6 +8,7 @@ import static com.almasb.fxgl.dsl.FXGL.set;
 import static com.almasb.fxgl.dsl.FXGL.spawn;
 
 import org.enstabretagne.Component.EntityType;
+import org.enstabretagne.Utils.entityNames;
 
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.physics.CollisionHandler;
@@ -38,12 +39,12 @@ public class EnemyShootPlayerCollision extends CollisionHandler {
 
         inc(GameVariableNames.PLAYER1_LIVES, -1);
         if (geti(GameVariableNames.PLAYER1_LIVES) == 0) {
-            spawn("explosion_player_death", player.getPosition());
+            spawn(entityNames.EXPLOSION_PLAYER_DEATH, player.getPosition());
             play("Explosion/finalExplosion.wav");
             set(GameVariableNames.isGameOver, true);
             player.removeFromWorld();
         } else {
-            spawn("explosion_player_bullet", enemy_shoot.getPosition());
+            spawn(entityNames.EXPLOSION_PLAYER_BULLET, enemy_shoot.getPosition());
             play("Explosion/strongExplosion.wav");
         }
     }

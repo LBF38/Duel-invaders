@@ -2,6 +2,8 @@ package org.enstabretagne.Component;
 
 import static org.enstabretagne.Core.Constant.*;
 
+import org.enstabretagne.Utils.entityNames;
+
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.Component;
 import javafx.util.Duration;
@@ -66,7 +68,9 @@ public class PlayerComponent extends Component {
             side_shoot = 0;
             decalage = -18;
         }
-        Entity bullet = spawn("bullet", entity.getX() + (entity.getWidth() / 2) + decalage, entity.getY() - 20);
+        double x = entity.getX() + (entity.getWidth() / 2) + decalage;
+        double y = entity.getY() - 20;
+        Entity bullet = spawn(entityNames.BULLET, x, y);
         bullet.getComponent(BulletComponent.class).initialize();
         last_shot = getGameTimer().getNow();
 

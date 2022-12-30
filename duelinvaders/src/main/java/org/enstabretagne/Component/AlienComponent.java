@@ -2,6 +2,7 @@ package org.enstabretagne.Component;
 
 import org.enstabretagne.Core.Constant;
 import org.enstabretagne.Core.Constant.Direction;
+import org.enstabretagne.Utils.entityNames;
 
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.entity.Entity;
@@ -126,7 +127,7 @@ public class AlienComponent extends Component {
         if (canShoot || last_shot == null) {
             double x = this.entity.getX() + this.entity.getWidth() / 2;
             double y = this.entity.getY() + this.entity.getHeight();
-            Entity bullet = spawn("alienBullet", x, y);
+            Entity bullet = spawn(entityNames.BULLET_ALIEN, x, y);
             BulletComponent bulletComponent = bullet.getComponent(BulletComponent.class);
             // TODO: rendre le shotDirection dépendant de la direction de l'alien
             bulletComponent.setDirection(new Point2D(0, 1));

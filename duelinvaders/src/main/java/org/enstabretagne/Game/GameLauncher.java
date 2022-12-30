@@ -27,6 +27,7 @@ import org.enstabretagne.Core.AlienPlayerCollision;
 import org.enstabretagne.Core.Constant;
 import org.enstabretagne.Core.EnemyShootPlayerCollision;
 import org.enstabretagne.Core.GameVariableNames;
+import org.enstabretagne.Utils.entityNames;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
@@ -37,6 +38,13 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
+/**
+ * Classe principale du jeu
+ * C'est la classe qui lance le jeu et gère les fonctions principales
+ * 
+ * @author @jufch, @LBF38, @MathieuDFS
+ * @since 0.1.0
+ */
 public class GameLauncher extends GameApplication {
     private PlayerComponent playerComponent;
     private Entity player;
@@ -88,16 +96,16 @@ public class GameLauncher extends GameApplication {
             throw new RuntimeException(e);
         }
         getGameWorld().addEntityFactory(new SpaceInvadersFactory());
-        player = spawn("player");
-        spawn("alien");
+        player = spawn(entityNames.PLAYER);
+        spawn(entityNames.ALIEN);
         run(() -> {
-            spawn("alien");
+            spawn(entityNames.ALIEN);
         }, Duration.seconds(2));
         player.setX(Constant.GAME_WIDTH / 2);
         player.setY(Constant.GAME_HEIGHT - player.getHeight());
         playerComponent = player.getComponent(PlayerComponent.class);
 
-        spawn("background");
+        spawn(entityNames.BACKGROUND);
         loopBGM("Across_the_Universe_-_Oleg_O._Kachanko.mp3"); // TODO: sélectionner la musique via les paramètres
     }
 
@@ -131,7 +139,8 @@ public class GameLauncher extends GameApplication {
         if (getb(GameVariableNames.isGameWon))
             winScreen();
 
-        // teste le temps écoulé depuis la dernière fois que le son d'ambiance a été joué
+        // teste le temps écoulé depuis la dernière fois que le son d'ambiance a été
+        // joué
         if ((System.currentTimeMillis() - last_ambient_sound) > delay_ambient_sound) {
             ambientSound();
             last_ambient_sound = System.currentTimeMillis();
