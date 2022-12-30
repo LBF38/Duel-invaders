@@ -9,11 +9,27 @@ import org.enstabretagne.Component.EntityType;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.physics.CollisionHandler;
 
+/**
+ * Gestion des collisions entre les aliens et le joueur
+ * 
+ * @author @jufch, @LBF38, @MathieuDFS
+ * @since 0.1.0
+ */
 public class AlienPlayerCollision extends CollisionHandler {
+    /**
+     * Constructeur de la classe AlienPlayerCollision
+     * Création d'une collision entre les entités player et alien
+     * 
+     * @param player
+     * @param alien
+     */
     public AlienPlayerCollision(EntityType player, EntityType alien) {
         super(EntityType.PLAYER, EntityType.ALIEN);
     }
 
+    /**
+     * Gestion des collisions entre les aliens et le joueur
+     */
     @Override
     protected void onCollisionBegin(Entity player, Entity alien) {
         spawn("explosion_player_death", player.getPosition());
