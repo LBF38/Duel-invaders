@@ -11,12 +11,33 @@ import org.enstabretagne.Component.EntityType;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.physics.CollisionHandler;
 
+/**
+ * Gestion des collisions entre les balles et les aliens
+ * 
+ * @author @jufch, @LBF38, @MathieuDFS
+ * @since 0.1.0
+ */
 public class AlienBulletCollision extends CollisionHandler {
-
+    /**
+     * Constructeur de la classe AlienBulletCollision
+     * Elle hérite de la classe CollisionHandler de FXGL
+     * 
+     * @param bullet
+     * @param alien
+     */
     public AlienBulletCollision(EntityType bullet, EntityType alien) {
         super(EntityType.BULLET, EntityType.ALIEN);
     }
 
+    /**
+     * Gestion des collisions entre les balles et les aliens
+     * Cette méthode est appelée à chaque fois qu'une collision est détectée entre
+     * les entités bullet et alien
+     * Cela signifie que le joueur a touché un alien
+     * 
+     * @param bullet
+     * @param alien
+     */
     @Override
     protected void onCollisionBegin(Entity bullet, Entity alien) {
         inc(GameVariableNames.PLAYER1_SCORE, +1);
@@ -25,6 +46,5 @@ public class AlienBulletCollision extends CollisionHandler {
         alien.removeFromWorld();
         play("Explosion/mediumExplosion.wav");
         set(GameVariableNames.isGameWon, getGameWorld().getEntitiesByType(EntityType.ALIEN).isEmpty());
-
     }
 }
