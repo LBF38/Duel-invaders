@@ -37,7 +37,7 @@ public class assetNames {
         public static final String VICTORY_CLAIRON = "autre/claironVictory.wav";
         public static final ArrayList<String> AMBIENT_SOUNDS = new ArrayList<String>();
         static {
-            for (int i = 1; i < Constant.NUMBER_OF_AMBIENT_SOUND; i++) {
+            for (int i = 1; i < Constant.NUMBER_OF_AMBIENT_SOUND +1 ; i++) {
                 AMBIENT_SOUNDS.add("ambiance/ambientSound" + i + ".wav");
             }
         }

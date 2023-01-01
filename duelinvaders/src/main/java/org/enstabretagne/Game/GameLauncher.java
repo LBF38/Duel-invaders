@@ -199,7 +199,7 @@ public class GameLauncher extends GameApplication {
      */
     private void ambientSound() {
         String ambientMusic = assetNames.sounds.AMBIENT_SOUNDS
-                .get(FXGLMath.random(0, Constant.NUMBER_OF_AMBIENT_SOUND - 1));
+                .get(FXGLMath.random(0, Constant.NUMBER_OF_AMBIENT_SOUND-1));
         play(ambientMusic);
     }
 
