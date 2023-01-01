@@ -1,30 +1,44 @@
 package org.enstabretagne.Component;
 
-
-import com.almasb.fxgl.audio.Sound;
-import com.almasb.fxgl.core.math.FXGLMath;
-import com.almasb.fxgl.dsl.components.ProjectileComponent;
-import javafx.geometry.Point2D;
-import org.enstabretagne.Core.Constant;
 import static com.almasb.fxgl.dsl.FXGL.entityBuilder;
-import static com.almasb.fxgl.dsl.FXGLForKtKt.play;
-import static com.almasb.fxgl.dsl.FXGLForKtKt.spawn;
+import static com.almasb.fxgl.dsl.FXGL.play;
+import static com.almasb.fxgl.dsl.FXGL.runOnce;
+import static com.almasb.fxgl.dsl.FXGL.spawn;
+import static com.almasb.fxgl.dsl.FXGL.texture;
 
-import com.almasb.fxgl.dsl.FXGL;
+import org.enstabretagne.Core.Constant;
+import org.enstabretagne.Utils.assetNames;
+import org.enstabretagne.Utils.entityNames;
+
+import com.almasb.fxgl.core.math.FXGLMath;
+import com.almasb.fxgl.dsl.components.ExpireCleanComponent;
 import com.almasb.fxgl.dsl.components.OffscreenCleanComponent;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.Spawns;
+import com.almasb.fxgl.texture.Texture;
 
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
+/**
+ * Définition des entités du jeu. Chaque entité est définie par une méthode avec
+ * l'annotation {@code}@Spawns{@code}.
+ * 
+ * @author @LBF38, @jufch, @MathieuDFS
+ * @since 0.1.0
+ */
 public class SpaceInvadersFactory implements EntityFactory {
-    @Spawns("player")
+    /**
+     * Définition de l'entité joueur, nommé player
+     * 
+     * @param data
+     * @return Entity
+     */
+    @Spawns(entityNames.PLAYER)
     public Entity newPlayer(SpawnData data) {
-        var texture = FXGL.texture("SpaceShip.png", 100, 100);
+        Texture texture = texture(assetNames.textures.SPACESHIP, 100, 100);
         return entityBuilder()
                 .type(EntityType.PLAYER)
                 .at(data.getX(), data.getY())
@@ -34,15 +48,19 @@ public class SpaceInvadersFactory implements EntityFactory {
                 .build();
     }
 
-    @Spawns("alien")
+    /**
+     * Définition de l'entité alien, nommé alien
+     * 
+     * @param data
+     * @return Entity
+     */
+    @Spawns(entityNames.ALIEN)
     public Entity newAlien(SpawnData data) {
-        // Extrait une couleur aléatoire dans la liste des couleurs
         int randomIndex = Constant.random.nextInt(Constant.AlienColor.values().length);
         Constant.AlienColor randomColor = Constant.AlienColor.values()[randomIndex];
-        // la convertit en couleur JavaFX
         Color color = Color.valueOf(randomColor.name());
 
-        var texture = FXGL.texture("Alien.png", 60, 60).multiplyColor(color);
+        Texture texture = texture(assetNames.textures.ALIEN, 60, 60).multiplyColor(color);
         return entityBuilder()
                 .type(EntityType.ALIEN)
                 .at(data.getX(), data.getY())
@@ -52,15 +70,20 @@ public class SpaceInvadersFactory implements EntityFactory {
                 .build();
     }
 
-    @Spawns("bullet")
+    /**
+     * Définition de l'entité tir du joueur, nommé bullet
+     * Elle est uniquement utilisée par le joueur
+     * 
+     * @param data
+     * @return Entity
+     */
+    @Spawns(entityNames.BULLET)
     public Entity newBullet(SpawnData data) {
-        var bulletWidth = 20;
-        var bulletHeight = 20;
-        var texture = FXGL.texture("rocket.png", bulletWidth, bulletHeight);
-        FXGL.spawn("shooting_start", data.getX(), data.getY());
-        play("Tir/canon.wav");
-
-
+        int bulletWidth = 20;
+        int bulletHeight = 20;
+        Texture texture = texture(assetNames.textures.ROCKET, bulletWidth, bulletHeight);
+        spawn(entityNames.SHOOTING_START, data.getX(), data.getY());
+        play(assetNames.sounds.CANNON_SHOT);
 
         return entityBuilder()
                 .type(EntityType.BULLET)
@@ -72,121 +95,172 @@ public class SpaceInvadersFactory implements EntityFactory {
                 .build();
     }
 
-    @Spawns("alienBullet")
+    /**
+     * Définition de l'entité tir de l'alien, nommé alienBullet
+     * Elle est uniquement utilisée par les aliens
+     * 
+     * @param data
+     * @return Entity
+     */
+    @Spawns(entityNames.BULLET_ALIEN)
     public Entity newAlienBullet(SpawnData data) {
-        FXGL.runOnce(() -> spawn("eclat",data.getX(), data.getY()), Duration.seconds(0.5));
-
-        var laserWidth = 20;
-        var laserHeight = 20;
-        var texture = FXGL.texture("laser.png", laserWidth, laserHeight);
-        play("Tir/laser" + (int)(Math.random() * 4 + 1) + ".wav");
+        int laserWidth = 20;
+        int laserHeight = 20;
+        Texture texture = texture(assetNames.textures.LASER, laserWidth, laserHeight);
+        String randomLaserSound = assetNames.sounds.LASER_SOUNDS
+                .get(FXGLMath.random(0, Constant.NUMBER_OF_LASER_SOUNDS - 1));
+        play(randomLaserSound);
 
         return entityBuilder()
                 .type(EntityType.ENEMY_SHOOT)
-                .at(data.getX()- laserWidth / 2, data.getY())
+                .at(data.getX() - laserWidth / 2, data.getY())
                 .viewWithBBox(texture)
                 .with(new BulletComponent())
                 .collidable()
                 .build();
     }
 
-    @Spawns("eclat")
+    /**
+     * Définition de l'entité eclat, nommé eclat
+     * Décoration pour agrémenter le jeu lors d'un tir
+     * 
+     * @param data
+     * @return Entity
+     */
+    @Spawns(entityNames.ECLAT)
     public Entity newEclat(SpawnData data) {
-        var eclatWidth = 150;
-        var eclatHeight = 150;
-        var texture = FXGL.texture("eclat2.png", eclatWidth, eclatHeight);
+        int eclatWidth = 150;
+        int eclatHeight = 150;
+        Texture texture = texture(assetNames.textures.ECLAT2, eclatWidth, eclatHeight);
         texture.setRotate(180);
-        var e = entityBuilder()
-                .at(data.getX()-eclatWidth/2, data.getY()- eclatHeight/2)
+        return entityBuilder()
+                .at(data.getX() - eclatWidth / 2, data.getY() - eclatHeight / 2)
                 .viewWithBBox(texture)
+                .with(new ExpireCleanComponent(Duration.seconds(0.05)))
                 .build();
-        FXGL.runOnce(() -> e.removeFromWorld(), Duration.seconds(0.05));
-        return e;
     }
 
-    @Spawns("background")
+    /**
+     * Définition de l'entité pour l'arrière-plan, nommé background
+     * Elle est utilisée pour l'arrière-plan du jeu
+     * 
+     * @param data
+     * @return Entity
+     */
+    @Spawns(entityNames.BACKGROUND)
     public Entity newBackground(SpawnData data) {
         return entityBuilder()
                 .at(-10, -10)
-                // bigger than game size to account for camera shake
-                .view(FXGL.texture("Background.png", Constant.BOARD_WIDTH + 20, Constant.BOARD_HEIGHT + 20))
-                .zIndex(-500) // todo a tester a quoi ca sert
+                .view(texture(assetNames.textures.BACKGROUND, Constant.GAME_WIDTH + 20, Constant.GAME_HEIGHT + 20))
+                .zIndex(-500)
                 .build();
     }
 
-    @Spawns("shooting_start")
+    /**
+     * Définition de l'entité pour le tir du joueur, nommé shooting_start
+     * A but décoratif pour agrémenter le jeu
+     * 
+     * @param data
+     * @return Entity
+     */
+    @Spawns(entityNames.SHOOTING_START)
     public Entity shooting_start(SpawnData data) {
-        var bullet_width = 20;
-        var bullet_height = 40;
+        int bullet_width = 20;
+        int bullet_height = 40;
 
-        var texture = FXGL.texture("Fire.png", bullet_width, bullet_height);
-        // tourne la texture de 180°
+        Texture texture = texture(assetNames.textures.FIRE, bullet_width, bullet_height);
         texture.setRotate(180);
 
-        var e = entityBuilder()
+        runOnce(() -> spawn("shooting_smoke", data.getX(), data.getY()), Duration.seconds(0.2));
+        return entityBuilder()
                 .at(data.getX() - bullet_width / 2, data.getY())
                 .view(texture)
+                .with(new ExpireCleanComponent(Duration.seconds(0.2)))
                 .build();
-
-        FXGL.runOnce(() -> e.removeFromWorld(), Duration.seconds(0.2));
-        FXGL.runOnce(() -> FXGL.spawn("shooting_smoke", data.getX(), data.getY()), Duration.seconds(0.2));
-        return e;
     }
 
-    @Spawns("shooting_smoke")
+    /**
+     * Définition de l'entité pour le tir du joueur, nommé shooting_smoke
+     * A but décoratif pour agrémenter le jeu
+     * 
+     * @param data
+     * @return Entity
+     */
+    @Spawns(entityNames.SHOOTING_SMOKE)
     public Entity shooting_smoke(SpawnData data) {
-        var smoke_width = 40;
-        var smoke_height = 40;
-        var texture = FXGL.texture("Smoke.png", smoke_width, smoke_height);
-        var e = entityBuilder()
+        int smoke_width = 40;
+        int smoke_height = 40;
+        Texture texture = texture(assetNames.textures.SMOKE, smoke_width, smoke_height);
+        return entityBuilder()
                 .at(data.getX() - smoke_width / 2, data.getY() - 30)
                 .view(texture)
+                .with(new ExpireCleanComponent(Duration.seconds(0.2)))
                 .build();
-
-        FXGL.runOnce(() -> e.removeFromWorld(), Duration.seconds(0.2));
-        return e;
     }
 
-    @Spawns("explosion_alien")
+    /**
+     * Définition de l'entité pour l'explosion, nommé explosion_alien
+     * A but décoratif pour agrémenter le jeu
+     * 
+     * @param data
+     * @return Entity
+     */
+    @Spawns(entityNames.EXPLOSION_ALIEN)
     public Entity explosion_alien(SpawnData data) {
-        var explosion_width = 60;
-        var explosion_height = 60;
-
-        var texture = FXGL.texture("explosion"+ FXGLMath.random(1,7) +".png", explosion_width, explosion_height);
-        var e = entityBuilder()
-                .at(data.getX() , data.getY())
-                .view(texture)
-                .build();
-
-        FXGL.runOnce(() -> e.removeFromWorld(), Duration.seconds(0.3));
-        return e;
-    }
-
-    @Spawns("explosion_player_bullet")
-    public Entity explosion_player_bullet(SpawnData data) {
-        var explosion_width = 70;
-        var explosion_height = 60;
-        var texture = FXGL.texture("explosion_player.png", explosion_width, explosion_height);
-        var e = entityBuilder()
-                .at(data.getX() - explosion_width / 2, data.getY() - explosion_height / 2)
-                .view(texture)
-                .build();
-
-        FXGL.runOnce(() -> e.removeFromWorld(), Duration.seconds(0.3));
-        return e;
-    }
-
-    @Spawns("explosion_player_death")
-    public Entity explosion_player_death(SpawnData data) {
-        var explosion_width = 200;
-        var explosion_height = 200;
-        var texture = FXGL.texture("finalExplosion.png", explosion_width, explosion_height);
-        var e = entityBuilder()
+        int explosion_width = 60;
+        int explosion_height = 60;
+        String randomTexture = assetNames.textures.EXPLOSIONS
+                .get(FXGLMath.random(0, Constant.NUMBER_OF_EXPLOSIONS - 1));
+        Texture texture = texture(randomTexture, explosion_width, explosion_height);
+        return entityBuilder()
                 .at(data.getX(), data.getY())
                 .view(texture)
+                .with(new ExpireCleanComponent(Duration.seconds(0.3)))
                 .build();
-        for (int i = 0; i < 10; i++) {
-            FXGL.spawn("explosion_alien",data.getX() + FXGLMath.random(-100,100), data.getY()+ FXGLMath.random(-100,100));}
-        return e;
+    }
+
+    /**
+     * Définition de l'entité pour l'explosion, nommé explosion_player_bullet
+     * A but décoratif pour agrémenter le jeu
+     * 
+     * @param data
+     * @return Entity
+     */
+    @Spawns(entityNames.EXPLOSION_PLAYER_BULLET)
+    public Entity explosion_player_bullet(SpawnData data) {
+        int explosion_width = 70;
+        int explosion_height = 60;
+        Texture texture = texture(assetNames.textures.EXPLOSION_PLAYER, explosion_width, explosion_height);
+        return entityBuilder()
+                .at(data.getX() - explosion_width / 2, data.getY() - explosion_height / 2)
+                .view(texture)
+                .with(new ExpireCleanComponent(Duration.seconds(0.3)))
+                .build();
+    }
+
+    /**
+     * Définition de l'entité pour l'explosion, nommé explosion_player_death
+     * A but décoratif pour agrémenter le jeu
+     * 
+     * @param data
+     * @return Entity
+     */
+    @Spawns(entityNames.EXPLOSION_PLAYER_DEATH)
+    public Entity explosion_player_death(SpawnData data) {
+        int explosion_width = 200;
+        int explosion_height = 200;
+        Texture texture = texture(assetNames.textures.EXPLOSION_FINAL, explosion_width, explosion_height);
+
+        for (int i = 0; i < 20; i++) {
+            double x = data.getX() + FXGLMath.random(-100, 100);
+            double y = data.getY() + FXGLMath.random(-100, 100);
+            spawn(entityNames.EXPLOSION_ALIEN, x, y);
+        }
+
+        return entityBuilder()
+                .at(data.getX(), data.getY())
+                .view(texture)
+                .zIndex(-100)
+                .build();
     }
 }

@@ -1,6 +1,19 @@
 package org.enstabretagne.Game;
 
-import static com.almasb.fxgl.dsl.FXGL.*;
+import static com.almasb.fxgl.dsl.FXGL.getAppWidth;
+import static com.almasb.fxgl.dsl.FXGL.getDialogService;
+import static com.almasb.fxgl.dsl.FXGL.getGameController;
+import static com.almasb.fxgl.dsl.FXGL.getGameScene;
+import static com.almasb.fxgl.dsl.FXGL.getGameWorld;
+import static com.almasb.fxgl.dsl.FXGL.getNotificationService;
+import static com.almasb.fxgl.dsl.FXGL.getPhysicsWorld;
+import static com.almasb.fxgl.dsl.FXGL.getWorldProperties;
+import static com.almasb.fxgl.dsl.FXGL.getb;
+import static com.almasb.fxgl.dsl.FXGL.loopBGM;
+import static com.almasb.fxgl.dsl.FXGL.onKey;
+import static com.almasb.fxgl.dsl.FXGL.play;
+import static com.almasb.fxgl.dsl.FXGL.run;
+import static com.almasb.fxgl.dsl.FXGL.spawn;
 
 import java.util.Arrays;
 import java.util.EnumSet;
@@ -16,6 +29,8 @@ import org.enstabretagne.Core.AlienPlayerCollision;
 import org.enstabretagne.Core.Constant;
 import org.enstabretagne.Core.EnemyShootPlayerCollision;
 import org.enstabretagne.Core.GameVariableNames;
+import org.enstabretagne.Utils.assetNames;
+import org.enstabretagne.Utils.entityNames;
 
 import com.almasb.fxgl.app.ApplicationMode;
 import com.almasb.fxgl.app.GameApplication;
@@ -28,6 +43,13 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
+/**
+ * Classe principale du jeu
+ * C'est la classe qui lance le jeu et gère les fonctions principales
+ * 
+ * @author @jufch, @LBF38, @MathieuDFS
+ * @since 0.1.0
+ */
 public class GameLauncher extends GameApplication {
     private PlayerComponent playerComponent;
     private Entity player;
@@ -35,10 +57,14 @@ public class GameLauncher extends GameApplication {
     private int delay_ambient_sound = FXGLMath.random(Constant.AMBIENT_SOUND_DELAY_MIN,
             Constant.AMBIENT_SOUND_DELAY_MAX);
 
+    /**
+     * Initialisation des paramètres du jeu
+     * @param settings
+     */
     @Override
     protected void initSettings(GameSettings settings) {
-        settings.setWidth(Constant.BOARD_WIDTH.intValue());
-        settings.setHeight(Constant.BOARD_HEIGHT.intValue());
+        settings.setWidth(Constant.GAME_WIDTH.intValue());
+        settings.setHeight(Constant.GAME_HEIGHT.intValue());
         settings.setTitle("Duel Invaders");
         settings.setAppIcon("duelinvaders_icon2.png");
         settings.setVersion("0.1.0");
@@ -56,6 +82,9 @@ public class GameLauncher extends GameApplication {
         settings.setApplicationMode(ApplicationMode.RELEASE);
     }
 
+    /**
+     * Initialisation des commandes du jeu avec les touches du clavier
+     */
     @Override
     protected void initInput() {
         onKey(KeyCode.N, () -> {
@@ -75,6 +104,10 @@ public class GameLauncher extends GameApplication {
         });
     }
 
+    /**
+     * Initialisation des variables du jeu
+     * @param vars
+     */
     @Override
     protected void initGameVars(Map<String, Object> vars) {
         vars.put(GameVariableNames.PLAYER1_SCORE, 0);
@@ -83,28 +116,35 @@ public class GameLauncher extends GameApplication {
         vars.put(GameVariableNames.isGameWon, false);
     }
 
+    /**
+     * Initialisation du jeu
+     * Coordonnées des entités et début du fond sonore
+     */
     @Override
     protected void initGame() {
-        play("autre/claironStart.wav");
+        play(assetNames.sounds.START_CLAIRON);
         try {
             TimeUnit.SECONDS.sleep(Constant.WAITING_TIME_BEFORE_START);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
         getGameWorld().addEntityFactory(new SpaceInvadersFactory());
-        player = spawn("player");
-        spawn("alien");
+        player = spawn(entityNames.PLAYER);
+        spawn(entityNames.ALIEN);
         run(() -> {
-            spawn("alien");
+            spawn(entityNames.ALIEN);
         }, Duration.seconds(2));
-        player.setX(Constant.BOARD_WIDTH / 2);
-        player.setY(Constant.BOARD_HEIGHT - player.getHeight());
+        player.setX(Constant.GAME_WIDTH / 2);
+        player.setY(Constant.GAME_HEIGHT - player.getHeight());
         playerComponent = player.getComponent(PlayerComponent.class);
 
-        spawn("background"); // ajout de l'arrière plan
-        loopBGM("Across_the_Universe_-_Oleg_O._Kachanko.mp3");// lance la musique TODO: sélectionner la musique
+        spawn(entityNames.BACKGROUND);
+        loopBGM(assetNames.music.BACKGROUND_MUSIC); // TODO: sélectionner la musique via les paramètres
     }
 
+    /**
+     * Initialisation des propriétés physiques du jeu liées aux collisions
+     */
     @Override
     protected void initPhysics() {
         getPhysicsWorld().addCollisionHandler(new AlienPlayerCollision(EntityType.PLAYER, EntityType.ALIEN));
@@ -113,6 +153,9 @@ public class GameLauncher extends GameApplication {
                 .addCollisionHandler(new EnemyShootPlayerCollision(EntityType.ENEMY_SHOOT, EntityType.PLAYER));
     }
 
+    /**
+     * Initialisation de l'interface graphique du jeu avec le score du joueur
+     */
     @Override
     protected void initUI() {
         Text textScore = new Text();
@@ -128,6 +171,10 @@ public class GameLauncher extends GameApplication {
         getGameScene().addUINode(textLives);
     }
 
+    /**
+     * Vérification de la fin du jeu et déroulé de la partie en cours
+     * @param tpf
+     */
     @Override
     protected void onUpdate(double tpf) {
         if (getb(GameVariableNames.isGameOver))
@@ -135,7 +182,8 @@ public class GameLauncher extends GameApplication {
         if (getb(GameVariableNames.isGameWon))
             winScreen();
 
-        // test le temps écoulé depuis la dernière fois que le son d'ambiance a été joué
+        // teste le temps écoulé depuis la dernière fois que le son d'ambiance a été
+        // joué
         if ((System.currentTimeMillis() - last_ambient_sound) > delay_ambient_sound) {
             ambientSound();
             last_ambient_sound = System.currentTimeMillis();
@@ -150,13 +198,19 @@ public class GameLauncher extends GameApplication {
         }, Duration.seconds(Constant.random.nextDouble() * 10));
     }
 
+    /**
+     * Affichage de l'écran de fin de partie
+     */
     private void gameOverScreen() {
-        play("autre/claironDefeat.wav");
+        play(assetNames.sounds.DEFEAT_CLAIRON);
         getDialogService().showMessageBox("Game Over!", () -> {
             getDialogService().showConfirmationBox("Do you want to play again?", (yes) -> playAgain(yes));
         });
     }
 
+    /**
+     * Affichage de l'écran pour jouer une nouvelle partie
+     */
     private void playAgain(Boolean yes) {
         if (yes)
             getGameController().startNewGame();
@@ -164,18 +218,23 @@ public class GameLauncher extends GameApplication {
             getGameController().gotoMainMenu();
     }
 
+    /**
+     * Affichage de l'écran de victoire
+     */
     private void winScreen() {
-        play("autre/claironVictory.wav");
+        play(assetNames.sounds.VICTORY_CLAIRON);
         getDialogService().showMessageBox("You win!", () -> {
             getDialogService().showConfirmationBox("Do you want to play again?", (yes) -> playAgain(yes));
         });
     }
 
+    /**
+     * Joue un son d'ambiance aléatoire parmi ceux disponibles
+     */
     private void ambientSound() {
-        /*
-         * Joue un son d'ambiance aléatoire parmi ceux disponibles
-         */
-        play("ambiance/ambientSound" + FXGLMath.random(1, Constant.NUMBER_OF_AMBIENT_SOUND) + ".wav");
+        String ambientMusic = assetNames.sounds.AMBIENT_SOUNDS
+                .get(FXGLMath.random(0, Constant.NUMBER_OF_AMBIENT_SOUND-1));
+        play(ambientMusic);
     }
 
     public static void main(String[] args) {
