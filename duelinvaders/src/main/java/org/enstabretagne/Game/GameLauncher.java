@@ -93,16 +93,29 @@ public class GameLauncher extends GameApplication {
         }
         getGameWorld().addEntityFactory(new SpaceInvadersFactory());
         player = spawn("player");
-        spawn("alien");
-        run(() -> {
-            spawn("alien");
-        }, Duration.seconds(2));
         player.setX(Constant.BOARD_WIDTH / 2);
         player.setY(Constant.BOARD_HEIGHT - player.getHeight());
         playerComponent = player.getComponent(PlayerComponent.class);
+        makeAlienBlock();
 
         spawn("background"); // ajout de l'arrière plan
         loopBGM("Across_the_Universe_-_Oleg_O._Kachanko.mp3");// lance la musique TODO: sélectionner la musique
+    }
+
+    private void makeAlienBlock() {
+        for (int i = 0; i < 5; i++)
+            makeAlienLine(i);
+    }
+
+    private void makeAlienLine(int line) {
+        Entity alien = spawn("alien");
+        double alien_width = alien.getWidth();
+        double alien_height = alien.getHeight();
+        alien.removeFromWorld();
+        double nbAlien = (Constant.BOARD_WIDTH - 4 * alien_width) / alien_width;
+        for (int i = 0; i < nbAlien; i++) {
+            spawn("alien", i * alien_width, line * alien_height);
+        }
     }
 
     @Override

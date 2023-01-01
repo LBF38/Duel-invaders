@@ -31,7 +31,7 @@ public class AlienComponent extends Component {
     @Override
     public void onUpdate(double tpf) {
         dx = tpf * Constant.SPEED_ALIEN;
-        dy = 0.5 * Constant.SPEED_ALIEN;
+        dy = entity.getHeight();
         this.move(dx);
     }
 
