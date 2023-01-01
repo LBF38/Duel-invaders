@@ -16,12 +16,13 @@ Le projet est composé de 3 packages principaux :
 
 ### Package Component
 
-Ce package est composé de trois classes abstraites :
+Ce package est composé de trois classes :
 
 - AlienComponent
 - PlayerComponent
 - BulletComponent
 
+Ces classes permettent de gérer le comportement des éléments du jeu.
 
 Exemple :
 
@@ -33,9 +34,13 @@ classDiagram
         +randomshoot()
     }
 ```
+
 Et de deux autres classes :
+
 - EntityType
 - SpaceInvadersFactory
+
+Ces classes permettent de définir les types d'entités possibles dans le jeu et la fabrication des entités, comme suggéré par la documentation de la librairie FXGL.
 
 ### Package Core
 
@@ -48,8 +53,11 @@ Ce package est composé des classes suivantes, qui définissent les collisions p
 A chaque collision, soit la vie du player diminue, soit l'alien disparaît. (dépend de nos choix de conception et de nos règles de jeu)
 
 Ce package est également constitué de deux autres classes :
+
 - Constant : définit l'ensemble des constantes du jeu
 - GameVariableNames : définit les noms des variables utilisées dans le jeu
+
+Ces classes permettent de définir des variables globales utilisées par plusieurs classes et éviter les erreurs de frappe.
 
 ### Package Game
 
@@ -68,6 +76,15 @@ classDiagram
         +startGame()
     }
 ```
+
+### Package Utils
+
+Ce package est composé des classes suivantes :
+
+- assetNames : définit des variables contenant les noms des assets utilisés dans le jeu
+- entityNames : définit des variables contenant les noms des entités utilisées dans le jeu
+
+Ces classes permettent d'éviter les erreurs de frappe et de centraliser les noms des assets et des entités.
 
 ## Logique du jeu
 
@@ -109,7 +126,7 @@ Fin de partie si une de ces situations se produit:
 - un canon joueur est détruit.
 - tous les aliens sont détruits.
 
-## Modélisation du projet
+## Modélisation du projet (ancienne modélisation)
 
 Modélisation du projet
 
