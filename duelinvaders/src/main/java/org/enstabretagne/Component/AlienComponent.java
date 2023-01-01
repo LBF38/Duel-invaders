@@ -127,6 +127,7 @@ public class AlienComponent extends Component {
         if (canShoot || last_shot == null) {
             double x = this.entity.getX() + this.entity.getWidth() / 2;
             double y = this.entity.getY() + this.entity.getHeight();
+            spawn(entityNames.ECLAT,x,y);
             Entity bullet = spawn(entityNames.BULLET_ALIEN, x, y);
             BulletComponent bulletComponent = bullet.getComponent(BulletComponent.class);
             // TODO: rendre le shotDirection dépendant de la direction de l'alien

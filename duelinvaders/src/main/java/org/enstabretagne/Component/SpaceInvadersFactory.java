@@ -104,8 +104,6 @@ public class SpaceInvadersFactory implements EntityFactory {
      */
     @Spawns(entityNames.BULLET_ALIEN)
     public Entity newAlienBullet(SpawnData data) {
-        runOnce(() -> spawn(entityNames.ECLAT, data.getX(), data.getY()), Duration.seconds(0.5));
-
         int laserWidth = 20;
         int laserHeight = 20;
         Texture texture = texture(assetNames.textures.LASER, laserWidth, laserHeight);
@@ -253,7 +251,7 @@ public class SpaceInvadersFactory implements EntityFactory {
         int explosion_height = 200;
         Texture texture = texture(assetNames.textures.EXPLOSION_FINAL, explosion_width, explosion_height);
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 20; i++) {
             double x = data.getX() + FXGLMath.random(-100, 100);
             double y = data.getY() + FXGLMath.random(-100, 100);
             spawn(entityNames.EXPLOSION_ALIEN, x, y);
