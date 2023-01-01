@@ -57,6 +57,10 @@ public class GameLauncher extends GameApplication {
     private int delay_ambient_sound = FXGLMath.random(Constant.AMBIENT_SOUND_DELAY_MIN,
             Constant.AMBIENT_SOUND_DELAY_MAX);
 
+    /**
+     * Initialisation des paramètres du jeu
+     * @param settings
+     */
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setWidth(Constant.GAME_WIDTH.intValue());
@@ -78,6 +82,9 @@ public class GameLauncher extends GameApplication {
         settings.setApplicationMode(ApplicationMode.RELEASE);
     }
 
+    /**
+     * Initialisation des commandes du jeu avec les touches du clavier
+     */
     @Override
     protected void initInput() {
         onKey(KeyCode.N, () -> {
@@ -97,6 +104,10 @@ public class GameLauncher extends GameApplication {
         });
     }
 
+    /**
+     * Initialisation des variables du jeu
+     * @param vars
+     */
     @Override
     protected void initGameVars(Map<String, Object> vars) {
         vars.put(GameVariableNames.PLAYER1_SCORE, 0);
@@ -105,6 +116,10 @@ public class GameLauncher extends GameApplication {
         vars.put(GameVariableNames.isGameWon, false);
     }
 
+    /**
+     * Initialisation du jeu
+     * Coordonnées des entités et début du fond sonore
+     */
     @Override
     protected void initGame() {
         play(assetNames.sounds.START_CLAIRON);
@@ -127,6 +142,9 @@ public class GameLauncher extends GameApplication {
         loopBGM(assetNames.music.BACKGROUND_MUSIC); // TODO: sélectionner la musique via les paramètres
     }
 
+    /**
+     * Initialisation des propriétés physiques du jeu liées aux collisions
+     */
     @Override
     protected void initPhysics() {
         getPhysicsWorld().addCollisionHandler(new AlienPlayerCollision(EntityType.PLAYER, EntityType.ALIEN));
@@ -135,6 +153,9 @@ public class GameLauncher extends GameApplication {
                 .addCollisionHandler(new EnemyShootPlayerCollision(EntityType.ENEMY_SHOOT, EntityType.PLAYER));
     }
 
+    /**
+     * Initialisation de l'interface graphique du jeu avec le score du joueur
+     */
     @Override
     protected void initUI() {
         Text textScore = new Text();
@@ -150,6 +171,10 @@ public class GameLauncher extends GameApplication {
         getGameScene().addUINode(textLives);
     }
 
+    /**
+     * Vérification de la fin du jeu et déroulé de la partie en cours
+     * @param tpf
+     */
     @Override
     protected void onUpdate(double tpf) {
         if (getb(GameVariableNames.isGameOver))
@@ -173,6 +198,9 @@ public class GameLauncher extends GameApplication {
         }, Duration.seconds(Constant.random.nextDouble() * 10));
     }
 
+    /**
+     * Affichage de l'écran de fin de partie
+     */
     private void gameOverScreen() {
         play(assetNames.sounds.DEFEAT_CLAIRON);
         getDialogService().showMessageBox("Game Over!", () -> {
@@ -180,6 +208,9 @@ public class GameLauncher extends GameApplication {
         });
     }
 
+    /**
+     * Affichage de l'écran pour jouer une nouvelle partie
+     */
     private void playAgain(Boolean yes) {
         if (yes)
             getGameController().startNewGame();
@@ -187,6 +218,9 @@ public class GameLauncher extends GameApplication {
             getGameController().gotoMainMenu();
     }
 
+    /**
+     * Affichage de l'écran de victoire
+     */
     private void winScreen() {
         play(assetNames.sounds.VICTORY_CLAIRON);
         getDialogService().showMessageBox("You win!", () -> {

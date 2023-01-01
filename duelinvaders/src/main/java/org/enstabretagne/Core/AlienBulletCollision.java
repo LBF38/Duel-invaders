@@ -14,6 +14,7 @@ import com.almasb.fxgl.physics.CollisionHandler;
 
 /**
  * Gestion des collisions entre les balles et les aliens
+ * En cas de collision, le joueur gagne un point et l'alien est détruit
  * 
  * @author @jufch, @LBF38, @MathieuDFS
  * @since 0.1.0

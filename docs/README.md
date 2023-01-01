@@ -16,51 +16,58 @@ Le projet est composé de 3 packages principaux :
 
 ### Package Component
 
-Ce package est composé des classes suivantes :
+Ce package est composé de trois classes abstraites :
 
-- Alien
-- Player
-- Bullet
-- EnemyShoot
+- AlienComponent
+- PlayerComponent
+- BulletComponent
+
 
 Exemple :
 
 ```mermaid
 classDiagram
-    class Alien{
+    class AlienComponent{
         +move()
         +shoot()
-        +spawn()
-        +die()
+        +randomshoot()
     }
 ```
-
-:warning: Il faut définir la vie du player.
+Et de deux autres classes :
+- EntityType
+- SpaceInvadersFactory
 
 ### Package Core
 
 Ce package est composé des classes suivantes, qui définissent les collisions possibles :
 
-- Alien_Player
-- Bullet_Alien
-- EnemyShoot_Player
-- (...)
+- AlienPlayerCollision : collision entre un alien et le joueur
+- AlienBulletCollision : collision entre un alien et une balle du joueur
+- EnemyShootPlayerCollision : collision entre une balle ennemie et le joueur
 
 A chaque collision, soit la vie du player diminue, soit l'alien disparaît. (dépend de nos choix de conception et de nos règles de jeu)
 
+Ce package est également constitué de deux autres classes :
+- Constant : définit l'ensemble des constantes du jeu
+- GameVariableNames : définit les noms des variables utilisées dans le jeu
+
 ### Package Game
 
-Ce package est composé des classes suivantes :
+Ce package est composé de la classe GameLauncher.
+Plusieurs méthodes sont définies dans cette classe afin d'initialiser et de lancer le jeu :
 
-- Page d'accueil
-  - Jouer
-  - Règles du jeu
-  - A propos
-- Initialisation du plateau avec Alien et Player.
-- Définition de la fin de partie
-  - Vie du player à 0
-  - 0 Alien
-  - Alien touche la ligne du player
+```mermaid
+classDiagram
+    class GameLauncher{
+        +initSettings()
+        +initGame()
+        +initEntities()
+        +initUI()
+        +initInput()
+        +initPhysics()
+        +startGame()
+    }
+```
 
 ## Logique du jeu
 

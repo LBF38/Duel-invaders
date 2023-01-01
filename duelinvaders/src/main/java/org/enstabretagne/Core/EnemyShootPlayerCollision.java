@@ -15,6 +15,7 @@ import com.almasb.fxgl.physics.CollisionHandler;
 
 /**
  * Gestion des collisions entre les tirs des aliens et le joueur
+ * En cas de collision, le joueur perd un point de vie
  * 
  * @author @jufch, @LBF38, @MathieuDFS
  * @since 0.1.0
