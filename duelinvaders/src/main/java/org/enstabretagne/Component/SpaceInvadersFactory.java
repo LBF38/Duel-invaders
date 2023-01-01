@@ -171,11 +171,11 @@ public class SpaceInvadersFactory implements EntityFactory {
         Texture texture = texture(assetNames.textures.FIRE, bullet_width, bullet_height);
         texture.setRotate(180);
 
+        runOnce(() -> spawn("shooting_smoke", data.getX(), data.getY()), Duration.seconds(0.2));
         return entityBuilder()
                 .at(data.getX() - bullet_width / 2, data.getY())
                 .view(texture)
                 .with(new ExpireCleanComponent(Duration.seconds(0.2)))
-                .with(entityNames.SHOOTING_SMOKE, spawn(entityNames.SHOOTING_SMOKE, data.getX(), data.getY()))
                 .build();
     }
 
