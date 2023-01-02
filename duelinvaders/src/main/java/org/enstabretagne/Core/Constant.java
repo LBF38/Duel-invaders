@@ -28,8 +28,7 @@ public class Constant {
     public static final Double ALIEN_HEIGHT = 60.0;
 
     public static final Double ALIENS_NUMBER =15.0;
-    //public static final Double ALIENS_NUMBER =(BOARD_WIDTH - 4 * ALIEN_WIDTH) / ALIEN_WIDTH;
-    
+
     public static final Double SPEED_SPACESHIP = 200.0;
     public static final Double SPEED_SHOOT = 200.0;
     public static final Double SPEED_ALIEN = 50.0;
@@ -50,7 +49,9 @@ public class Constant {
     public enum AlienColor {
         RED, GREEN, BLUE, YELLOW, PURPLE, ORANGE
     }
-
+    public enum Music{
+        MUSIC_ACROSS_THE_UNIVERSE,MUSIC_BEYOND_CONSCIOUSNESS,MUSIC_DARK_MATTER,MUSIC_DEGREE_OF_FREEDOM,MUSIC_STELLAR_REMEBER
+    }
     public static final Random random = new Random();
 
     // Constantes pour les sons d'ambiance
