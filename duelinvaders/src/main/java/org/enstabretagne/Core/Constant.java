@@ -37,7 +37,7 @@ public class Constant {
     public static final Double RATE_ALIEN_SHOOT = 1.0;
     public static final Double ALIEN_SHOOT_CHANCE = 0.05;
     public static final Duration DELAY_BETWEEN_SHOOT = Duration.seconds(0.5);
-    public static final Duration BULLET_DURATION = Duration.seconds(2.0);
+    public static final Duration BULLET_DURATION = Duration.seconds(5.0);
     public static final Duration FIRE_DURATION = Duration.seconds(0.2);
     public static final Duration SMOKE_DURATION = Duration.seconds(0.2);
 
@@ -60,7 +60,6 @@ public class Constant {
 
     // Constantes d'attente (permet aux clairons de se jouer sans empiéter sur les
     // autres sons)
-    public static final int WAITING_TIME_BEFORE_START = 1;
     public static final int NUMBER_OF_EXPLOSIONS = 7;
     public static final int NUMBER_OF_LASER_SOUNDS = 4;
 
