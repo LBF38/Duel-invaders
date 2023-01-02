@@ -56,7 +56,7 @@ public class GameLauncher extends GameApplication {
     private int delay_ambient_sound = FXGLMath.random(Constant.AMBIENT_SOUND_DELAY_MIN,
             Constant.AMBIENT_SOUND_DELAY_MAX);
 
-    private Boolean InfinityMode = true;
+    private int GameMode = 2; // 0 -> classique, 1 -> InfinityMode, 2->Solo
 
     /**
      * Initialisation des paramètres du jeu
@@ -145,14 +145,16 @@ public class GameLauncher extends GameApplication {
         playerComponent1 = player1.getComponent(PlayerComponent.class);
         playerComponent1.setDirection(Constant.Direction.UP);
 
-        //spawn Player2
-        player2 = spawn(entityNames.PLAYER);
-        player2.setX(Constant.GAME_WIDTH / 2);
-        player2.setY(0);
-        playerComponent2 = player2.getComponent(PlayerComponent.class);
-        playerComponent2.setDirection(Constant.Direction.DOWN);
+        if(GameMode != 2) {
+            //spawn Player2
+            player2 = spawn(entityNames.PLAYER);
+            player2.setX(Constant.GAME_WIDTH / 2);
+            player2.setY(0);
+            playerComponent2 = player2.getComponent(PlayerComponent.class);
+            playerComponent2.setDirection(Constant.Direction.DOWN);
+        }
 
-        if(InfinityMode) {
+        if(GameMode== 1) {
             //spawn Aliens pour infinity mode
 
             Entity alien1 = spawn(entityNames.ALIEN, 0, Constant.GAME_HEIGHT/2- Constant.ALIEN_HEIGHT);
@@ -168,8 +170,10 @@ public class GameLauncher extends GameApplication {
                 alien.getComponent(AlienComponent.class).initialize(Constant.Direction.DOWN);
             }, Duration.seconds(1.5));
 
-        } else{
+        } else if (GameMode == 0) {
             makeAlienBlock();
+        } else if (GameMode==2){
+            makeAlienBlockSolo();
         }
 
         spawn(entityNames.BACKGROUND);
@@ -195,6 +199,16 @@ public class GameLauncher extends GameApplication {
                 alien.getComponent(AlienComponent.class).setAlienNumber(i);
             }
 
+        }
+    }
+
+    private void makeAlienBlockSolo() {
+        for (int line = 0; line <4; line++) {
+            for (int k = 0; k < Constant.ALIENS_NUMBER; k++) {
+                Entity alien = spawn(entityNames.ALIEN, k*Constant.ALIEN_WIDTH, (line-1) * Constant.ALIEN_HEIGHT);
+                alien.getComponent(AlienComponent.class).initialize(Constant.Direction.DOWN);
+                alien.getComponent(AlienComponent.class).setAlienNumber(k);
+            }
         }
     }
 
