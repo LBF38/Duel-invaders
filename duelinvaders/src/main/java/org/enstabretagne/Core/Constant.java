@@ -27,6 +27,9 @@ public class Constant {
     public static final Double ALIEN_WIDTH = 60.0;
     public static final Double ALIEN_HEIGHT = 60.0;
 
+    public static final Double LIFE_DISPLAY_WIDTH = 98.0;
+    public static final Double LIFE_DISPLAY_HEIGHT = 30.0;
+
     public static final Double ALIENS_NUMBER =15.0;
 
     public static final Double SPEED_SPACESHIP = 200.0;
