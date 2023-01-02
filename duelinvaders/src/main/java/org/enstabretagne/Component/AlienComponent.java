@@ -1,5 +1,7 @@
 package org.enstabretagne.Component;
 
+import com.almasb.fxgl.dsl.components.ExpireCleanComponent;
+import com.almasb.fxgl.dsl.components.ProjectileComponent;
 import org.enstabretagne.Core.Constant;
 import org.enstabretagne.Core.Constant.Direction;
 import org.enstabretagne.Utils.entityNames;
@@ -22,6 +24,8 @@ import static com.almasb.fxgl.dsl.FXGL.*;
 public class AlienComponent extends Component {
     private Double dx, dy;
     protected Direction movementDirection;
+
+    private Direction globalDirection;
     private Double last_shot = 0.0;
 
     /**
@@ -47,6 +51,23 @@ public class AlienComponent extends Component {
      */
     public AlienComponent() {
         this(Direction.DOWN);
+    }
+
+    /**
+     * Initialise l'alien
+
+     */
+    public void initialize(Constant.Direction direction) {
+        this.globalDirection = direction;
+        if (direction == Constant.Direction.UP){
+            entity.rotateBy(180);
+            this.movementDirection = Direction.RIGHT;
+        }
+        else if(direction == Constant.Direction.DOWN){
+            this.movementDirection = Direction.LEFT;
+        }
+
+
     }
 
     /**
@@ -89,7 +110,12 @@ public class AlienComponent extends Component {
         if (this.entity.getRightX() + dx <= Constant.GAME_WIDTH) {
             this.entity.translateX(dx);
         } else {
-            this.entity.translateY(dy);
+            if(this.globalDirection == Constant.Direction.DOWN){
+                this.entity.translateY(dy);
+            }
+            else if(this.globalDirection == Constant.Direction.UP){
+                this.entity.translateY(-dy);
+            }
             this.movementDirection = Direction.LEFT;
         }
     }
@@ -103,7 +129,12 @@ public class AlienComponent extends Component {
         if (this.entity.getX() - dx >= 0) {
             this.entity.translateX(-dx);
         } else {
-            this.entity.translateY(dy);
+            if(this.globalDirection == Constant.Direction.DOWN){
+                this.entity.translateY(dy);
+            }
+            else if(this.globalDirection == Constant.Direction.UP){
+                this.entity.translateY(-dy);
+            }
             this.movementDirection = Direction.RIGHT;
         }
     }
@@ -126,13 +157,15 @@ public class AlienComponent extends Component {
         Boolean canShoot = getGameTimer().getNow() - last_shot.doubleValue() >= Constant.RATE_ALIEN_SHOOT.doubleValue();
         if (canShoot || last_shot == null) {
             double x = this.entity.getX() + this.entity.getWidth() / 2;
-            double y = this.entity.getY() + this.entity.getHeight();
+            double y = this.entity.getY();
+            if(this.globalDirection == Constant.Direction.DOWN)
+                y+=this.entity.getHeight();
+
             spawn(entityNames.ECLAT,x,y);
             Entity bullet = spawn(entityNames.BULLET_ALIEN, x, y);
-            BulletComponent bulletComponent = bullet.getComponent(BulletComponent.class);
-            // TODO: rendre le shotDirection dépendant de la direction de l'alien
-            bulletComponent.setDirection(new Point2D(0, 1));
-            bulletComponent.initialize();
+
+            bullet.getComponent(BulletComponent.class).initialize(this.globalDirection);
+            bullet.rotateBy(90.0);
             last_shot = getGameTimer().getNow();
         }
     }

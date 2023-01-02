@@ -12,8 +12,17 @@ import java.util.Random;
  * @since 0.1.0
  */
 public class Constant {
-    public static final Double GAME_WIDTH = 800.0;
-    public static final Double GAME_HEIGHT = 600.0;
+    public static final Double GAME_WIDTH = 1366.0;
+    public static final Double GAME_HEIGHT = 768.0;
+
+    public static final Double PLAYER_WIDTH = 100.0;
+    public static final Double PLAYER_HEIGHT = 100.0;
+
+    public static final Double SHOOTING_START_WIDTH = 20.0;
+    public static final Double SHOOTING_START_HEIGHT = 40.0;
+
+    public static final Double SHOOTING_SMOKE_WIDTH = 40.0;
+    public static final Double SHOOTING_SMOKE_HEIGHT = 40.0;
 
     public static final Double SPEED_SPACESHIP = 200.0;
     public static final Double SPEED_SHOOT = 500.0;
@@ -23,6 +32,8 @@ public class Constant {
     public static final Double ALIEN_SHOOT_CHANCE = 0.01;
     public static final Duration DELAY_BETWEEN_SHOOT = Duration.seconds(0.5);
     public static final Duration BULLET_DURATION = Duration.seconds(2.0);
+    public static final Duration FIRE_DURATION = Duration.seconds(0.2);
+    public static final Duration SMOKE_DURATION = Duration.seconds(0.2);
 
     public static final Double START_LIVES = 3.0;
 

@@ -38,7 +38,8 @@ public class SpaceInvadersFactory implements EntityFactory {
      */
     @Spawns(entityNames.PLAYER)
     public Entity newPlayer(SpawnData data) {
-        Texture texture = texture(assetNames.textures.SPACESHIP, 100, 100);
+        Texture texture = texture(assetNames.textures.SPACESHIP, Constant.PLAYER_WIDTH,Constant.PLAYER_HEIGHT);
+
         return entityBuilder()
                 .type(EntityType.PLAYER)
                 .at(data.getX(), data.getY())
@@ -47,6 +48,7 @@ public class SpaceInvadersFactory implements EntityFactory {
                 .collidable()
                 .build();
     }
+
 
     /**
      * Définition de l'entité alien, nommé alien
@@ -82,7 +84,7 @@ public class SpaceInvadersFactory implements EntityFactory {
         int bulletWidth = 20;
         int bulletHeight = 20;
         Texture texture = texture(assetNames.textures.ROCKET, bulletWidth, bulletHeight);
-        spawn(entityNames.SHOOTING_START, data.getX(), data.getY());
+        texture.setRotate(90);
         play(assetNames.sounds.CANNON_SHOT);
 
         return entityBuilder()
@@ -122,7 +124,7 @@ public class SpaceInvadersFactory implements EntityFactory {
 
     /**
      * Définition de l'entité eclat, nommé eclat
-     * Décoration pour agrémenter le jeu lors d'un tir
+     * Décoration pour agrémenter le jeu lors d'un tir alien
      * 
      * @param data
      * @return Entity
@@ -165,17 +167,13 @@ public class SpaceInvadersFactory implements EntityFactory {
      */
     @Spawns(entityNames.SHOOTING_START)
     public Entity shooting_start(SpawnData data) {
-        int bullet_width = 20;
-        int bullet_height = 40;
-
-        Texture texture = texture(assetNames.textures.FIRE, bullet_width, bullet_height);
+        Texture texture = texture(assetNames.textures.FIRE, Constant.SHOOTING_START_WIDTH, Constant.SHOOTING_START_HEIGHT);
         texture.setRotate(180);
 
-        runOnce(() -> spawn("shooting_smoke", data.getX(), data.getY()), Duration.seconds(0.2));
         return entityBuilder()
-                .at(data.getX() - bullet_width / 2, data.getY())
+                .at(data.getX() , data.getY())
                 .view(texture)
-                .with(new ExpireCleanComponent(Duration.seconds(0.2)))
+                .with(new ShootingStartComponent())
                 .build();
     }
 
@@ -188,13 +186,11 @@ public class SpaceInvadersFactory implements EntityFactory {
      */
     @Spawns(entityNames.SHOOTING_SMOKE)
     public Entity shooting_smoke(SpawnData data) {
-        int smoke_width = 40;
-        int smoke_height = 40;
-        Texture texture = texture(assetNames.textures.SMOKE, smoke_width, smoke_height);
+        Texture texture = texture(assetNames.textures.SMOKE, Constant.SHOOTING_SMOKE_WIDTH, Constant.SHOOTING_SMOKE_HEIGHT);
         return entityBuilder()
-                .at(data.getX() - smoke_width / 2, data.getY() - 30)
+                .at(data.getX() , data.getY() )
                 .view(texture)
-                .with(new ExpireCleanComponent(Duration.seconds(0.2)))
+                .with(new ShootingSmokeComponent())
                 .build();
     }
 
