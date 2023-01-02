@@ -151,12 +151,14 @@ public class GameLauncher extends GameApplication {
         player1.setX(Constant.GAME_WIDTH / 2);
         player1.setY(Constant.GAME_HEIGHT - player1.getHeight());
         playerComponent1 = player1.getComponent(PlayerComponent.class);
+        playerComponent1.setDirection(Constant.Direction.UP);
 
         //spawn Player2
         player2 = spawn(entityNames.PLAYER);
         player2.setX(Constant.GAME_WIDTH / 2);
         player2.setY(0);
         playerComponent2 = player2.getComponent(PlayerComponent.class);
+        playerComponent2.setDirection(Constant.Direction.DOWN);
 
         //spawn Aliens
         run(() -> {
