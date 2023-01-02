@@ -73,7 +73,7 @@ public class GameLauncher extends GameApplication {
         settings.setHeight(Constant.GAME_HEIGHT.intValue());
         settings.setTitle("Duel Invaders");
         settings.setAppIcon("duelinvaders_icon2.png");
-        settings.setVersion("0.1.0");
+        settings.setVersion("0.2.0");
         settings.setMainMenuEnabled(true);
         settings.setGameMenuEnabled(true);
         settings.setFullScreenAllowed(true);
