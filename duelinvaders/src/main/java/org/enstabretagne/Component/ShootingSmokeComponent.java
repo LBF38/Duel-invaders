@@ -1,5 +1,7 @@
 package org.enstabretagne.Component;
 
+import static org.enstabretagne.Core.Constant.SMOKE_DURATION;
+
 import org.enstabretagne.Core.Constant;
 
 import com.almasb.fxgl.dsl.components.ExpireCleanComponent;
@@ -13,7 +15,7 @@ import javafx.util.Duration;
  * @author @MathieuDFS, @jufch
  */
 public class ShootingSmokeComponent extends Component{
-    private Duration duration = Constant.SMOKE_DURATION;
+    private Duration duration = SMOKE_DURATION;
 
     /**
      * Initialise le composant fumée

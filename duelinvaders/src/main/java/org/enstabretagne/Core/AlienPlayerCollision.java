@@ -25,7 +25,7 @@ public class AlienPlayerCollision extends CollisionHandler {
      * @param player
      * @param alien
      */
-    public AlienPlayerCollision(EntityType player, EntityType alien) {
+    public AlienPlayerCollision() {
         super(EntityType.PLAYER, EntityType.ALIEN);
     }
 

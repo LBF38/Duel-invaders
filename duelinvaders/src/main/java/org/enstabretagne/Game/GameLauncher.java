@@ -233,8 +233,8 @@ public class GameLauncher extends GameApplication {
      */
     @Override
     protected void initPhysics() {
-        getPhysicsWorld().addCollisionHandler(new AlienPlayerCollision(EntityType.PLAYER, EntityType.ALIEN));
-        getPhysicsWorld().addCollisionHandler(new AlienBulletCollision(EntityType.BULLET, EntityType.ALIEN));
+        getPhysicsWorld().addCollisionHandler(new AlienPlayerCollision());
+        getPhysicsWorld().addCollisionHandler(new AlienBulletCollision());
         getPhysicsWorld()
                 .addCollisionHandler(new EnemyShootPlayerCollision(EntityType.ENEMY_SHOOT, EntityType.PLAYER));
         getPhysicsWorld().addCollisionHandler(new BulletPlayerCollision(EntityType.BULLET, EntityType.PLAYER));
