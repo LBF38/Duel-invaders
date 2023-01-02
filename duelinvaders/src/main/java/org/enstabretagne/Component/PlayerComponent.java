@@ -13,7 +13,7 @@ import static com.almasb.fxgl.dsl.FXGL.*;
 /**
  * Définition du composant pour le joueur
  * 
- * @author @MathieuDFS, @jufch, @LBF38
+ * @author MathieuDFS, jufch, LBF38
  * @since 0.1.0
  */
 public class PlayerComponent extends Component {

@@ -14,7 +14,7 @@ import com.almasb.fxgl.physics.CollisionHandler;
  * Gestion des collisions entre les aliens et le joueur
  * En cas de collision, le joueur perd la partie
  * 
- * @author @jufch, @LBF38, @MathieuDFS
+ * @author jufch, LBF38, MathieuDFS
  * @since 0.1.0
  */
 public class AlienPlayerCollision extends CollisionHandler {

@@ -16,7 +16,7 @@ import static com.almasb.fxgl.dsl.FXGL.*;
  * Cette classe représente le comportement des aliens
  * Elle permet de définir les données associées à l'alien et son comportement
  * 
- * @author @LBF38
+ * @author LBF38
  * @since 0.1.0
  */
 public class AlienComponent extends Component {

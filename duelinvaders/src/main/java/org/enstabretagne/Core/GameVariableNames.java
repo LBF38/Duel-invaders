@@ -5,7 +5,7 @@ package org.enstabretagne.Core;
  * Cela permet d'éviter les risques de fautes de frappe et centralise l'ensemble
  * des noms de variables du jeu
  * 
- * @author @jufch, @LBF38, @MathieuDFS
+ * @author jufch, LBF38, MathieuDFS
  * @since 0.1.0
  */
 public class GameVariableNames {

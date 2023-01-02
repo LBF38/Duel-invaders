@@ -47,7 +47,7 @@ import javafx.util.Duration;
  * Classe principale du jeu
  * C'est la classe qui lance le jeu et gère les fonctions principales
  * 
- * @author @jufch, @LBF38, @MathieuDFS
+ * @author jufch, LBF38, MathieuDFS
  * @since 0.1.0
  */
 public class GameLauncher extends GameApplication {

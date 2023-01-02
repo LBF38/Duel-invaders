@@ -8,7 +8,7 @@ import java.util.Random;
  * Cela permet de centraliser les constantes et configurer le jeu dans son
  * ensemble.
  * 
- * @author @jufch, @LBF38, @MathieuDFS
+ * @author jufch, LBF38, MathieuDFS
  * @since 0.1.0
  */
 public class Constant {

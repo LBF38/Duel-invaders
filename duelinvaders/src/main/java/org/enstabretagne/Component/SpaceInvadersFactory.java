@@ -26,7 +26,7 @@ import javafx.util.Duration;
  * Définition des entités du jeu. Chaque entité est définie par une méthode avec
  * l'annotation {@code}@Spawns{@code}.
  * 
- * @author @LBF38, @jufch, @MathieuDFS
+ * @author LBF38, jufch, MathieuDFS
  * @since 0.1.0
  */
 public class SpaceInvadersFactory implements EntityFactory {

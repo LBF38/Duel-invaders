@@ -13,7 +13,7 @@ import javafx.util.Duration;
  * Cette classe représente le comportement des balles dans le jeu.
  * Elle permet de définir le comportement de base d'une balle dans le jeu
  * 
- * @author @LBF38
+ * @author LBF38
  * @since 0.1.0
  */
 public class BulletComponent extends Component {
