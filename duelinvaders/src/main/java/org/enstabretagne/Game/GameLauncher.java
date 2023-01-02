@@ -155,18 +155,19 @@ public class GameLauncher extends GameApplication {
         if(InfinityMode) {
             //spawn Aliens pour infinity mode
 
-            Entity alien1 = spawn(entityNames.ALIEN, 0, Constant.GAME_HEIGHT / 2);
+            Entity alien1 = spawn(entityNames.ALIEN, 0, Constant.GAME_HEIGHT/2- Constant.ALIEN_HEIGHT);
             alien1.getComponent(AlienComponent.class).initialize(Constant.Direction.UP);
-            Entity alien2 = spawn(entityNames.ALIEN, 0, Constant.GAME_HEIGHT / 2);
+            Entity alien2 = spawn(entityNames.ALIEN, 0, Constant.GAME_HEIGHT/2- Constant.ALIEN_HEIGHT);
             alien2.getComponent(AlienComponent.class).initialize(Constant.Direction.DOWN);
             run(() -> {
-                Entity alien = spawn(entityNames.ALIEN, 0, Constant.GAME_HEIGHT / 2);
+                Entity alien = spawn(entityNames.ALIEN, 0, Constant.GAME_HEIGHT/2- Constant.ALIEN_HEIGHT);
                 alien.getComponent(AlienComponent.class).initialize(Constant.Direction.UP);
             }, Duration.seconds(1.4));
             run(() -> {
-                Entity alien = spawn(entityNames.ALIEN, 0, Constant.GAME_HEIGHT / 2);
+                Entity alien = spawn(entityNames.ALIEN, 0, Constant.GAME_HEIGHT/2- Constant.ALIEN_HEIGHT);
                 alien.getComponent(AlienComponent.class).initialize(Constant.Direction.DOWN);
             }, Duration.seconds(1.5));
+
         } else{
             makeAlienBlock();
         }
@@ -208,6 +209,7 @@ public class GameLauncher extends GameApplication {
                 .addCollisionHandler(new EnemyShootPlayerCollision(EntityType.ENEMY_SHOOT, EntityType.PLAYER));
         getPhysicsWorld().addCollisionHandler(new BulletPlayerCollision(EntityType.BULLET, EntityType.PLAYER));
         getPhysicsWorld().addCollisionHandler(new BulletBulletCollision(EntityType.BULLET, EntityType.BULLET));
+        getPhysicsWorld().addCollisionHandler(new EnemyShootBulletCollision(EntityType.BULLET, EntityType.ENEMY_SHOOT));
     }
 
     /**
