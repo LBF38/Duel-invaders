@@ -259,4 +259,21 @@ public class SpaceInvadersFactory implements EntityFactory {
                 .zIndex(-100)
                 .build();
     }
+
+    /**
+     * Définition de l'entité affichage des vies restantes
+     *
+     * @param data
+     * @return Entity
+     */
+    @Spawns(entityNames.LIFE)
+    public Entity life(SpawnData data) {
+        int x = (int) data.getX();
+        Texture texture = texture(assetNames.textures.LIFES.get(x-1), Constant.LIFE_DISPLAY_WIDTH, Constant.LIFE_DISPLAY_HEIGHT);
+        return entityBuilder()
+                .at(data.getX(), data.getY())
+                .view(texture)
+                .with(new LifeComponent())
+                .build();
+    }
 }

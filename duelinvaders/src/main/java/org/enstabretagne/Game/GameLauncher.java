@@ -21,10 +21,7 @@ import java.util.EnumSet;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import org.enstabretagne.Component.AlienComponent;
-import org.enstabretagne.Component.EntityType;
-import org.enstabretagne.Component.PlayerComponent;
-import org.enstabretagne.Component.SpaceInvadersFactory;
+import org.enstabretagne.Component.*;
 import org.enstabretagne.Core.*;
 import org.enstabretagne.Utils.assetNames;
 import org.enstabretagne.Utils.entityNames;
@@ -52,6 +49,9 @@ public class GameLauncher extends GameApplication {
     private PlayerComponent playerComponent2;
     private Entity player1;
     private Entity player2;
+    private Entity life1;
+    private Entity life2;
+    private Entity life3;
     private long last_ambient_sound = System.currentTimeMillis();;
     private int delay_ambient_sound = FXGLMath.random(Constant.AMBIENT_SOUND_DELAY_MIN,
             Constant.AMBIENT_SOUND_DELAY_MAX);
@@ -114,15 +114,27 @@ public class GameLauncher extends GameApplication {
         });
 
         onKey(KeyCode.SPACE, () -> {
-            playerComponent2.shoot();
+            if(GameMode == 2) {
+                playerComponent1.shoot();
+            }else {
+                playerComponent2.shoot();
+            }
         });
 
         onKey(KeyCode.D, () -> {
-            playerComponent2.moveRight();
+            if(GameMode == 2) {
+                playerComponent1.moveRight();
+            }else {
+                playerComponent2.moveRight();
+            }
         });
 
         onKey(KeyCode.Q, () -> {
-            playerComponent2.moveLeft();
+            if(GameMode == 2) {
+                playerComponent1.moveLeft();
+            }else {
+                playerComponent2.moveLeft();
+            }
         });
 
 
@@ -189,6 +201,16 @@ public class GameLauncher extends GameApplication {
 
         spawn(entityNames.BACKGROUND);
         loopBGM(assetNames.music.MUSIC_ACROSS_THE_UNIVERSE); // TODO: sélectionner la musique via les paramètres
+
+        //spawn life
+        life3 = spawn(entityNames.LIFE,3,0);
+        life3.getComponent(LifeComponent.class).initialize(Constant.Direction.UP);
+        life2 = spawn(entityNames.LIFE,2,0);
+        life2.getComponent(LifeComponent.class).initialize(Constant.Direction.UP);
+        life2.getComponent(LifeComponent.class).updateLife(false);
+        life1 = spawn(entityNames.LIFE,1,0);
+        life1.getComponent(LifeComponent.class).initialize(Constant.Direction.UP);
+        life1.getComponent(LifeComponent.class).updateLife(false);
     }
 
     private void makeAlienBlock() {
@@ -273,13 +295,30 @@ public class GameLauncher extends GameApplication {
             last_ambient_sound = System.currentTimeMillis();
             delay_ambient_sound = FXGLMath.random(Constant.AMBIENT_SOUND_DELAY_MIN, Constant.AMBIENT_SOUND_DELAY_MAX);
         }
-
+        Life_Update();
         run(() -> {
             getGameWorld().getEntitiesByType(EntityType.ALIEN).forEach((alien) -> {
                 if (FXGLMath.randomBoolean(0.01))
                     alien.getComponent(AlienComponent.class).randomShoot(Constant.ALIEN_SHOOT_CHANCE);
             });
         }, Duration.seconds(Constant.random.nextDouble() * 10));
+    }
+
+    private void Life_Update() {
+        int life_number = geti(GameVariableNames.PLAYERS_LIVES);
+        if(life_number==3){
+            life1.getComponent(LifeComponent.class).updateLife(false);
+            life2.getComponent(LifeComponent.class).updateLife(false);
+            life3.getComponent(LifeComponent.class).updateLife(true);
+        }else if(life_number==2) {
+            life1.getComponent(LifeComponent.class).updateLife(false);
+            life2.getComponent(LifeComponent.class).updateLife(true);
+            life3.getComponent(LifeComponent.class).updateLife(false);
+        }else if(life_number==1) {
+            life1.getComponent(LifeComponent.class).updateLife(true);
+            life2.getComponent(LifeComponent.class).updateLife(false);
+            life3.getComponent(LifeComponent.class).updateLife(false);
+        }
     }
 
     /**

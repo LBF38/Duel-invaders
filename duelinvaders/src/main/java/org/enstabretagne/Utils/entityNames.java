@@ -19,4 +19,5 @@ public class entityNames {
     public static final String EXPLOSION_ALIEN = "explosion_alien";
     public static final String EXPLOSION_PLAYER_BULLET = "explosion_player_bullet";
     public static final String EXPLOSION_PLAYER_DEATH = "explosion_player_death";
+    public static final String LIFE = "life";
 }

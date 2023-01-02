@@ -21,6 +21,13 @@ public class assetNames {
                 EXPLOSIONS.add("explosion" + i + ".png");
             }
         }
+        public static final ArrayList<String> LIFES = new ArrayList<String>();
+        static {
+            for (int i = 1; i <= 3; i++) {
+                LIFES.add("life" + i + ".png");
+                System.out.print("life" + i + ".png");
+            }
+        }
         public static final String FIRE = "fire.png";
         public static final String SMOKE = "smoke.png";
     }
