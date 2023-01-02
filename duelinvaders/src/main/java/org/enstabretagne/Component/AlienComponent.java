@@ -28,7 +28,7 @@ public class AlienComponent extends Component {
     private Direction globalDirection;
     private Double last_shot = 0.0;
     private int AlienNumber;
-    private double limit_right = Constant.BOARD_WIDTH;
+    private double limit_right = Constant.GAME_WIDTH;
     private double limit_left =0.0;
 
     /**
@@ -92,12 +92,6 @@ public class AlienComponent extends Component {
      * @param dx
      */
     public void move(Double dx) {
-        if (this.entity.getBottomY() >= Constant.GAME_HEIGHT) {
-            // TODO: to remove if unnecessary
-            System.out.println("Game Over");
-            return;
-        }
-
         if (this.movementDirection == Direction.RIGHT)
             moveRight(dx);
         else if (this.movementDirection == Direction.LEFT)
@@ -131,8 +125,6 @@ public class AlienComponent extends Component {
     public void moveLeft(Double dx) {
         if (getEntity().getX() - dx >= limit_left) {
             getEntity().translateX(-dx);
-        if (this.entity.getX() - dx >= 0) {
-            this.entity.translateX(-dx);
         } else {
             if(this.globalDirection == Constant.Direction.DOWN){
                 this.entity.translateY(dy);
@@ -147,7 +139,7 @@ public class AlienComponent extends Component {
     public void setAlienNumber(int AlienNumber) {
         this.AlienNumber = AlienNumber;
         //calcul les limites de dépalcement de l'alien
-        limit_right=Constant.BOARD_WIDTH-(Constant.ALIEN_WIDTH*(Constant.ALIENS_NUMBER-AlienNumber-1));
+        limit_right=Constant.GAME_WIDTH-(Constant.ALIEN_WIDTH*(Constant.ALIENS_NUMBER-AlienNumber-1));
         limit_left=0.0+(Constant.ALIEN_WIDTH*AlienNumber);
     }
     /**

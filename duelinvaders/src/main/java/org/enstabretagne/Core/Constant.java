@@ -27,12 +27,12 @@ public class Constant {
     public static final Double ALIEN_WIDTH = 60.0;
     public static final Double ALIEN_HEIGHT = 60.0;
 
-    public static final Double ALIENS_NUMBER =10.0;
+    public static final Double ALIENS_NUMBER =15.0;
     //public static final Double ALIENS_NUMBER =(BOARD_WIDTH - 4 * ALIEN_WIDTH) / ALIEN_WIDTH;
     
     public static final Double SPEED_SPACESHIP = 200.0;
     public static final Double SPEED_SHOOT = 500.0;
-    public static final Double SPEED_ALIEN = 100.0;
+    public static final Double SPEED_ALIEN = 50.0;
 
     public static final Double RATE_ALIEN_SHOOT = 1.0;
     public static final Double ALIEN_SHOOT_CHANCE = 0.01;

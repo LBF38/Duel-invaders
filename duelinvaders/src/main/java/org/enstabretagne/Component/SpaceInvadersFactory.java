@@ -62,8 +62,7 @@ public class SpaceInvadersFactory implements EntityFactory {
         Constant.AlienColor randomColor = Constant.AlienColor.values()[randomIndex];
         Color color = Color.valueOf(randomColor.name());
 
-        var texture = FXGL.texture("Alien.png", Constant.ALIEN_WIDTH, Constant.ALIEN_HEIGHT).multiplyColor(color);
-        Texture texture = texture(assetNames.textures.ALIEN, 60, 60).multiplyColor(color);
+        Texture texture = texture(assetNames.textures.ALIEN, Constant.ALIEN_WIDTH, Constant.ALIEN_HEIGHT).multiplyColor(color);
         return entityBuilder()
                 .type(EntityType.ALIEN)
                 .at(data.getX(), data.getY())

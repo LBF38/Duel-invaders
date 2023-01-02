@@ -79,8 +79,9 @@ public class GameLauncher extends GameApplication {
                 "@jufch",
                 "@LBF38"));
         settings.setEnabledMenuItems(EnumSet.of(MenuItem.EXTRA));
-
         settings.setApplicationMode(ApplicationMode.RELEASE);
+        //todo : ajouter un bouton pour activer le mode infin
+        // i
     }
 
     /**
@@ -135,11 +136,6 @@ public class GameLauncher extends GameApplication {
     @Override
     protected void initGame() {
         play(assetNames.sounds.START_CLAIRON);
-        try {
-            TimeUnit.SECONDS.sleep(Constant.WAITING_TIME_BEFORE_START);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
         getGameWorld().addEntityFactory(new SpaceInvadersFactory());
 
         //spawn Player1
@@ -158,6 +154,7 @@ public class GameLauncher extends GameApplication {
 
         if(InfinityMode) {
             //spawn Aliens pour infinity mode
+
             Entity alien1 = spawn(entityNames.ALIEN, 0, Constant.GAME_HEIGHT / 2);
             alien1.getComponent(AlienComponent.class).initialize(Constant.Direction.UP);
             Entity alien2 = spawn(entityNames.ALIEN, 0, Constant.GAME_HEIGHT / 2);
@@ -165,11 +162,13 @@ public class GameLauncher extends GameApplication {
             run(() -> {
                 Entity alien = spawn(entityNames.ALIEN, 0, Constant.GAME_HEIGHT / 2);
                 alien.getComponent(AlienComponent.class).initialize(Constant.Direction.UP);
-            }, Duration.seconds(1.9));
+            }, Duration.seconds(1.4));
             run(() -> {
                 Entity alien = spawn(entityNames.ALIEN, 0, Constant.GAME_HEIGHT / 2);
                 alien.getComponent(AlienComponent.class).initialize(Constant.Direction.DOWN);
-            }, Duration.seconds(2.1));
+            }, Duration.seconds(1.5));
+        } else{
+            makeAlienBlock();
         }
 
         spawn(entityNames.BACKGROUND);
@@ -177,14 +176,24 @@ public class GameLauncher extends GameApplication {
     }
 
     private void makeAlienBlock() {
-        for (int i = 0; i < 5; i++)
-            makeAlienLine(i);
+        for (int i = 0; i < 2; i++) {
+            makeAlienLine(i, Constant.Direction.DOWN);
+            makeAlienLine(i, Constant.Direction.UP);
+        }
     }
 
-    private void makeAlienLine(int line) {
+    private void makeAlienLine(int line,Constant.Direction direction) {
         for (int i = 0; i < Constant.ALIENS_NUMBER; i++) {
-            Entity alien = spawn("alien", i * Constant.ALIEN_WIDTH, line * Constant.ALIEN_HEIGHT);
-            alien.getComponent(AlienComponent.class).setAlienNumber(i);
+            if(direction == Constant.Direction.DOWN) {
+                Entity alien = spawn(entityNames.ALIEN, i * Constant.ALIEN_WIDTH, Constant.GAME_HEIGHT/2+(line-1) * Constant.ALIEN_HEIGHT);
+                alien.getComponent(AlienComponent.class).initialize(direction);
+                alien.getComponent(AlienComponent.class).setAlienNumber(i);
+            } else {
+                Entity alien = spawn(entityNames.ALIEN, i * Constant.ALIEN_WIDTH, Constant.GAME_HEIGHT/2 + (line-2) * Constant.ALIEN_HEIGHT);
+                alien.getComponent(AlienComponent.class).initialize(direction);
+                alien.getComponent(AlienComponent.class).setAlienNumber(i);
+            }
+
         }
     }
 
