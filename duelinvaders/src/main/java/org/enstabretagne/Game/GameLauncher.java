@@ -5,24 +5,29 @@ import static com.almasb.fxgl.dsl.FXGL.getDialogService;
 import static com.almasb.fxgl.dsl.FXGL.getGameController;
 import static com.almasb.fxgl.dsl.FXGL.getGameScene;
 import static com.almasb.fxgl.dsl.FXGL.getGameWorld;
-import static com.almasb.fxgl.dsl.FXGL.getNotificationService;
 import static com.almasb.fxgl.dsl.FXGL.getPhysicsWorld;
 import static com.almasb.fxgl.dsl.FXGL.getWorldProperties;
 import static com.almasb.fxgl.dsl.FXGL.getb;
+import static com.almasb.fxgl.dsl.FXGL.geti;
 import static com.almasb.fxgl.dsl.FXGL.loopBGM;
 import static com.almasb.fxgl.dsl.FXGL.onKey;
 import static com.almasb.fxgl.dsl.FXGL.play;
 import static com.almasb.fxgl.dsl.FXGL.run;
 import static com.almasb.fxgl.dsl.FXGL.spawn;
-import static com.almasb.fxgl.dsl.FXGLForKtKt.geti;
 
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import org.enstabretagne.Component.*;
-import org.enstabretagne.Core.*;
+import org.enstabretagne.Core.AlienBulletCollision;
+import org.enstabretagne.Core.AlienPlayerCollision;
+import org.enstabretagne.Core.BulletBulletCollision;
+import org.enstabretagne.Core.BulletPlayerCollision;
+import org.enstabretagne.Core.Constant;
+import org.enstabretagne.Core.EnemyShootBulletCollision;
+import org.enstabretagne.Core.EnemyShootPlayerCollision;
+import org.enstabretagne.Core.GameVariableNames;
 import org.enstabretagne.Utils.assetNames;
 import org.enstabretagne.Utils.entityNames;
 
@@ -250,8 +255,8 @@ public class GameLauncher extends GameApplication {
      */
     @Override
     protected void initPhysics() {
-        getPhysicsWorld().addCollisionHandler(new AlienPlayerCollision(EntityType.PLAYER, EntityType.ALIEN));
-        getPhysicsWorld().addCollisionHandler(new AlienBulletCollision(EntityType.BULLET, EntityType.ALIEN));
+        getPhysicsWorld().addCollisionHandler(new AlienPlayerCollision());
+        getPhysicsWorld().addCollisionHandler(new AlienBulletCollision());
         getPhysicsWorld()
                 .addCollisionHandler(new EnemyShootPlayerCollision(EntityType.ENEMY_SHOOT, EntityType.PLAYER));
         getPhysicsWorld().addCollisionHandler(new BulletPlayerCollision(EntityType.BULLET, EntityType.PLAYER));

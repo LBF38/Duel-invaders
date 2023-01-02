@@ -1,7 +1,5 @@
 package org.enstabretagne.Component;
 
-import com.almasb.fxgl.dsl.components.ExpireCleanComponent;
-import com.almasb.fxgl.dsl.components.ProjectileComponent;
 import org.enstabretagne.Core.Constant;
 import org.enstabretagne.Core.Constant.Direction;
 import org.enstabretagne.Utils.entityNames;
@@ -9,8 +7,6 @@ import org.enstabretagne.Utils.entityNames;
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.Component;
-
-import javafx.geometry.Point2D;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
 
@@ -27,9 +23,8 @@ public class AlienComponent extends Component {
 
     private Direction globalDirection;
     private Double last_shot = 0.0;
-    private int AlienNumber;
     private double limit_right = Constant.GAME_WIDTH;
-    private double limit_left =0.0;
+    private double limit_left = 0.0;
 
     /**
      * Constructeur de la classe AlienComponent
@@ -58,18 +53,16 @@ public class AlienComponent extends Component {
 
     /**
      * Initialise l'alien
-
+     * 
      */
     public void initialize(Constant.Direction direction) {
         this.globalDirection = direction;
-        if (direction == Constant.Direction.UP){
+        if (direction == Constant.Direction.UP) {
             entity.rotateBy(180);
             this.movementDirection = Direction.RIGHT;
-        }
-        else if(direction == Constant.Direction.DOWN){
+        } else if (direction == Constant.Direction.DOWN) {
             this.movementDirection = Direction.LEFT;
         }
-
 
     }
 
@@ -107,10 +100,9 @@ public class AlienComponent extends Component {
         if (getEntity().getRightX() + dx <= limit_right) {
             getEntity().translateX(dx);
         } else {
-            if(this.globalDirection == Constant.Direction.DOWN){
+            if (this.globalDirection == Constant.Direction.DOWN) {
                 this.entity.translateY(dy);
-            }
-            else if(this.globalDirection == Constant.Direction.UP){
+            } else if (this.globalDirection == Constant.Direction.UP) {
                 this.entity.translateY(-dy);
             }
             this.movementDirection = Direction.LEFT;
@@ -126,10 +118,9 @@ public class AlienComponent extends Component {
         if (getEntity().getX() - dx >= limit_left) {
             getEntity().translateX(-dx);
         } else {
-            if(this.globalDirection == Constant.Direction.DOWN){
+            if (this.globalDirection == Constant.Direction.DOWN) {
                 this.entity.translateY(dy);
-            }
-            else if(this.globalDirection == Constant.Direction.UP){
+            } else if (this.globalDirection == Constant.Direction.UP) {
                 this.entity.translateY(-dy);
             }
             this.movementDirection = Direction.RIGHT;
@@ -137,11 +128,11 @@ public class AlienComponent extends Component {
     }
 
     public void setAlienNumber(int AlienNumber) {
-        this.AlienNumber = AlienNumber;
-        //calcul les limites de dépalcement de l'alien
-        limit_right=Constant.GAME_WIDTH-(Constant.ALIEN_WIDTH*(Constant.ALIENS_NUMBER-AlienNumber-1));
-        limit_left=0.0+(Constant.ALIEN_WIDTH*AlienNumber);
+        // calcul les limites de dépalcement de l'alien
+        limit_right = Constant.GAME_WIDTH - (Constant.ALIEN_WIDTH * (Constant.ALIENS_NUMBER - AlienNumber - 1));
+        limit_left = 0.0 + (Constant.ALIEN_WIDTH * AlienNumber);
     }
+
     /**
      * Tir aléatoire de l'alien.
      * 
@@ -161,10 +152,10 @@ public class AlienComponent extends Component {
         if (canShoot || last_shot == null) {
             double x = this.entity.getX() + this.entity.getWidth() / 2;
             double y = this.entity.getY();
-            if(this.globalDirection == Constant.Direction.DOWN)
-                y+=this.entity.getHeight();
+            if (this.globalDirection == Constant.Direction.DOWN)
+                y += this.entity.getHeight();
 
-            spawn(entityNames.ECLAT,x,y);
+            spawn(entityNames.ECLAT, x, y);
             Entity bullet = spawn(entityNames.BULLET_ALIEN, x, y);
 
             bullet.getComponent(BulletComponent.class).initialize(this.globalDirection);
