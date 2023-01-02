@@ -1,5 +1,8 @@
-# Compiled class file
+# Java configuration
 *.class
+target/
+# For JavaFX and FXGL
+system/
 
 # Log file
 *.log
@@ -25,3 +28,6 @@ hs_err_pid*
 # Fichiers configs IntelliJ IDEA ou VS Code
 .idea/
 .vscode/
+
+# Generated files by maven
+duelinvaders/dependency-reduced-pom.xml
