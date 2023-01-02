@@ -176,6 +176,18 @@ public class GameLauncher extends GameApplication {
         loopBGM(assetNames.music.BACKGROUND_MUSIC); // TODO: sélectionner la musique via les paramètres
     }
 
+    private void makeAlienBlock() {
+        for (int i = 0; i < 5; i++)
+            makeAlienLine(i);
+    }
+
+    private void makeAlienLine(int line) {
+        for (int i = 0; i < Constant.ALIENS_NUMBER; i++) {
+            Entity alien = spawn("alien", i * Constant.ALIEN_WIDTH, line * Constant.ALIEN_HEIGHT);
+            alien.getComponent(AlienComponent.class).setAlienNumber(i);
+        }
+    }
+
     /**
      * Initialisation des propriétés physiques du jeu liées aux collisions
      */

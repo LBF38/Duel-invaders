@@ -27,6 +27,9 @@ public class AlienComponent extends Component {
 
     private Direction globalDirection;
     private Double last_shot = 0.0;
+    private int AlienNumber;
+    private double limit_right = Constant.BOARD_WIDTH;
+    private double limit_left =0.0;
 
     /**
      * Constructeur de la classe AlienComponent
@@ -78,7 +81,7 @@ public class AlienComponent extends Component {
     @Override
     public void onUpdate(double tpf) {
         dx = tpf * Constant.SPEED_ALIEN;
-        dy = 0.5 * Constant.SPEED_ALIEN;
+        dy = entity.getHeight();
         this.move(dx);
     }
 
@@ -107,8 +110,8 @@ public class AlienComponent extends Component {
      * @param dx
      */
     public void moveRight(Double dx) {
-        if (this.entity.getRightX() + dx <= Constant.GAME_WIDTH) {
-            this.entity.translateX(dx);
+        if (getEntity().getRightX() + dx <= limit_right) {
+            getEntity().translateX(dx);
         } else {
             if(this.globalDirection == Constant.Direction.DOWN){
                 this.entity.translateY(dy);
@@ -126,6 +129,8 @@ public class AlienComponent extends Component {
      * @param dx
      */
     public void moveLeft(Double dx) {
+        if (getEntity().getX() - dx >= limit_left) {
+            getEntity().translateX(-dx);
         if (this.entity.getX() - dx >= 0) {
             this.entity.translateX(-dx);
         } else {
@@ -139,6 +144,12 @@ public class AlienComponent extends Component {
         }
     }
 
+    public void setAlienNumber(int AlienNumber) {
+        this.AlienNumber = AlienNumber;
+        //calcul les limites de dépalcement de l'alien
+        limit_right=Constant.BOARD_WIDTH-(Constant.ALIEN_WIDTH*(Constant.ALIENS_NUMBER-AlienNumber-1));
+        limit_left=0.0+(Constant.ALIEN_WIDTH*AlienNumber);
+    }
     /**
      * Tir aléatoire de l'alien.
      * 
