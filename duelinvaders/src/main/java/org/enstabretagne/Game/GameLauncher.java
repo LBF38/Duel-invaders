@@ -14,6 +14,7 @@ import static com.almasb.fxgl.dsl.FXGL.onKey;
 import static com.almasb.fxgl.dsl.FXGL.play;
 import static com.almasb.fxgl.dsl.FXGL.run;
 import static com.almasb.fxgl.dsl.FXGL.spawn;
+import static com.almasb.fxgl.dsl.FXGLForKtKt.geti;
 
 import java.util.Arrays;
 import java.util.EnumSet;
@@ -55,6 +56,8 @@ public class GameLauncher extends GameApplication {
     private int delay_ambient_sound = FXGLMath.random(Constant.AMBIENT_SOUND_DELAY_MIN,
             Constant.AMBIENT_SOUND_DELAY_MAX);
 
+    private Boolean InfinityMode = true;
+
     /**
      * Initialisation des paramètres du jeu
      * @param settings
@@ -85,9 +88,6 @@ public class GameLauncher extends GameApplication {
      */
     @Override
     protected void initInput() {
-        onKey(KeyCode.N, () -> {
-            getNotificationService().pushNotification("Hello World!");
-        });
 
         onKey(KeyCode.ENTER, () -> {
             playerComponent1.shoot();
@@ -156,15 +156,21 @@ public class GameLauncher extends GameApplication {
         playerComponent2 = player2.getComponent(PlayerComponent.class);
         playerComponent2.setDirection(Constant.Direction.DOWN);
 
-        //spawn Aliens
-        run(() -> {
-            Entity alien =spawn(entityNames.ALIEN,0,Constant.GAME_HEIGHT/2);
-            alien.getComponent(AlienComponent.class).initialize(Constant.Direction.UP);
-        }, Duration.seconds(2));
-        run(() -> {
-            Entity alien =spawn(entityNames.ALIEN,0,Constant.GAME_HEIGHT/2);
-            alien.getComponent(AlienComponent.class).initialize(Constant.Direction.DOWN);
-        }, Duration.seconds(2));
+        if(InfinityMode) {
+            //spawn Aliens pour infinity mode
+            Entity alien1 = spawn(entityNames.ALIEN, 0, Constant.GAME_HEIGHT / 2);
+            alien1.getComponent(AlienComponent.class).initialize(Constant.Direction.UP);
+            Entity alien2 = spawn(entityNames.ALIEN, 0, Constant.GAME_HEIGHT / 2);
+            alien2.getComponent(AlienComponent.class).initialize(Constant.Direction.DOWN);
+            run(() -> {
+                Entity alien = spawn(entityNames.ALIEN, 0, Constant.GAME_HEIGHT / 2);
+                alien.getComponent(AlienComponent.class).initialize(Constant.Direction.UP);
+            }, Duration.seconds(1.9));
+            run(() -> {
+                Entity alien = spawn(entityNames.ALIEN, 0, Constant.GAME_HEIGHT / 2);
+                alien.getComponent(AlienComponent.class).initialize(Constant.Direction.DOWN);
+            }, Duration.seconds(2.1));
+        }
 
         spawn(entityNames.BACKGROUND);
         loopBGM(assetNames.music.BACKGROUND_MUSIC); // TODO: sélectionner la musique via les paramètres
@@ -233,7 +239,8 @@ public class GameLauncher extends GameApplication {
      */
     private void gameOverScreen() {
         play(assetNames.sounds.DEFEAT_CLAIRON);
-        getDialogService().showMessageBox("Game Over!", () -> {
+        String message = "Game Over! Your score is " + geti(GameVariableNames.PLAYERS_SCORE);
+        getDialogService().showMessageBox(message, () -> {
             getDialogService().showConfirmationBox("Do you want to play again?", (yes) -> playAgain(yes));
         });
     }
@@ -253,7 +260,8 @@ public class GameLauncher extends GameApplication {
      */
     private void winScreen() {
         play(assetNames.sounds.VICTORY_CLAIRON);
-        getDialogService().showMessageBox("You win!", () -> {
+        String message = "You won! Your score is " + geti(GameVariableNames.PLAYERS_SCORE);
+        getDialogService().showMessageBox(message, () -> {
             getDialogService().showConfirmationBox("Do you want to play again?", (yes) -> playAgain(yes));
         });
     }
