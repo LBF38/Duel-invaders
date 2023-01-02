@@ -42,7 +42,7 @@ public class SpaceInvadersFactory implements EntityFactory {
         // la convertit en couleur JavaFX
         Color color = Color.valueOf(randomColor.name());
 
-        var texture = FXGL.texture("Alien.png", 60, 60).multiplyColor(color);
+        var texture = FXGL.texture("Alien.png", Constant.ALIEN_WIDTH, Constant.ALIEN_HEIGHT).multiplyColor(color);
         return entityBuilder()
                 .type(EntityType.ALIEN)
                 .at(data.getX(), data.getY())

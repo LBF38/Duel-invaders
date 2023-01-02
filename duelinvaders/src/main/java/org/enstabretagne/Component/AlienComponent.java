@@ -15,6 +15,9 @@ public class AlienComponent extends Component {
     private Double dx, dy;
     protected Direction movementDirection;
     private Double last_shot = 0.0;
+    private int AlienNumber;
+    private double limit_right = Constant.BOARD_WIDTH;
+    private double limit_left =0.0;
 
     public AlienComponent(Direction direction) {
         super();
@@ -48,7 +51,7 @@ public class AlienComponent extends Component {
     }
 
     public void moveRight(Double dx) {
-        if (getEntity().getRightX() + dx <= Constant.BOARD_WIDTH) {
+        if (getEntity().getRightX() + dx <= limit_right) {
             getEntity().translateX(dx);
         } else {
             this.entity.translateY(dy);
@@ -57,12 +60,19 @@ public class AlienComponent extends Component {
     }
 
     public void moveLeft(Double dx) {
-        if (getEntity().getX() - dx >= 0) {
+        if (getEntity().getX() - dx >= limit_left) {
             getEntity().translateX(-dx);
         } else {
             this.entity.translateY(dy);
             this.movementDirection = Direction.RIGHT;
         }
+    }
+
+    public void setAlienNumber(int AlienNumber) {
+        this.AlienNumber = AlienNumber;
+        //calcul les limites de dépalcement de l'alien
+        limit_right=Constant.BOARD_WIDTH-(Constant.ALIEN_WIDTH*(Constant.ALIENS_NUMBER-AlienNumber-1));
+        limit_left=0.0+(Constant.ALIEN_WIDTH*AlienNumber);
     }
 
     public void shoot() {

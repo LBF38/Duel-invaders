@@ -108,13 +108,9 @@ public class GameLauncher extends GameApplication {
     }
 
     private void makeAlienLine(int line) {
-        Entity alien = spawn("alien");
-        double alien_width = alien.getWidth();
-        double alien_height = alien.getHeight();
-        alien.removeFromWorld();
-        double nbAlien = (Constant.BOARD_WIDTH - 4 * alien_width) / alien_width;
-        for (int i = 0; i < nbAlien; i++) {
-            spawn("alien", i * alien_width, line * alien_height);
+        for (int i = 0; i < Constant.ALIENS_NUMBER; i++) {
+            Entity alien = spawn("alien", i * Constant.ALIEN_WIDTH, line * Constant.ALIEN_HEIGHT);
+            alien.getComponent(AlienComponent.class).setAlienNumber(i);
         }
     }
 
