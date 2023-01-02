@@ -12,8 +12,8 @@ import java.util.Random;
  * @since 0.1.0
  */
 public class Constant {
-    public static final Double GAME_WIDTH = 800.0;
-    public static final Double GAME_HEIGHT = 600.0;
+    public static final Double GAME_WIDTH = 1366.0;
+    public static final Double GAME_HEIGHT = 768.0;
 
     public static final Double SPEED_SPACESHIP = 200.0;
     public static final Double SPEED_SHOOT = 500.0;

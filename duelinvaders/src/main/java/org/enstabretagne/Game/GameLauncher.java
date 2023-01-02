@@ -51,8 +51,10 @@ import javafx.util.Duration;
  * @since 0.1.0
  */
 public class GameLauncher extends GameApplication {
-    private PlayerComponent playerComponent;
-    private Entity player;
+    private PlayerComponent playerComponent1;
+    private PlayerComponent playerComponent2;
+    private Entity player1;
+    private Entity player2;
     private long last_ambient_sound = System.currentTimeMillis();;
     private int delay_ambient_sound = FXGLMath.random(Constant.AMBIENT_SOUND_DELAY_MIN,
             Constant.AMBIENT_SOUND_DELAY_MAX);
@@ -91,17 +93,31 @@ public class GameLauncher extends GameApplication {
             getNotificationService().pushNotification("Hello World!");
         });
 
+        onKey(KeyCode.ENTER, () -> {
+            playerComponent1.shoot();
+        });
+
         onKey(KeyCode.RIGHT, () -> {
-            playerComponent.moveRight();
+            playerComponent1.moveRight();
         });
 
         onKey(KeyCode.LEFT, () -> {
-            playerComponent.moveLeft();
+            playerComponent1.moveLeft();
         });
 
         onKey(KeyCode.SPACE, () -> {
-            playerComponent.shoot();
+            playerComponent2.shoot();
         });
+
+        onKey(KeyCode.D, () -> {
+            playerComponent2.moveRight();
+        });
+
+        onKey(KeyCode.Q, () -> {
+            playerComponent2.moveLeft();
+        });
+
+
     }
 
     /**
@@ -129,14 +145,23 @@ public class GameLauncher extends GameApplication {
             throw new RuntimeException(e);
         }
         getGameWorld().addEntityFactory(new SpaceInvadersFactory());
-        player = spawn(entityNames.PLAYER);
-        spawn(entityNames.ALIEN);
+
+        //spawn Player1
+        player1 = spawn(entityNames.PLAYER);
+        player1.setX(Constant.GAME_WIDTH / 2);
+        player1.setY(Constant.GAME_HEIGHT - player1.getHeight());
+        playerComponent1 = player1.getComponent(PlayerComponent.class);
+
+        //spawn Player2
+        player2 = spawn(entityNames.PLAYER);
+        player2.setX(Constant.GAME_WIDTH / 2);
+        player2.setY(0);
+        playerComponent2 = player2.getComponent(PlayerComponent.class);
+
+        //spawn Aliens
         run(() -> {
-            spawn(entityNames.ALIEN);
+            spawn(entityNames.ALIEN,0,Constant.GAME_HEIGHT/2);
         }, Duration.seconds(2));
-        player.setX(Constant.GAME_WIDTH / 2);
-        player.setY(Constant.GAME_HEIGHT - player.getHeight());
-        playerComponent = player.getComponent(PlayerComponent.class);
 
         spawn(entityNames.BACKGROUND);
         loopBGM(assetNames.music.BACKGROUND_MUSIC); // TODO: sélectionner la musique via les paramètres
