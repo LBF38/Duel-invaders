@@ -5,27 +5,32 @@ import static com.almasb.fxgl.dsl.FXGL.getDialogService;
 import static com.almasb.fxgl.dsl.FXGL.getGameController;
 import static com.almasb.fxgl.dsl.FXGL.getGameScene;
 import static com.almasb.fxgl.dsl.FXGL.getGameWorld;
-import static com.almasb.fxgl.dsl.FXGL.getNotificationService;
 import static com.almasb.fxgl.dsl.FXGL.getPhysicsWorld;
 import static com.almasb.fxgl.dsl.FXGL.getWorldProperties;
 import static com.almasb.fxgl.dsl.FXGL.getb;
+import static com.almasb.fxgl.dsl.FXGL.geti;
 import static com.almasb.fxgl.dsl.FXGL.loopBGM;
 import static com.almasb.fxgl.dsl.FXGL.onKey;
 import static com.almasb.fxgl.dsl.FXGL.play;
 import static com.almasb.fxgl.dsl.FXGL.run;
 import static com.almasb.fxgl.dsl.FXGL.spawn;
-import static com.almasb.fxgl.dsl.FXGLForKtKt.geti;
 
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import org.enstabretagne.Component.AlienComponent;
 import org.enstabretagne.Component.EntityType;
 import org.enstabretagne.Component.PlayerComponent;
 import org.enstabretagne.Component.SpaceInvadersFactory;
-import org.enstabretagne.Core.*;
+import org.enstabretagne.Core.AlienBulletCollision;
+import org.enstabretagne.Core.AlienPlayerCollision;
+import org.enstabretagne.Core.BulletBulletCollision;
+import org.enstabretagne.Core.BulletPlayerCollision;
+import org.enstabretagne.Core.Constant;
+import org.enstabretagne.Core.EnemyShootBulletCollision;
+import org.enstabretagne.Core.EnemyShootPlayerCollision;
+import org.enstabretagne.Core.GameVariableNames;
 import org.enstabretagne.Utils.assetNames;
 import org.enstabretagne.Utils.entityNames;
 
