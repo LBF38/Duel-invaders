@@ -162,7 +162,12 @@ public class GameLauncher extends GameApplication {
 
         //spawn Aliens
         run(() -> {
-            spawn(entityNames.ALIEN,0,Constant.GAME_HEIGHT/2);
+            Entity alien =spawn(entityNames.ALIEN,0,Constant.GAME_HEIGHT/2);
+            alien.getComponent(AlienComponent.class).initialize(Constant.Direction.UP);
+        }, Duration.seconds(2));
+        run(() -> {
+            Entity alien =spawn(entityNames.ALIEN,0,Constant.GAME_HEIGHT/2);
+            alien.getComponent(AlienComponent.class).initialize(Constant.Direction.DOWN);
         }, Duration.seconds(2));
 
         spawn(entityNames.BACKGROUND);
