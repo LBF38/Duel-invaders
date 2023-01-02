@@ -26,7 +26,12 @@ public class assetNames {
     }
 
     public static class music {
-        public static final String BACKGROUND_MUSIC = "Across_the_Universe_-_Oleg_O._Kachanko.mp3";
+        public static final String MUSIC_ACROSS_THE_UNIVERSE = "Across_the_Universe_-_Oleg_O._Kachanko.mp3";
+        public static final String MUSIC_BEYOND_CONSCIOUSNESS = "Beyond_Consciousness_(Instrumental)_-_Raresix.mp3";
+        public static final String MUSIC_DARK_MATTER = "Dark_MATTER_Sprouts_(Off_Vocal)_-_Scythe_of_Luna.mp3";
+        public static final String MUSIC_DEGREE_OF_FREEDOM = "Degrees_of_Freedom_-_Social_Bot.mp3";
+        public static final String MUSIC_STELLAR_REMEBER = "Stellar_remember_-_cyborgjeff.mp3";
+
     }
 
     public static class sounds {

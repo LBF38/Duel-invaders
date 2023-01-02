@@ -77,7 +77,18 @@ public class GameLauncher extends GameApplication {
                 "Duel Invaders project by:",
                 "@MathieuDFS",
                 "@jufch",
-                "@LBF38"));
+                "@LBF38",
+                "",
+                "Music from:",
+                "https://www.jamendo.com/start",
+                "Oleg O.Kachanko - Across the Universes",
+                "Raresix - Beyond Consciouness",
+                "Scythe of Luna - Dark Matter Sprouts (Off Vocal)",
+                "Social Bot - Degrees of Freedom",
+                "cyborhjeff - Stellar remember",
+                "",
+                "Sounds effect from:",
+                "https://universal-soundbank.com/"));
         settings.setEnabledMenuItems(EnumSet.of(MenuItem.EXTRA));
         settings.setApplicationMode(ApplicationMode.RELEASE);
         //todo : ajouter un bouton pour activer le mode infin
@@ -177,7 +188,7 @@ public class GameLauncher extends GameApplication {
         }
 
         spawn(entityNames.BACKGROUND);
-        loopBGM(assetNames.music.BACKGROUND_MUSIC); // TODO: sélectionner la musique via les paramètres
+        loopBGM(assetNames.music.MUSIC_ACROSS_THE_UNIVERSE); // TODO: sélectionner la musique via les paramètres
     }
 
     private void makeAlienBlock() {
