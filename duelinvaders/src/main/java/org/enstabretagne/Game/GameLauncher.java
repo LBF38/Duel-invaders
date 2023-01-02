@@ -56,7 +56,7 @@ public class GameLauncher extends GameApplication {
     private int delay_ambient_sound = FXGLMath.random(Constant.AMBIENT_SOUND_DELAY_MIN,
             Constant.AMBIENT_SOUND_DELAY_MAX);
 
-    private int GameMode = 0; // 0 -> classique, 1 -> InfinityMode, 2->Solo
+    private int GameMode = 2; // 0 -> classique, 1 -> InfinityMode, 2->Solo
 
     /**
      * Initialisation des paramètres du jeu
@@ -114,15 +114,27 @@ public class GameLauncher extends GameApplication {
         });
 
         onKey(KeyCode.SPACE, () -> {
-            playerComponent2.shoot();
+            if(GameMode == 2) {
+                playerComponent1.shoot();
+            }else {
+                playerComponent2.shoot();
+            }
         });
 
         onKey(KeyCode.D, () -> {
-            playerComponent2.moveRight();
+            if(GameMode == 2) {
+                playerComponent1.moveRight();
+            }else {
+                playerComponent2.moveRight();
+            }
         });
 
         onKey(KeyCode.Q, () -> {
-            playerComponent2.moveLeft();
+            if(GameMode == 2) {
+                playerComponent1.moveLeft();
+            }else {
+                playerComponent2.moveLeft();
+            }
         });
 
 
