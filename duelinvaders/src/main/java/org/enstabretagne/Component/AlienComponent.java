@@ -158,11 +158,12 @@ public class AlienComponent extends Component {
         if (canShoot || last_shot == null) {
             double x = this.entity.getX() + this.entity.getWidth() / 2;
             double y = this.entity.getY();
-            if(this.globalDirection == Constant.Direction.UP)
+            if(this.globalDirection == Constant.Direction.DOWN)
                 y+=this.entity.getHeight();
 
             spawn(entityNames.ECLAT,x,y);
             Entity bullet = spawn(entityNames.BULLET_ALIEN, x, y);
+
             bullet.getComponent(BulletComponent.class).initialize(this.globalDirection);
             bullet.rotateBy(90.0);
             last_shot = getGameTimer().getNow();

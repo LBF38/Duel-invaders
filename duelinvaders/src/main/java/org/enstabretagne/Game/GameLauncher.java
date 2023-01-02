@@ -24,11 +24,7 @@ import org.enstabretagne.Component.AlienComponent;
 import org.enstabretagne.Component.EntityType;
 import org.enstabretagne.Component.PlayerComponent;
 import org.enstabretagne.Component.SpaceInvadersFactory;
-import org.enstabretagne.Core.AlienBulletCollision;
-import org.enstabretagne.Core.AlienPlayerCollision;
-import org.enstabretagne.Core.Constant;
-import org.enstabretagne.Core.EnemyShootPlayerCollision;
-import org.enstabretagne.Core.GameVariableNames;
+import org.enstabretagne.Core.*;
 import org.enstabretagne.Utils.assetNames;
 import org.enstabretagne.Utils.entityNames;
 
@@ -126,8 +122,8 @@ public class GameLauncher extends GameApplication {
      */
     @Override
     protected void initGameVars(Map<String, Object> vars) {
-        vars.put(GameVariableNames.PLAYER1_SCORE, 0);
-        vars.put(GameVariableNames.PLAYER1_LIVES, Constant.START_LIVES.intValue());
+        vars.put(GameVariableNames.PLAYERS_SCORE, 0);
+        vars.put(GameVariableNames.PLAYERS_LIVES, Constant.START_LIVES.intValue());
         vars.put(GameVariableNames.isGameOver, false);
         vars.put(GameVariableNames.isGameWon, false);
     }
@@ -183,6 +179,8 @@ public class GameLauncher extends GameApplication {
         getPhysicsWorld().addCollisionHandler(new AlienBulletCollision(EntityType.BULLET, EntityType.ALIEN));
         getPhysicsWorld()
                 .addCollisionHandler(new EnemyShootPlayerCollision(EntityType.ENEMY_SHOOT, EntityType.PLAYER));
+        getPhysicsWorld().addCollisionHandler(new BulletPlayerCollision(EntityType.BULLET, EntityType.PLAYER));
+        getPhysicsWorld().addCollisionHandler(new BulletBulletCollision(EntityType.BULLET, EntityType.BULLET));
     }
 
     /**
@@ -193,13 +191,13 @@ public class GameLauncher extends GameApplication {
         Text textScore = new Text();
         textScore.setX(getAppWidth() - 100);
         textScore.setY(100);
-        textScore.textProperty().bind(getWorldProperties().intProperty(GameVariableNames.PLAYER1_SCORE).asString());
+        textScore.textProperty().bind(getWorldProperties().intProperty(GameVariableNames.PLAYERS_SCORE).asString());
         getGameScene().addUINode(textScore);
 
         Text textLives = new Text();
         textLives.setX(getAppWidth() - 100);
         textLives.setY(200);
-        textLives.textProperty().bind(getWorldProperties().intProperty(GameVariableNames.PLAYER1_LIVES).asString());
+        textLives.textProperty().bind(getWorldProperties().intProperty(GameVariableNames.PLAYERS_LIVES).asString());
         getGameScene().addUINode(textLives);
     }
 

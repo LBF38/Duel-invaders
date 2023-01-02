@@ -42,7 +42,7 @@ public class AlienBulletCollision extends CollisionHandler {
      */
     @Override
     protected void onCollisionBegin(Entity bullet, Entity alien) {
-        inc(GameVariableNames.PLAYER1_SCORE, +1);
+        inc(GameVariableNames.PLAYERS_SCORE, +1);
         spawn(entityNames.EXPLOSION_ALIEN, alien.getPosition());
         bullet.removeFromWorld();
         alien.removeFromWorld();

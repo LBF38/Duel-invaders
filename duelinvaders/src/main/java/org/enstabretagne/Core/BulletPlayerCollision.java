@@ -14,29 +14,29 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.physics.CollisionHandler;
 
 /**
- * Gestion des collisions entre les tirs des aliens et le joueur
+ * Gestion des collisions entre les tirs des joueurs et les joueurs
  * En cas de collision, le joueur perd un point de vie
- * 
- * @author @jufch, @LBF38, @MathieuDFS
- * @since 0.1.0
+ *
+ * @author @jufch, @MathieuDFS
  */
-public class EnemyShootPlayerCollision extends CollisionHandler {
+
+public class BulletPlayerCollision extends CollisionHandler {
     /**
-     * Constructeur de la classe EnemyShootPlayerCollision
-     * 
-     * @param enemy_shoot
+     * Constructeur de la classe BulletPlayerCollision
+     *
+     * @param bullet
      * @param player
      */
-    public EnemyShootPlayerCollision(EntityType enemy_shoot, EntityType player) {
-        super(EntityType.ENEMY_SHOOT, EntityType.PLAYER);
+    public BulletPlayerCollision(EntityType bullet, EntityType player) {
+        super(EntityType.BULLET, EntityType.PLAYER);
     }
 
     /**
-     * Gestion des collisions entre les tirs des aliens et le joueur
+     * Gestion des collisions entre les tirs des joueurs et les joueurs
      */
     @Override
-    protected void onCollisionBegin(Entity enemy_shoot, Entity player) {
-        enemy_shoot.removeFromWorld();
+    protected void onCollisionBegin(Entity bullet, Entity player) {
+        bullet.removeFromWorld();
 
         inc(GameVariableNames.PLAYERS_LIVES, -1);
         if (geti(GameVariableNames.PLAYERS_LIVES) == 0) {
@@ -45,7 +45,7 @@ public class EnemyShootPlayerCollision extends CollisionHandler {
             set(GameVariableNames.isGameOver, true);
             player.removeFromWorld();
         } else {
-            spawn(entityNames.EXPLOSION_PLAYER_BULLET, enemy_shoot.getPosition());
+            spawn(entityNames.EXPLOSION_PLAYER_BULLET, bullet.getPosition());
             play("Explosion/strongExplosion.wav");
         }
     }
