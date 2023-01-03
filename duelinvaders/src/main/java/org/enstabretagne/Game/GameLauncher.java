@@ -1,30 +1,31 @@
 package org.enstabretagne.Game;
 
-import static com.almasb.fxgl.dsl.FXGL.getAppWidth;
 import static com.almasb.fxgl.dsl.FXGL.getDialogService;
 import static com.almasb.fxgl.dsl.FXGL.getGameController;
 import static com.almasb.fxgl.dsl.FXGL.getGameScene;
 import static com.almasb.fxgl.dsl.FXGL.getGameWorld;
 import static com.almasb.fxgl.dsl.FXGL.getPhysicsWorld;
-import static com.almasb.fxgl.dsl.FXGL.getWorldProperties;
+import static com.almasb.fxgl.dsl.FXGL.getUIFactoryService;
 import static com.almasb.fxgl.dsl.FXGL.getb;
-import static com.almasb.fxgl.dsl.FXGL.geti;
 import static com.almasb.fxgl.dsl.FXGL.loopBGM;
 import static com.almasb.fxgl.dsl.FXGL.onKey;
 import static com.almasb.fxgl.dsl.FXGL.play;
 import static com.almasb.fxgl.dsl.FXGL.run;
 import static com.almasb.fxgl.dsl.FXGL.spawn;
+import static com.almasb.fxgl.dsl.FXGL.texture;
 import static org.enstabretagne.Game.GameMode.CLASSIQUE;
 import static org.enstabretagne.Game.GameMode.INFINITY_MODE;
 import static org.enstabretagne.Game.GameMode.SOLO;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.enstabretagne.Component.AlienComponent;
 import org.enstabretagne.Component.EntityType;
-import org.enstabretagne.Component.LifeComponent;
 import org.enstabretagne.Component.PlayerComponent;
 import org.enstabretagne.Component.SpaceInvadersFactory;
 import org.enstabretagne.Core.AlienBulletCollision;
@@ -47,7 +48,11 @@ import com.almasb.fxgl.app.scene.SceneFactory;
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.entity.Entity;
 
+import javafx.geometry.Pos;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
@@ -63,13 +68,11 @@ public class GameLauncher extends GameApplication {
     private PlayerComponent playerComponent2;
     private Entity player1;
     private Entity player2;
-    private Entity life1;
-    private Entity life2;
-    private Entity life3;
     private long last_ambient_sound = System.currentTimeMillis();
     private int delay_ambient_sound = FXGLMath.random(Constant.AMBIENT_SOUND_DELAY_MIN,
             Constant.AMBIENT_SOUND_DELAY_MAX);
     private static GameMode GameMode = CLASSIQUE;
+    VBox playersUI = new VBox();
 
     public static void setGameMode(GameMode gameMode) {
         GameMode = gameMode;
@@ -167,8 +170,6 @@ public class GameLauncher extends GameApplication {
      */
     @Override
     protected void initGameVars(Map<String, Object> vars) {
-        vars.put(GameVariableNames.PLAYERS_SCORE, 0);
-        vars.put(GameVariableNames.PLAYERS_LIVES, Constant.START_LIVES.intValue());
         vars.put(GameVariableNames.isGameOver, false);
         vars.put(GameVariableNames.isGameWon, false);
     }
@@ -182,20 +183,22 @@ public class GameLauncher extends GameApplication {
         play(assetNames.sounds.START_CLAIRON);
         getGameWorld().addEntityFactory(new SpaceInvadersFactory());
 
-        // spawn Player1
         player1 = spawn(entityNames.PLAYER);
         player1.setX(Constant.GAME_WIDTH / 2);
         player1.setY(Constant.GAME_HEIGHT - player1.getHeight());
         playerComponent1 = player1.getComponent(PlayerComponent.class);
         playerComponent1.setDirection(Constant.Direction.UP);
+        playerComponent1.initializeScore();
+        playerComponent1.initializeLife();
 
         if (GameMode != SOLO) {
-            // spawn Player2
             player2 = spawn(entityNames.PLAYER);
             player2.setX(Constant.GAME_WIDTH / 2);
             player2.setY(0);
             playerComponent2 = player2.getComponent(PlayerComponent.class);
             playerComponent2.setDirection(Constant.Direction.DOWN);
+            playerComponent2.initializeScore();
+            playerComponent2.initializeLife();
         }
 
         if (GameMode == INFINITY_MODE) {
@@ -221,16 +224,6 @@ public class GameLauncher extends GameApplication {
 
         spawn(entityNames.BACKGROUND);
         loopBGM(assetNames.music.MUSIC_ACROSS_THE_UNIVERSE);
-
-        // spawn life
-        life3 = spawn(entityNames.LIFE, 3, 0);
-        life3.getComponent(LifeComponent.class).initialize(Constant.Direction.UP);
-        life2 = spawn(entityNames.LIFE, 2, 0);
-        life2.getComponent(LifeComponent.class).initialize(Constant.Direction.UP);
-        life2.getComponent(LifeComponent.class).updateLife(false);
-        life1 = spawn(entityNames.LIFE, 1, 0);
-        life1.getComponent(LifeComponent.class).initialize(Constant.Direction.UP);
-        life1.getComponent(LifeComponent.class).updateLife(false);
     }
 
     private void makeAlienBlock() {
@@ -284,17 +277,44 @@ public class GameLauncher extends GameApplication {
      */
     @Override
     protected void initUI() {
-        Text textScore = new Text();
-        textScore.setX(getAppWidth() - 100);
-        textScore.setY(100);
-        textScore.textProperty().bind(getWorldProperties().intProperty(GameVariableNames.PLAYERS_SCORE).asString());
-        getGameScene().addUINode(textScore);
+        showPlayersLivesAndScores();
+    }
 
-        Text textLives = new Text();
-        textLives.setX(getAppWidth() - 100);
-        textLives.setY(200);
-        textLives.textProperty().bind(getWorldProperties().intProperty(GameVariableNames.PLAYERS_LIVES).asString());
-        getGameScene().addUINode(textLives);
+    private void showPlayersLivesAndScores() {
+        if (getGameScene().getUINodes().contains(playersUI)) {
+            getGameScene().removeUINodes(playersUI);
+        }
+        List<HBox> playersViews = new ArrayList<>();
+        List<PlayerComponent> players = getGameWorld().getEntitiesByType(EntityType.PLAYER).stream()
+                .map(player -> player.getComponent(PlayerComponent.class)).collect(Collectors.toList());
+        for (PlayerComponent playerComponent : players) {
+            HBox scoreUI = createScoreUI(playerComponent.getScore(), playerComponent.getId());
+            scoreUI.setTranslateY(scoreUI.getHeight() * playerComponent.getId());
+            HBox lifeUI = createLifeUI(playerComponent.getLife());
+            var playerUI = new HBox(30, scoreUI, lifeUI);
+            playersViews.add(playerUI);
+        }
+        playersUI = new VBox(20, playersViews.toArray(new HBox[0]));
+        getGameScene().addUINodes(playersUI);
+    }
+
+    private HBox createScoreUI(int score, int player_id) {
+        Text scoreText = getUIFactoryService().newText(Integer.toString(score), Color.WHITE, 24.0);
+        Text playerText = getUIFactoryService().newText("Player " + Integer.toString(player_id % 2 + 1), Color.WHITE,
+                24.0);
+        var scoreView = new HBox(10, playerText, scoreText);
+        scoreView.setAlignment(Pos.CENTER);
+        return scoreView;
+    }
+
+    private HBox createLifeUI(int life) {
+        var lifeTexture = texture(assetNames.textures.LIFE, 30, 30);
+        var lifeView = new HBox(10);
+        for (int i = 0; i < life; i++) {
+            lifeView.getChildren().add(lifeTexture.copy());
+        }
+        lifeView.setAlignment(Pos.CENTER);
+        return lifeView;
     }
 
     /**
@@ -314,7 +334,7 @@ public class GameLauncher extends GameApplication {
             last_ambient_sound = System.currentTimeMillis();
             delay_ambient_sound = FXGLMath.random(Constant.AMBIENT_SOUND_DELAY_MIN, Constant.AMBIENT_SOUND_DELAY_MAX);
         }
-        updateLife();
+        // showPlayersLivesAndScores();
         run(() -> {
             getGameWorld().getEntitiesByType(EntityType.ALIEN).forEach((alien) -> {
                 if (FXGLMath.randomBoolean(0.01))
@@ -323,29 +343,16 @@ public class GameLauncher extends GameApplication {
         }, Duration.seconds(Constant.random.nextDouble() * 10));
     }
 
-    private void updateLife() {
-        int life_number = geti(GameVariableNames.PLAYERS_LIVES);
-        if (life_number == 3) {
-            life1.getComponent(LifeComponent.class).updateLife(false);
-            life2.getComponent(LifeComponent.class).updateLife(false);
-            life3.getComponent(LifeComponent.class).updateLife(true);
-        } else if (life_number == 2) {
-            life1.getComponent(LifeComponent.class).updateLife(false);
-            life2.getComponent(LifeComponent.class).updateLife(true);
-            life3.getComponent(LifeComponent.class).updateLife(false);
-        } else if (life_number == 1) {
-            life1.getComponent(LifeComponent.class).updateLife(true);
-            life2.getComponent(LifeComponent.class).updateLife(false);
-            life3.getComponent(LifeComponent.class).updateLife(false);
-        }
-    }
-
     /**
      * Affichage de l'écran de fin de partie
      */
     private void gameOverScreen() {
         play(assetNames.sounds.DEFEAT_CLAIRON);
-        String message = "Game Over! Your score is " + geti(GameVariableNames.PLAYERS_SCORE);
+        String message = "Game Over ! \n Scores are as follows : \n" +
+                "Player 1 : " + playerComponent1.getScore() + "\n";
+        String player2 = "Player 2 : " + playerComponent2.getScore();
+        if (playerComponent2 != null)
+            message += player2;
         getDialogService().showMessageBox(message, () -> {
             getDialogService().showConfirmationBox("Do you want to play again?", (yes) -> playAgain(yes));
         });
@@ -366,7 +373,11 @@ public class GameLauncher extends GameApplication {
      */
     private void winScreen() {
         play(assetNames.sounds.VICTORY_CLAIRON);
-        String message = "You won! Your score is " + geti(GameVariableNames.PLAYERS_SCORE);
+        String message = "You won ! \n Scores are as follows : \n" +
+                "Player 1 : " + playerComponent1.getScore() + "\n";
+        String player2 = "Player 2 : " + playerComponent2.getScore();
+        if (playerComponent2 != null)
+            message += player2;
         getDialogService().showMessageBox(message, () -> {
             getDialogService().showConfirmationBox("Do you want to play again?", (yes) -> playAgain(yes));
         });

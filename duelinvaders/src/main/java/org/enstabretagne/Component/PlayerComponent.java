@@ -159,38 +159,38 @@ public class PlayerComponent extends Component {
      * Score du joueur
      */
     public void incrementScore() {
-        if (id == 1)
+        if (id % 2 == 0)
             set(GameVariableNames.PLAYER1_SCORE, geti(GameVariableNames.PLAYER1_SCORE) + 1);
-        else if (id == 2)
+        else if (id % 2 == 1)
             set(GameVariableNames.PLAYER2_SCORE, geti(GameVariableNames.PLAYER2_SCORE) + 1);
     }
 
     public void initializeScore() {
-        if (id == 1)
+        if (id % 2 == 0)
             set(GameVariableNames.PLAYER1_SCORE, 0);
-        else if (id == 2)
+        else if (id % 2 == 1)
             set(GameVariableNames.PLAYER2_SCORE, 0);
     }
 
     public int getScore() {
-        if (id == 1)
+        if (id % 2 == 0)
             return geti(GameVariableNames.PLAYER1_SCORE);
-        else if (id == 2)
+        else if (id % 2 == 1)
             return geti(GameVariableNames.PLAYER2_SCORE);
         return -1;
     }
 
     public void setScore(int score) {
-        if (id == 1)
+        if (id % 2 == 0)
             set(GameVariableNames.PLAYER1_SCORE, score);
-        else if (id == 2)
+        else if (id % 2 == 1)
             set(GameVariableNames.PLAYER2_SCORE, score);
     }
 
     public void decrementScore() {
-        if (id == 1)
+        if (id % 2 == 0)
             set(GameVariableNames.PLAYER1_SCORE, geti(GameVariableNames.PLAYER1_SCORE) - 1);
-        else if (id == 2)
+        else if (id % 2 == 1)
             set(GameVariableNames.PLAYER2_SCORE, geti(GameVariableNames.PLAYER2_SCORE) - 1);
     }
 
@@ -198,38 +198,38 @@ public class PlayerComponent extends Component {
      * Vies du joueur
      */
     public void incrementLife() {
-        if (id == 1)
+        if (id % 2 == 0)
             set(GameVariableNames.PLAYER1_LIFE, geti(GameVariableNames.PLAYER1_LIFE) + 1);
-        else if (id == 2)
+        else if (id % 2 == 1)
             set(GameVariableNames.PLAYER2_LIFE, geti(GameVariableNames.PLAYER2_LIFE) + 1);
     }
 
     public void initializeLife() {
-        if (id == 1)
+        if (id % 2 == 0)
             set(GameVariableNames.PLAYER1_LIFE, 3);
-        else if (id == 2)
+        else if (id % 2 == 1)
             set(GameVariableNames.PLAYER2_LIFE, 3);
     }
 
     public int getLife() {
-        if (id == 1)
+        if (id % 2 == 0)
             return geti(GameVariableNames.PLAYER1_LIFE);
-        else if (id == 2)
+        else if (id % 2 == 1)
             return geti(GameVariableNames.PLAYER2_LIFE);
         return -1;
     }
 
     public void setLife(int life) {
-        if (id == 1)
+        if (id % 2 == 0)
             set(GameVariableNames.PLAYER1_LIFE, life);
-        else if (id == 2)
+        else if (id % 2 == 1)
             set(GameVariableNames.PLAYER2_LIFE, life);
     }
 
     public void decrementLife() {
-        if (id == 1)
+        if (id % 2 == 0)
             set(GameVariableNames.PLAYER1_LIFE, geti(GameVariableNames.PLAYER1_LIFE) - 1);
-        else if (id == 2)
+        else if (id % 2 == 1)
             set(GameVariableNames.PLAYER2_LIFE, geti(GameVariableNames.PLAYER2_LIFE) - 1);
     }
 }
