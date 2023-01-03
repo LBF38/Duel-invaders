@@ -41,6 +41,7 @@ public class assetNames {
         };
         public static final String FIRE = "fire.png";
         public static final String SMOKE = "smoke.png";
+        public static final String LIFE = "heart.png";
     }
 
     public static class music {
