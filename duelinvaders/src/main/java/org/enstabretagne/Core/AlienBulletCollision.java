@@ -7,6 +7,7 @@ import static com.almasb.fxgl.dsl.FXGL.set;
 import static com.almasb.fxgl.dsl.FXGL.spawn;
 
 import org.enstabretagne.Component.EntityType;
+import org.enstabretagne.Utils.assetNames;
 import org.enstabretagne.Utils.entityNames;
 
 import com.almasb.fxgl.entity.Entity;
@@ -24,10 +25,8 @@ public class AlienBulletCollision extends CollisionHandler {
      * Constructeur de la classe AlienBulletCollision
      * Elle hérite de la classe CollisionHandler de FXGL
      * 
-     * @param bullet
-     * @param alien
      */
-    public AlienBulletCollision(EntityType bullet, EntityType alien) {
+    public AlienBulletCollision() {
         super(EntityType.BULLET, EntityType.ALIEN);
     }
 
@@ -42,11 +41,11 @@ public class AlienBulletCollision extends CollisionHandler {
      */
     @Override
     protected void onCollisionBegin(Entity bullet, Entity alien) {
-        inc(GameVariableNames.PLAYER1_SCORE, +1);
-        spawn(entityNames.EXPLOSION_ALIEN, alien.getPosition());
         bullet.removeFromWorld();
         alien.removeFromWorld();
-        play("Explosion/mediumExplosion.wav");
+        inc(GameVariableNames.PLAYERS_SCORE, +1);
+        spawn(entityNames.EXPLOSION_ALIEN, alien.getPosition());
+        play(assetNames.sounds.EXPLOSION_ALIEN);
         set(GameVariableNames.isGameWon, getGameWorld().getEntitiesByType(EntityType.ALIEN).isEmpty());
     }
 }

@@ -4,6 +4,7 @@ package org.enstabretagne.Core;
 import static com.almasb.fxgl.dsl.FXGL.geti;
 import static com.almasb.fxgl.dsl.FXGL.inc;
 import static com.almasb.fxgl.dsl.FXGL.play;
+import static com.almasb.fxgl.dsl.FXGL.runOnce;
 import static com.almasb.fxgl.dsl.FXGL.set;
 import static com.almasb.fxgl.dsl.FXGL.spawn;
 
@@ -14,39 +15,41 @@ import org.enstabretagne.Utils.entityNames;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.physics.CollisionHandler;
 
+import javafx.util.Duration;
+
 /**
- * Gestion des collisions entre les tirs des aliens et le joueur
+ * Gestion des collisions entre les tirs des joueurs et les joueurs
  * En cas de collision, le joueur perd un point de vie
- * 
- * @author jufch, LBF38, MathieuDFS
- * @since 0.1.0
+ *
+ * @author jufch, MathieuDFS
+ * @since 0.2.0
  */
-public class EnemyShootPlayerCollision extends CollisionHandler {
+public class BulletPlayerCollision extends CollisionHandler {
     /**
-     * Constructeur de la classe EnemyShootPlayerCollision
-     * 
-     * @param enemy_shoot
+     * Constructeur de la classe BulletPlayerCollision
+     *
+     * @param bullet
      * @param player
      */
-    public EnemyShootPlayerCollision() {
-        super(EntityType.ENEMY_SHOOT, EntityType.PLAYER);
+    public BulletPlayerCollision() {
+        super(EntityType.BULLET, EntityType.PLAYER);
     }
 
     /**
-     * Gestion des collisions entre les tirs des aliens et le joueur
+     * Gestion des collisions entre les tirs des joueurs et les joueurs
      */
     @Override
-    protected void onCollisionBegin(Entity enemy_shoot, Entity player) {
-        enemy_shoot.removeFromWorld();
+    protected void onCollisionBegin(Entity bullet, Entity player) {
+        bullet.removeFromWorld();
 
         inc(GameVariableNames.PLAYERS_LIVES, -1);
         if (geti(GameVariableNames.PLAYERS_LIVES) == 0) {
             spawn(entityNames.EXPLOSION_PLAYER_DEATH, player.getPosition());
-            play(assetNames.sounds.EXPLOSION_PLAYER_DEATH);
-            set(GameVariableNames.isGameOver, true);
             player.removeFromWorld();
+            play(assetNames.sounds.EXPLOSION_PLAYER_DEATH);
+            runOnce(() -> set(GameVariableNames.isGameOver, true), Duration.seconds(1));
         } else {
-            spawn(entityNames.EXPLOSION_PLAYER_BULLET, enemy_shoot.getPosition());
+            spawn(entityNames.EXPLOSION_PLAYER_BULLET, bullet.getPosition());
             play(assetNames.sounds.EXPLOSION_PLAYER_LIFE);
         }
     }

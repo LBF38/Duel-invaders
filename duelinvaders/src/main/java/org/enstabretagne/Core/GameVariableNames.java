@@ -9,8 +9,8 @@ package org.enstabretagne.Core;
  * @since 0.1.0
  */
 public class GameVariableNames {
-    public static final String PLAYER1_SCORE = "Player1_score";
-    public static final String PLAYER1_LIVES = "Player1_lives";
+    public static final String PLAYERS_SCORE = "Players_score";
+    public static final String PLAYERS_LIVES = "Players_lives";
     public static final String isGameOver = "isGameOver";
     public static final String isGameWon = "isGameWon";
 }

@@ -32,10 +32,10 @@ public class BulletComponent extends Component {
      * Ce sont des composants prédéfinis dans la librairie FXGL qui facilite la
      * création de projectiles
      */
-    public void initialize() {
+    public void initialize(Constant.Direction UporDown) {
+        this.direction= new Point2D(0, UporDown == Constant.Direction.UP ? -1 : 1);
         this.entity.addComponent(new ProjectileComponent(direction, speed));
         this.entity.addComponent(new ExpireCleanComponent(duration));
-        this.entity.rotateBy(90);
     }
 
     /**
