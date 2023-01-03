@@ -5,6 +5,7 @@ import static com.almasb.fxgl.dsl.FXGL.set;
 import static com.almasb.fxgl.dsl.FXGL.spawn;
 
 import org.enstabretagne.Component.EntityType;
+import org.enstabretagne.Utils.assetNames;
 import org.enstabretagne.Utils.entityNames;
 
 import com.almasb.fxgl.entity.Entity;
@@ -14,7 +15,7 @@ import com.almasb.fxgl.physics.CollisionHandler;
  * Gestion des collisions entre les aliens et le joueur
  * En cas de collision, le joueur perd la partie
  * 
- * @author @jufch, @LBF38, @MathieuDFS
+ * @author jufch, LBF38, MathieuDFS
  * @since 0.1.0
  */
 public class AlienPlayerCollision extends CollisionHandler {
@@ -34,9 +35,9 @@ public class AlienPlayerCollision extends CollisionHandler {
      */
     @Override
     protected void onCollisionBegin(Entity player, Entity alien) {
-        spawn(entityNames.EXPLOSION_PLAYER_DEATH, player.getPosition());
         player.removeFromWorld();
+        spawn(entityNames.EXPLOSION_PLAYER_DEATH, player.getPosition());
         set(GameVariableNames.isGameOver, true);
-        play("Explosion/finalExplosion.wav");
+        play(assetNames.sounds.EXPLOSION_PLAYER_DEATH);
     }
 }

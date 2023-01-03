@@ -14,13 +14,12 @@ import static com.almasb.fxgl.dsl.FXGL.*;
  * Cette classe représente le comportement des aliens
  * Elle permet de définir les données associées à l'alien et son comportement
  * 
- * @author @LBF38
+ * @author LBF38, MathieuDFS
  * @since 0.1.0
  */
 public class AlienComponent extends Component {
     private Double dx, dy;
-    protected Direction movementDirection;
-
+    private Direction movementDirection;
     private Direction globalDirection;
     private Double last_shot = 0.0;
     private double limit_right = Constant.GAME_WIDTH;
@@ -97,8 +96,8 @@ public class AlienComponent extends Component {
      * @param dx
      */
     public void moveRight(Double dx) {
-        if (getEntity().getRightX() + dx <= limit_right) {
-            getEntity().translateX(dx);
+        if (this.entity.getRightX() + dx <= limit_right) {
+            this.entity.translateX(dx);
         } else {
             if (this.globalDirection == Constant.Direction.DOWN) {
                 this.entity.translateY(dy);
@@ -115,8 +114,8 @@ public class AlienComponent extends Component {
      * @param dx
      */
     public void moveLeft(Double dx) {
-        if (getEntity().getX() - dx >= limit_left) {
-            getEntity().translateX(-dx);
+        if (this.entity.getX() - dx >= limit_left) {
+            this.entity.translateX(-dx);
         } else {
             if (this.globalDirection == Constant.Direction.DOWN) {
                 this.entity.translateY(dy);
@@ -128,7 +127,6 @@ public class AlienComponent extends Component {
     }
 
     public void setAlienNumber(int AlienNumber) {
-        // calcul les limites de dépalcement de l'alien
         limit_right = Constant.GAME_WIDTH - (Constant.ALIEN_WIDTH * (Constant.ALIENS_NUMBER - AlienNumber - 1));
         limit_left = 0.0 + (Constant.ALIEN_WIDTH * AlienNumber);
     }
@@ -149,18 +147,19 @@ public class AlienComponent extends Component {
      */
     public void shoot() {
         Boolean canShoot = getGameTimer().getNow() - last_shot.doubleValue() >= Constant.RATE_ALIEN_SHOOT.doubleValue();
-        if (canShoot || last_shot == null) {
-            double x = this.entity.getX() + this.entity.getWidth() / 2;
-            double y = this.entity.getY();
-            if (this.globalDirection == Constant.Direction.DOWN)
-                y += this.entity.getHeight();
+        if (!canShoot)
+            return;
 
-            spawn(entityNames.ECLAT, x, y);
-            Entity bullet = spawn(entityNames.BULLET_ALIEN, x, y);
+        double x = this.entity.getX() + this.entity.getWidth() / 2;
+        double y = this.entity.getY();
+        if (this.globalDirection == Constant.Direction.DOWN)
+            y += this.entity.getHeight();
 
-            bullet.getComponent(BulletComponent.class).initialize(this.globalDirection);
-            bullet.rotateBy(90.0);
-            last_shot = getGameTimer().getNow();
-        }
+        spawn(entityNames.ECLAT, x, y);
+        Entity bullet = spawn(entityNames.BULLET_ALIEN, x, y);
+
+        bullet.getComponent(BulletComponent.class).initialize(this.globalDirection);
+        bullet.rotateBy(90.0);
+        last_shot = getGameTimer().getNow();
     }
 }

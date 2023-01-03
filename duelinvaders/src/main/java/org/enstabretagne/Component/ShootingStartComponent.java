@@ -1,39 +1,37 @@
 package org.enstabretagne.Component;
 
-import org.enstabretagne.Core.Constant;
+import static org.enstabretagne.Core.Constant.FIRE_DURATION;
+import static org.enstabretagne.Core.Constant.SHOOTING_START_WIDTH;
+
+import org.enstabretagne.Core.Constant.Direction;
 
 import com.almasb.fxgl.dsl.components.ExpireCleanComponent;
 import com.almasb.fxgl.entity.component.Component;
 
-import javafx.util.Duration;
-
-
 /**
  * Cette classe représente le départ d'un tir.
  *
- * @author @MathieuDFS, @jufch
+ * @author MathieuDFS, jufch
+ * @since 0.2.0
  */
 public class ShootingStartComponent extends Component {
-    private Duration duration = Constant.FIRE_DURATION;
-
     /**
      * Initialise le composant départ du tir (feu)
      * Cette méthode ajoute le composant ExpireCleanComponent
+     * 
+     * @param direction
      */
-    public void initialize(Constant.Direction direction) {
-        this.entity.addComponent(new ExpireCleanComponent(duration));
-        double dx = 0;
-        double dy =0;
+    public void initialize(Direction direction) {
+        this.entity.addComponent(new ExpireCleanComponent(FIRE_DURATION));
+        double dx = SHOOTING_START_WIDTH / 2;
+        double dy = 0;
 
-        if (direction == Constant.Direction.DOWN) {
+        if (direction == Direction.DOWN) {
             this.entity.rotateBy(180);
-            dx=Constant.SHOOTING_START_WIDTH / 2;
+        } else if (direction == Direction.UP) {
+            dx = -dx;
         }
-        else if(direction == Constant.Direction.UP){
-            dx=-Constant.SHOOTING_START_WIDTH / 2;
-
-        }
-        this.entity.translate( dx,dy);
+        this.entity.translate(dx, dy);
     }
 
 }

@@ -58,6 +58,7 @@ Ce projet utilise [FXGL](https://github.com/almasb/FXGL) pour la partie graphiqu
 
 - [Introduction to FXGL](https://github.com/AlmasB/IntroductionToFXGL) : projet simple de démonstration de FXGL
 - [SpaceInvaders example](https://github.com/AlmasB/FXGLGames/tree/master/SpaceInvaders) : exemple de jeu vidéo 2D avec FXGL, qui reproduit le jeu Space Invaders.
+- [Unit Tests in FXGL (Video tutorial)](https://www.youtube.com/watch?v=141HZptAiRo)
 
 ## Auteurs
 

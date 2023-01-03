@@ -8,7 +8,7 @@ import java.util.Random;
  * Cela permet de centraliser les constantes et configurer le jeu dans son
  * ensemble.
  * 
- * @author @jufch, @LBF38, @MathieuDFS
+ * @author jufch, LBF38, MathieuDFS
  * @since 0.1.0
  */
 public class Constant {
@@ -30,7 +30,7 @@ public class Constant {
     public static final Double LIFE_DISPLAY_WIDTH = 98.0;
     public static final Double LIFE_DISPLAY_HEIGHT = 30.0;
 
-    public static final Double ALIENS_NUMBER =15.0;
+    public static final Double ALIENS_NUMBER = 15.0;
 
     public static final Double SPEED_SPACESHIP = 200.0;
     public static final Double SPEED_SHOOT = 200.0;
@@ -52,9 +52,12 @@ public class Constant {
     public enum AlienColor {
         RED, GREEN, BLUE, YELLOW, PURPLE, ORANGE
     }
-    public enum Music_List{
-        MUSIC_ACROSS_THE_UNIVERSE,MUSIC_BEYOND_CONSCIOUSNESS,MUSIC_DARK_MATTER,MUSIC_DEGREE_OF_FREEDOM,MUSIC_STELLAR_REMEBER
+
+    public enum Music_List {
+        MUSIC_ACROSS_THE_UNIVERSE, MUSIC_BEYOND_CONSCIOUSNESS, MUSIC_DARK_MATTER, MUSIC_DEGREE_OF_FREEDOM,
+        MUSIC_STELLAR_REMEBER
     }
+
     public static final Random random = new Random();
 
     // Constantes pour les sons d'ambiance
@@ -66,5 +69,4 @@ public class Constant {
     // autres sons)
     public static final int NUMBER_OF_EXPLOSIONS = 7;
     public static final int NUMBER_OF_LASER_SOUNDS = 4;
-
 }

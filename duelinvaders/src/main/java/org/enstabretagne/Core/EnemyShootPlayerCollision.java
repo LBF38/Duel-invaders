@@ -8,6 +8,7 @@ import static com.almasb.fxgl.dsl.FXGL.set;
 import static com.almasb.fxgl.dsl.FXGL.spawn;
 
 import org.enstabretagne.Component.EntityType;
+import org.enstabretagne.Utils.assetNames;
 import org.enstabretagne.Utils.entityNames;
 
 import com.almasb.fxgl.entity.Entity;
@@ -17,7 +18,7 @@ import com.almasb.fxgl.physics.CollisionHandler;
  * Gestion des collisions entre les tirs des aliens et le joueur
  * En cas de collision, le joueur perd un point de vie
  * 
- * @author @jufch, @LBF38, @MathieuDFS
+ * @author jufch, LBF38, MathieuDFS
  * @since 0.1.0
  */
 public class EnemyShootPlayerCollision extends CollisionHandler {
@@ -27,7 +28,7 @@ public class EnemyShootPlayerCollision extends CollisionHandler {
      * @param enemy_shoot
      * @param player
      */
-    public EnemyShootPlayerCollision(EntityType enemy_shoot, EntityType player) {
+    public EnemyShootPlayerCollision() {
         super(EntityType.ENEMY_SHOOT, EntityType.PLAYER);
     }
 
@@ -41,12 +42,12 @@ public class EnemyShootPlayerCollision extends CollisionHandler {
         inc(GameVariableNames.PLAYERS_LIVES, -1);
         if (geti(GameVariableNames.PLAYERS_LIVES) == 0) {
             spawn(entityNames.EXPLOSION_PLAYER_DEATH, player.getPosition());
-            play("Explosion/finalExplosion.wav");
+            play(assetNames.sounds.EXPLOSION_PLAYER_DEATH);
             set(GameVariableNames.isGameOver, true);
             player.removeFromWorld();
         } else {
             spawn(entityNames.EXPLOSION_PLAYER_BULLET, enemy_shoot.getPosition());
-            play("Explosion/strongExplosion.wav");
+            play(assetNames.sounds.EXPLOSION_PLAYER_LIFE);
         }
     }
 }
