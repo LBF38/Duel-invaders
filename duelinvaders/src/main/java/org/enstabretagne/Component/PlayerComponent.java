@@ -1,7 +1,9 @@
 package org.enstabretagne.Component;
 
 import static com.almasb.fxgl.dsl.FXGL.getGameTimer;
+import static com.almasb.fxgl.dsl.FXGL.geti;
 import static com.almasb.fxgl.dsl.FXGL.runOnce;
+import static com.almasb.fxgl.dsl.FXGL.set;
 import static com.almasb.fxgl.dsl.FXGL.spawn;
 import static org.enstabretagne.Core.Constant.DELAY_BETWEEN_SHOOT;
 import static org.enstabretagne.Core.Constant.GAME_WIDTH;
@@ -10,6 +12,7 @@ import static org.enstabretagne.Core.Constant.SPEED_SPACESHIP;
 
 import org.enstabretagne.Core.Constant;
 import org.enstabretagne.Core.Constant.Direction;
+import org.enstabretagne.Core.GameVariableNames;
 import org.enstabretagne.Utils.entityNames;
 
 import com.almasb.fxgl.entity.Entity;
@@ -29,6 +32,15 @@ public class PlayerComponent extends Component {
     private Double last_shot = 0.0;
     private Direction side_shoot = Direction.LEFT;
     private Constant.Direction direction = Constant.Direction.UP;
+    private static int id;
+
+    public int getId() {
+        return id;
+    }
+
+    public PlayerComponent() {
+        id += 1;
+    }
 
     /**
      * Setter de la direction du joueur
@@ -141,5 +153,83 @@ public class PlayerComponent extends Component {
             Entity shooting_smoke = spawn("shooting_smoke", position);
             shooting_smoke.getComponent(ShootingSmokeComponent.class).initialize(this.direction);
         }, Duration.seconds(0.2));
+    }
+
+    /**
+     * Score du joueur
+     */
+    public void incrementScore() {
+        if (id == 1)
+            set(GameVariableNames.PLAYER1_SCORE, geti(GameVariableNames.PLAYER1_SCORE) + 1);
+        else if (id == 2)
+            set(GameVariableNames.PLAYER2_SCORE, geti(GameVariableNames.PLAYER2_SCORE) + 1);
+    }
+
+    public void initializeScore() {
+        if (id == 1)
+            set(GameVariableNames.PLAYER1_SCORE, 0);
+        else if (id == 2)
+            set(GameVariableNames.PLAYER2_SCORE, 0);
+    }
+
+    public int getScore() {
+        if (id == 1)
+            return geti(GameVariableNames.PLAYER1_SCORE);
+        else if (id == 2)
+            return geti(GameVariableNames.PLAYER2_SCORE);
+        return -1;
+    }
+
+    public void setScore(int score) {
+        if (id == 1)
+            set(GameVariableNames.PLAYER1_SCORE, score);
+        else if (id == 2)
+            set(GameVariableNames.PLAYER2_SCORE, score);
+    }
+
+    public void decrementScore() {
+        if (id == 1)
+            set(GameVariableNames.PLAYER1_SCORE, geti(GameVariableNames.PLAYER1_SCORE) - 1);
+        else if (id == 2)
+            set(GameVariableNames.PLAYER2_SCORE, geti(GameVariableNames.PLAYER2_SCORE) - 1);
+    }
+
+    /**
+     * Vies du joueur
+     */
+    public void incrementLife() {
+        if (id == 1)
+            set(GameVariableNames.PLAYER1_LIFE, geti(GameVariableNames.PLAYER1_LIFE) + 1);
+        else if (id == 2)
+            set(GameVariableNames.PLAYER2_LIFE, geti(GameVariableNames.PLAYER2_LIFE) + 1);
+    }
+
+    public void initializeLife() {
+        if (id == 1)
+            set(GameVariableNames.PLAYER1_LIFE, 3);
+        else if (id == 2)
+            set(GameVariableNames.PLAYER2_LIFE, 3);
+    }
+
+    public int getLife() {
+        if (id == 1)
+            return geti(GameVariableNames.PLAYER1_LIFE);
+        else if (id == 2)
+            return geti(GameVariableNames.PLAYER2_LIFE);
+        return -1;
+    }
+
+    public void setLife(int life) {
+        if (id == 1)
+            set(GameVariableNames.PLAYER1_LIFE, life);
+        else if (id == 2)
+            set(GameVariableNames.PLAYER2_LIFE, life);
+    }
+
+    public void decrementLife() {
+        if (id == 1)
+            set(GameVariableNames.PLAYER1_LIFE, geti(GameVariableNames.PLAYER1_LIFE) - 1);
+        else if (id == 2)
+            set(GameVariableNames.PLAYER2_LIFE, geti(GameVariableNames.PLAYER2_LIFE) - 1);
     }
 }
