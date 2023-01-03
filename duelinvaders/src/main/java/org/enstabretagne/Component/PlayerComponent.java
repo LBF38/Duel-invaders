@@ -1,14 +1,22 @@
 package org.enstabretagne.Component;
 
-import static org.enstabretagne.Core.Constant.*;
+import static com.almasb.fxgl.dsl.FXGL.getGameTimer;
+import static com.almasb.fxgl.dsl.FXGL.runOnce;
+import static com.almasb.fxgl.dsl.FXGL.spawn;
+import static org.enstabretagne.Core.Constant.DELAY_BETWEEN_SHOOT;
+import static org.enstabretagne.Core.Constant.GAME_WIDTH;
+import static org.enstabretagne.Core.Constant.PLAYER_HEIGHT;
+import static org.enstabretagne.Core.Constant.SPEED_SPACESHIP;
 
+import org.enstabretagne.Core.Constant;
+import org.enstabretagne.Core.Constant.Direction;
 import org.enstabretagne.Utils.entityNames;
 
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.Component;
-import javafx.util.Duration;
 
-import static com.almasb.fxgl.dsl.FXGL.*;
+import javafx.geometry.Point2D;
+import javafx.util.Duration;
 
 /**
  * Définition du composant pour le joueur
@@ -19,7 +27,24 @@ import static com.almasb.fxgl.dsl.FXGL.*;
 public class PlayerComponent extends Component {
     private Double dx;
     private Double last_shot = 0.0;
-    private int side_shoot = 0;
+    private Direction side_shoot = Direction.LEFT;
+    private Constant.Direction direction = Constant.Direction.UP;
+
+    /**
+     * Setter de la direction du joueur
+     * Pour la rotation de l'image du joueur, on ne prend pas en compte les
+     * directions LEFT et RIGHT
+     * 
+     * @param direction
+     */
+    public void setDirection(Constant.Direction direction) {
+        if (direction == Constant.Direction.LEFT || direction == Constant.Direction.RIGHT)
+            return;
+        if (this.direction == direction)
+            return;
+        entity.rotateBy(180);
+        this.direction = direction;
+    }
 
     /**
      * Mise à jour de la vitesse du joueur à chaque frame.
@@ -56,24 +81,43 @@ public class PlayerComponent extends Component {
      */
     public void shoot() {
         Boolean canShoot = getGameTimer().getNow() - last_shot.doubleValue() >= DELAY_BETWEEN_SHOOT.toSeconds();
-        int decalage = 0;
 
         if (!canShoot)
             return;
+        Point2D bulletPosition = calculateShootPosition();
+        createBullet(bulletPosition);
+        createSmoke(bulletPosition);
+    }
 
-        if (side_shoot == 0) {
-            side_shoot = 1;
-            decalage = 22;
+    private Point2D calculateShootPosition() {
+        double x = entity.getX() + (entity.getWidth() / 2);
+        double y = entity.getY();
+        int decalage = 20;
+        int shift_x;
+        int shift_y;
+        if (this.direction == Constant.Direction.UP) {
+            shift_y = -decalage;
         } else {
-            side_shoot = 0;
-            decalage = -18;
+            shift_y = PLAYER_HEIGHT.intValue() + decalage;
         }
-        double x = entity.getX() + (entity.getWidth() / 2) + decalage;
-        double y = entity.getY() - 20;
-        Entity bullet = spawn(entityNames.BULLET, x, y);
-        bullet.getComponent(BulletComponent.class).initialize();
-        last_shot = getGameTimer().getNow();
 
+        if (this.side_shoot == Direction.LEFT) {
+            this.side_shoot = Direction.RIGHT;
+            shift_x = -decalage;
+        } else {
+            this.side_shoot = Direction.LEFT;
+            shift_x = decalage;
+        }
+
+        x += shift_x;
+        y += shift_y;
+        return new Point2D(x, y);
+    }
+
+    private void createBullet(Point2D position) {
+        Entity bullet = spawn(entityNames.BULLET, position);
+        bullet.getComponent(BulletComponent.class).initialize(this.direction);
+        last_shot = getGameTimer().getNow();
         shootingRecoil();
     }
 
@@ -81,7 +125,21 @@ public class PlayerComponent extends Component {
      * Simule le recul du vaisseau lors du tir
      */
     private void shootingRecoil() {
-        entity.translateY(10);
-        runOnce(() -> entity.translateY(-10), Duration.seconds(0.1));
+        if (this.direction == Constant.Direction.DOWN) {
+            this.entity.translateY(-10);
+            runOnce(() -> this.entity.translateY(10), Duration.seconds(0.1));
+        } else if (this.direction == Direction.UP) {
+            this.entity.translateY(10);
+            runOnce(() -> this.entity.translateY(-10), Duration.seconds(0.1));
+        }
+    }
+
+    private void createSmoke(Point2D position) {
+        Entity shooting_start = spawn(entityNames.SHOOTING_START, position);
+        shooting_start.getComponent(ShootingStartComponent.class).initialize(this.direction);
+        runOnce(() -> {
+            Entity shooting_smoke = spawn("shooting_smoke", position);
+            shooting_smoke.getComponent(ShootingSmokeComponent.class).initialize(this.direction);
+        }, Duration.seconds(0.2));
     }
 }
