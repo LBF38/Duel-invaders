@@ -21,6 +21,7 @@ public class assetNames {
         public static final String ECLAT = "eclat.png";
         public static final String ECLAT2 = "eclat2.png";
         public static final String BACKGROUND = "background.png";
+        public static final String APP_ICON = "duelinvaders_icon2.png";
         public static final String EXPLOSION_PLAYER = "explosion_player.png";
         public static final String EXPLOSION_FINAL = "explosion_final.png";
         public static final ArrayList<String> EXPLOSIONS = new ArrayList<String>() {
