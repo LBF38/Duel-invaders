@@ -3,6 +3,7 @@ package org.enstabretagne.Component;
 /**
  * Définition des types d'entités disponibles dans le jeu
  * 
+ * @author jufch, LBF38, MathieuDFS
  * @since 0.1.0
  */
 public enum EntityType {

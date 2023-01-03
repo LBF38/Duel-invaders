@@ -4,7 +4,7 @@ package org.enstabretagne.Utils;
  * Définition des noms des entités du jeu.
  * Cela permet d'éviter les erreurs de frappe.
  * 
- * @author @LBF38, @jufch, @MathieuDFS
+ * @author LBF38, jufch, MathieuDFS
  * @since 0.1.0
  */
 public class entityNames {

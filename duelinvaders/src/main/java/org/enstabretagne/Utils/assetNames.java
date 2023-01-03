@@ -4,6 +4,13 @@ import java.util.ArrayList;
 
 import org.enstabretagne.Core.Constant;
 
+/**
+ * Classe contenant les noms des assets du jeu
+ * Cela permet d'éviter les risques de fautes de frappe et centralise l'ensemble des noms d'assets du jeu
+ * 
+ * @author LBF38, MathieuDFS, jufch
+ * @since 0.2.0
+ */
 public class assetNames {
     public static class textures {
         public static final String ALIEN = "alien.png";
@@ -25,7 +32,6 @@ public class assetNames {
         static {
             for (int i = 1; i <= 3; i++) {
                 LIFES.add("life" + i + ".png");
-                System.out.print("life" + i + ".png");
             }
         }
         public static final String FIRE = "fire.png";
@@ -44,12 +50,13 @@ public class assetNames {
     public static class sounds {
         public static final String EXPLOSION_ALIEN = "Explosion/mediumExplosion.wav";
         public static final String EXPLOSION_PLAYER_DEATH = "Explosion/finalExplosion.wav";
+        public static final String EXPLOSION_PLAYER_LIFE = "Explosion/strongExplosion.wav";
         public static final String START_CLAIRON = "autre/claironStart.wav";
         public static final String DEFEAT_CLAIRON = "autre/claironDefeat.wav";
         public static final String VICTORY_CLAIRON = "autre/claironVictory.wav";
         public static final ArrayList<String> AMBIENT_SOUNDS = new ArrayList<String>();
         static {
-            for (int i = 1; i < Constant.NUMBER_OF_AMBIENT_SOUND +1 ; i++) {
+            for (int i = 1; i < Constant.NUMBER_OF_AMBIENT_SOUND + 1; i++) {
                 AMBIENT_SOUNDS.add("ambiance/ambientSound" + i + ".wav");
             }
         }
@@ -57,7 +64,7 @@ public class assetNames {
         public static final ArrayList<String> LASER_SOUNDS = new ArrayList<>();
         static {
             for (int i = 1; i <= Constant.NUMBER_OF_LASER_SOUNDS; i++) {
-                LASER_SOUNDS.add("tir/laser" + i + ".wav");
+                LASER_SOUNDS.add("Tir/laser" + i + ".wav");
             }
         }
     }
