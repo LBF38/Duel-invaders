@@ -19,6 +19,9 @@ import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Map;
 
+import com.almasb.fxgl.app.scene.FXGLMenu;
+import com.almasb.fxgl.app.scene.SceneFactory;
+import com.almasb.fxgl.dsl.FXGL;
 import org.enstabretagne.Component.*;
 import org.enstabretagne.Core.AlienBulletCollision;
 import org.enstabretagne.Core.AlienPlayerCollision;
@@ -57,11 +60,16 @@ public class GameLauncher extends GameApplication {
     private Entity life1;
     private Entity life2;
     private Entity life3;
-    private long last_ambient_sound = System.currentTimeMillis();;
+    private long last_ambient_sound = System.currentTimeMillis();
     private int delay_ambient_sound = FXGLMath.random(Constant.AMBIENT_SOUND_DELAY_MIN,
             Constant.AMBIENT_SOUND_DELAY_MAX);
 
-    private int GameMode = 2; // 0 -> classique, 1 -> InfinityMode, 2->Solo
+    private static int GameMode = 2; // 0 -> classique, 1 -> InfinityMode, 2->Solo
+
+    public static void setGameMode(int gameMode) {
+        GameMode = gameMode;
+    }
+
 
     /**
      * Initialisation des paramètres du jeu
@@ -96,9 +104,14 @@ public class GameLauncher extends GameApplication {
                 "https://universal-soundbank.com/"));
         settings.setEnabledMenuItems(EnumSet.of(MenuItem.EXTRA));
         settings.setApplicationMode(ApplicationMode.RELEASE);
-        //todo : ajouter un bouton pour activer le mode infin
-        // i
+        settings.setSceneFactory(new SceneFactory(){
+            @Override
+            public FXGLMenu newMainMenu() {
+                return new NewMainMenu();
+            }
+        });
     }
+
 
     /**
      * Initialisation des commandes du jeu avec les touches du clavier
@@ -205,7 +218,7 @@ public class GameLauncher extends GameApplication {
         }
 
         spawn(entityNames.BACKGROUND);
-        loopBGM(assetNames.music.MUSIC_ACROSS_THE_UNIVERSE); // TODO: sélectionner la musique via les paramètres
+        loopBGM(assetNames.music.MUSIC_ACROSS_THE_UNIVERSE);
 
         //spawn life
         life3 = spawn(entityNames.LIFE,3,0);

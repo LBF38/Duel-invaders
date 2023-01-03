@@ -52,7 +52,7 @@ public class Constant {
     public enum AlienColor {
         RED, GREEN, BLUE, YELLOW, PURPLE, ORANGE
     }
-    public enum Music{
+    public enum Music_List{
         MUSIC_ACROSS_THE_UNIVERSE,MUSIC_BEYOND_CONSCIOUSNESS,MUSIC_DARK_MATTER,MUSIC_DEGREE_OF_FREEDOM,MUSIC_STELLAR_REMEBER
     }
     public static final Random random = new Random();
