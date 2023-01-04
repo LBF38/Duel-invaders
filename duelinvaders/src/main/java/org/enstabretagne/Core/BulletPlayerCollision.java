@@ -26,7 +26,6 @@ import javafx.util.Duration;
 public class BulletPlayerCollision extends CollisionHandler {
     /**
      * Constructeur de la classe BulletPlayerCollision
-     *
      */
     public BulletPlayerCollision() {
         super(EntityType.BULLET, EntityType.PLAYER);

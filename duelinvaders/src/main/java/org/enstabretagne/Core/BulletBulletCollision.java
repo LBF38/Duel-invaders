@@ -20,7 +20,6 @@ import com.almasb.fxgl.physics.CollisionHandler;
 public class BulletBulletCollision extends CollisionHandler {
     /**
      * Constructeur de la classe BulletBulletCollision
-     *
      */
     public BulletBulletCollision() {
         super(EntityType.BULLET, EntityType.BULLET);

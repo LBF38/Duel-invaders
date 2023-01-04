@@ -25,7 +25,6 @@ public class AlienBulletCollision extends CollisionHandler {
     /**
      * Constructeur de la classe AlienBulletCollision
      * Elle hérite de la classe CollisionHandler de FXGL
-     * 
      */
     public AlienBulletCollision() {
         super(EntityType.BULLET, EntityType.ALIEN);

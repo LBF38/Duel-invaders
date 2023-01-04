@@ -23,7 +23,6 @@ import com.almasb.fxgl.physics.CollisionHandler;
 public class EnemyShootPlayerCollision extends CollisionHandler {
     /**
      * Constructeur de la classe EnemyShootPlayerCollision
-     * 
      */
     public EnemyShootPlayerCollision() {
         super(EntityType.ENEMY_SHOOT, EntityType.PLAYER);

@@ -22,7 +22,6 @@ public class AlienPlayerCollision extends CollisionHandler {
     /**
      * Constructeur de la classe AlienPlayerCollision
      * Création d'une collision entre les entités player et alien
-     * 
      */
     public AlienPlayerCollision() {
         super(EntityType.PLAYER, EntityType.ALIEN);
