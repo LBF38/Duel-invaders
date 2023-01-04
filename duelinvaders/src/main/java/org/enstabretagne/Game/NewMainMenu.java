@@ -128,10 +128,10 @@ public class NewMainMenu extends FXGLMenu {
         var soundVolume = getSettings().getGlobalSoundVolume();
         var musicSlider = new Slider(0, 100, musicVolume * 100);
         var soundSlider = new Slider(0, 100, soundVolume * 100);
-        var musicText = getUIFactoryService().newText("Music Volume :" + musicVolume * 100, Color.GRAY, 22);
+        var musicText = getUIFactoryService().newText("Music Volume", Color.GRAY, 22);
         musicText.strokeProperty().set(Color.WHITE);
         musicText.setStrokeWidth(0.5);
-        var soundText = getUIFactoryService().newText("Sound Volume :" + soundVolume * 100, Color.GRAY, 22);
+        var soundText = getUIFactoryService().newText("Sound Volume", Color.GRAY, 22);
         soundText.strokeProperty().set(Color.WHITE);
         soundText.setStrokeWidth(0.5);
         var musicBox = new HBox(10, musicText, musicSlider);
@@ -143,10 +143,10 @@ public class NewMainMenu extends FXGLMenu {
         soundBox.setAlignment(Pos.CENTER);
         box.setAlignment(Pos.CENTER);
 
-        musicSlider.onDragDoneProperty().set(e -> {
+        musicSlider.onMouseReleasedProperty().set(e -> {
             getSettings().setGlobalMusicVolume(musicSlider.getValue() / 100);
         });
-        soundSlider.onDragDoneProperty().set(e -> {
+        soundSlider.onMouseReleasedProperty().set(e -> {
             getSettings().setGlobalSoundVolume(soundSlider.getValue() / 100);
         });
         return box;
