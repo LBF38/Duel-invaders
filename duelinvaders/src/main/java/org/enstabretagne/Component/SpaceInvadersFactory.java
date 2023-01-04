@@ -152,7 +152,7 @@ public class SpaceInvadersFactory implements EntityFactory {
     public Entity newBackground(SpawnData data) {
         return entityBuilder()
                 .at(-10, -10)
-                .view(texture(assetNames.textures.BACKGROUND, Constant.GAME_WIDTH + 20, Constant.GAME_HEIGHT + 20))
+                .view(texture(assetNames.textures.GAME_BACKGROUND, Constant.GAME_WIDTH + 20, Constant.GAME_HEIGHT + 20))
                 .zIndex(-500)
                 .build();
     }
@@ -266,6 +266,7 @@ public class SpaceInvadersFactory implements EntityFactory {
      *
      * @param data
      * @return Entity
+     * @deprecated
      */
     @Spawns(entityNames.LIFE)
     public Entity life(SpawnData data) {
