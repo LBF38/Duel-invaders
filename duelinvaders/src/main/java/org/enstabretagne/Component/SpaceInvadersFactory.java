@@ -266,6 +266,7 @@ public class SpaceInvadersFactory implements EntityFactory {
      *
      * @param data
      * @return Entity
+     * @deprecated
      */
     @Spawns(entityNames.LIFE)
     public Entity life(SpawnData data) {

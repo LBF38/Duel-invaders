@@ -9,7 +9,7 @@ import com.almasb.fxgl.entity.component.Component;
  *
  * @author MathieuDFS, jufch
  * @since 0.2.0
- * @Deprecated since 0.3.0
+ * @deprecated since 0.3.0
  */
 public class LifeComponent extends Component {
     /**
