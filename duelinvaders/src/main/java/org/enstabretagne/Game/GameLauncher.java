@@ -281,9 +281,8 @@ public class GameLauncher extends GameApplication {
     }
 
     private void showPlayersLivesAndScores() {
-        if (getGameScene().getUINodes().contains(playersUI)) {
-            getGameScene().removeUINodes(playersUI);
-        }
+        getGameScene().removeChild(playersUI);
+
         List<HBox> playersViews = new ArrayList<>();
         List<PlayerComponent> players = getGameWorld().getEntitiesByType(EntityType.PLAYER).stream()
                 .map(player -> player.getComponent(PlayerComponent.class)).collect(Collectors.toList());
@@ -295,7 +294,7 @@ public class GameLauncher extends GameApplication {
             playersViews.add(playerUI);
         }
         playersUI = new VBox(20, playersViews.toArray(new HBox[0]));
-        getGameScene().addUINodes(playersUI);
+        getGameScene().addChild(playersUI);
     }
 
     private HBox createScoreUI(int score, int player_id) {
@@ -334,7 +333,8 @@ public class GameLauncher extends GameApplication {
             last_ambient_sound = System.currentTimeMillis();
             delay_ambient_sound = FXGLMath.random(Constant.AMBIENT_SOUND_DELAY_MIN, Constant.AMBIENT_SOUND_DELAY_MAX);
         }
-        // showPlayersLivesAndScores();
+        if (getGameScene().getContentRoot().getChildren().contains(playersUI))
+            showPlayersLivesAndScores();
         run(() -> {
             getGameWorld().getEntitiesByType(EntityType.ALIEN).forEach((alien) -> {
                 if (FXGLMath.randomBoolean(0.01))
@@ -350,9 +350,10 @@ public class GameLauncher extends GameApplication {
         play(assetNames.sounds.DEFEAT_CLAIRON);
         String message = "Game Over ! \n Scores are as follows : \n" +
                 "Player 1 : " + playerComponent1.getScore() + "\n";
-        String player2 = "Player 2 : " + playerComponent2.getScore();
-        if (playerComponent2 != null)
+        if (playerComponent2 != null) {
+            String player2 = "Player 2 : " + playerComponent2.getScore();
             message += player2;
+        }
         getDialogService().showMessageBox(message, () -> {
             getDialogService().showConfirmationBox("Do you want to play again?", (yes) -> playAgain(yes));
         });
@@ -375,9 +376,10 @@ public class GameLauncher extends GameApplication {
         play(assetNames.sounds.VICTORY_CLAIRON);
         String message = "You won ! \n Scores are as follows : \n" +
                 "Player 1 : " + playerComponent1.getScore() + "\n";
-        String player2 = "Player 2 : " + playerComponent2.getScore();
-        if (playerComponent2 != null)
+        if (playerComponent2 != null) {
+            String player2 = "Player 2 : " + playerComponent2.getScore();
             message += player2;
+        }
         getDialogService().showMessageBox(message, () -> {
             getDialogService().showConfirmationBox("Do you want to play again?", (yes) -> playAgain(yes));
         });

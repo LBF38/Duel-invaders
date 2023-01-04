@@ -32,14 +32,16 @@ public class PlayerComponent extends Component {
     private Double last_shot = 0.0;
     private Direction side_shoot = Direction.LEFT;
     private Constant.Direction direction = Constant.Direction.UP;
-    private static int id;
+    private int id;
+    private static int counter;
 
     public int getId() {
         return id;
     }
 
     public PlayerComponent() {
-        id += 1;
+        super();
+        this.id = counter++;
     }
 
     /**
@@ -129,6 +131,7 @@ public class PlayerComponent extends Component {
     private void createBullet(Point2D position) {
         Entity bullet = spawn(entityNames.BULLET, position);
         bullet.getComponent(BulletComponent.class).initialize(this.direction);
+        bullet.getComponent(BulletComponent.class).setPlayerId(this.getId());
         last_shot = getGameTimer().getNow();
         shootingRecoil();
     }
@@ -159,38 +162,41 @@ public class PlayerComponent extends Component {
      * Score du joueur
      */
     public void incrementScore() {
-        if (id % 2 == 0)
+        if (isPlayer1())
             set(GameVariableNames.PLAYER1_SCORE, geti(GameVariableNames.PLAYER1_SCORE) + 1);
-        else if (id % 2 == 1)
+        else
             set(GameVariableNames.PLAYER2_SCORE, geti(GameVariableNames.PLAYER2_SCORE) + 1);
     }
 
+    private boolean isPlayer1() {
+        return id % 2 == 1;
+    }
+
     public void initializeScore() {
-        if (id % 2 == 0)
+        if (isPlayer1())
             set(GameVariableNames.PLAYER1_SCORE, 0);
-        else if (id % 2 == 1)
+        else
             set(GameVariableNames.PLAYER2_SCORE, 0);
     }
 
     public int getScore() {
-        if (id % 2 == 0)
+        if (isPlayer1())
             return geti(GameVariableNames.PLAYER1_SCORE);
-        else if (id % 2 == 1)
+        else
             return geti(GameVariableNames.PLAYER2_SCORE);
-        return -1;
     }
 
     public void setScore(int score) {
-        if (id % 2 == 0)
+        if (isPlayer1())
             set(GameVariableNames.PLAYER1_SCORE, score);
-        else if (id % 2 == 1)
+        else
             set(GameVariableNames.PLAYER2_SCORE, score);
     }
 
     public void decrementScore() {
-        if (id % 2 == 0)
+        if (isPlayer1())
             set(GameVariableNames.PLAYER1_SCORE, geti(GameVariableNames.PLAYER1_SCORE) - 1);
-        else if (id % 2 == 1)
+        else
             set(GameVariableNames.PLAYER2_SCORE, geti(GameVariableNames.PLAYER2_SCORE) - 1);
     }
 
@@ -198,38 +204,38 @@ public class PlayerComponent extends Component {
      * Vies du joueur
      */
     public void incrementLife() {
-        if (id % 2 == 0)
+        if (isPlayer1())
             set(GameVariableNames.PLAYER1_LIFE, geti(GameVariableNames.PLAYER1_LIFE) + 1);
-        else if (id % 2 == 1)
+        else
             set(GameVariableNames.PLAYER2_LIFE, geti(GameVariableNames.PLAYER2_LIFE) + 1);
     }
 
     public void initializeLife() {
-        if (id % 2 == 0)
-            set(GameVariableNames.PLAYER1_LIFE, 3);
-        else if (id % 2 == 1)
-            set(GameVariableNames.PLAYER2_LIFE, 3);
+        int life = 5;
+        if (isPlayer1())
+            set(GameVariableNames.PLAYER1_LIFE, life);
+        else
+            set(GameVariableNames.PLAYER2_LIFE, life);
     }
 
     public int getLife() {
-        if (id % 2 == 0)
+        if (isPlayer1())
             return geti(GameVariableNames.PLAYER1_LIFE);
-        else if (id % 2 == 1)
+        else
             return geti(GameVariableNames.PLAYER2_LIFE);
-        return -1;
     }
 
     public void setLife(int life) {
-        if (id % 2 == 0)
+        if (isPlayer1())
             set(GameVariableNames.PLAYER1_LIFE, life);
-        else if (id % 2 == 1)
+        else
             set(GameVariableNames.PLAYER2_LIFE, life);
     }
 
     public void decrementLife() {
-        if (id % 2 == 0)
+        if (isPlayer1())
             set(GameVariableNames.PLAYER1_LIFE, geti(GameVariableNames.PLAYER1_LIFE) - 1);
-        else if (id % 2 == 1)
+        else
             set(GameVariableNames.PLAYER2_LIFE, geti(GameVariableNames.PLAYER2_LIFE) - 1);
     }
 }

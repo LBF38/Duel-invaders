@@ -5,6 +5,7 @@ import static com.almasb.fxgl.dsl.FXGL.play;
 import static com.almasb.fxgl.dsl.FXGL.set;
 import static com.almasb.fxgl.dsl.FXGL.spawn;
 
+import org.enstabretagne.Component.BulletComponent;
 import org.enstabretagne.Component.EntityType;
 import org.enstabretagne.Component.PlayerComponent;
 import org.enstabretagne.Utils.assetNames;
@@ -43,9 +44,11 @@ public class AlienBulletCollision extends CollisionHandler {
     protected void onCollisionBegin(Entity bullet, Entity alien) {
         bullet.removeFromWorld();
         alien.removeFromWorld();
-        if (bullet.hasComponent(PlayerComponent.class)) {
-            bullet.getComponent(PlayerComponent.class).incrementScore();
-        }
+        int playerId = bullet.getComponent(BulletComponent.class).getPlayerId();
+        Entity player = getGameWorld().getEntitiesByType(EntityType.PLAYER).stream()
+                .filter(p -> p.getComponent(PlayerComponent.class).getId() == playerId).findFirst().get();
+        player.getComponent(PlayerComponent.class).incrementScore();
+
         spawn(entityNames.EXPLOSION_ALIEN, alien.getPosition());
         play(assetNames.sounds.EXPLOSION_ALIEN);
         set(GameVariableNames.isGameWon, getGameWorld().getEntitiesByType(EntityType.ALIEN).isEmpty());
