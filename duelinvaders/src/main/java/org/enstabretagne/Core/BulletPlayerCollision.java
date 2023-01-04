@@ -27,8 +27,6 @@ public class BulletPlayerCollision extends CollisionHandler {
     /**
      * Constructeur de la classe BulletPlayerCollision
      *
-     * @param bullet
-     * @param player
      */
     public BulletPlayerCollision() {
         super(EntityType.BULLET, EntityType.PLAYER);

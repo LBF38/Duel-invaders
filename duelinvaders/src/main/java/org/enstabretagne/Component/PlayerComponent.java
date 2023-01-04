@@ -159,7 +159,7 @@ public class PlayerComponent extends Component {
     }
 
     /**
-     * Score du joueur
+     * Incrémente le score du joueur
      */
     public void incrementScore() {
         if (isPlayer1())
@@ -168,10 +168,16 @@ public class PlayerComponent extends Component {
             set(GameVariableNames.PLAYER2_SCORE, geti(GameVariableNames.PLAYER2_SCORE) + 1);
     }
 
+    /**
+     * @return boolean
+     */
     private boolean isPlayer1() {
         return id % 2 == 1;
     }
 
+    /**
+     * Initialisation du score du joueur
+     */
     public void initializeScore() {
         if (isPlayer1())
             set(GameVariableNames.PLAYER1_SCORE, 0);
@@ -179,6 +185,9 @@ public class PlayerComponent extends Component {
             set(GameVariableNames.PLAYER2_SCORE, 0);
     }
 
+    /**
+     * @return int
+     */
     public int getScore() {
         if (isPlayer1())
             return geti(GameVariableNames.PLAYER1_SCORE);
@@ -186,6 +195,9 @@ public class PlayerComponent extends Component {
             return geti(GameVariableNames.PLAYER2_SCORE);
     }
 
+    /**
+     * @param score
+     */
     public void setScore(int score) {
         if (isPlayer1())
             set(GameVariableNames.PLAYER1_SCORE, score);
@@ -201,7 +213,7 @@ public class PlayerComponent extends Component {
     }
 
     /**
-     * Vies du joueur
+     * Incrémente le nombre de vie du joueur
      */
     public void incrementLife() {
         if (isPlayer1())
@@ -210,6 +222,9 @@ public class PlayerComponent extends Component {
             set(GameVariableNames.PLAYER2_LIFE, geti(GameVariableNames.PLAYER2_LIFE) + 1);
     }
 
+    /**
+     * Initialise le nombre de vie du joueur
+     */
     public void initializeLife() {
         int life = 5;
         if (isPlayer1())
@@ -218,6 +233,9 @@ public class PlayerComponent extends Component {
             set(GameVariableNames.PLAYER2_LIFE, life);
     }
 
+    /**
+     * @return int
+     */
     public int getLife() {
         if (isPlayer1())
             return geti(GameVariableNames.PLAYER1_LIFE);
@@ -225,6 +243,9 @@ public class PlayerComponent extends Component {
             return geti(GameVariableNames.PLAYER2_LIFE);
     }
 
+    /**
+     * @param life
+     */
     public void setLife(int life) {
         if (isPlayer1())
             set(GameVariableNames.PLAYER1_LIFE, life);
@@ -232,6 +253,9 @@ public class PlayerComponent extends Component {
             set(GameVariableNames.PLAYER2_LIFE, life);
     }
 
+    /**
+     * Décrémente le nombre de vie du joueur
+     */
     public void decrementLife() {
         if (isPlayer1())
             set(GameVariableNames.PLAYER1_LIFE, geti(GameVariableNames.PLAYER1_LIFE) - 1);

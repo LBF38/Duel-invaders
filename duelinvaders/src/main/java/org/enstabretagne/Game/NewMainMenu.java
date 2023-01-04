@@ -26,6 +26,12 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
+/**
+ * Menu principal du jeu - Customisation du menu principal
+ * 
+ * @author LBF38, jufch, MathieuDFS
+ * @since 0.3.0
+ */
 public class NewMainMenu extends FXGLMenu {
     public NewMainMenu() {
         super(MenuType.MAIN_MENU);
@@ -50,10 +56,15 @@ public class NewMainMenu extends FXGLMenu {
         getContentRoot().getChildren().addAll(background, menu, titleBox, pauseBox);
     }
 
+    /**
+     * Create the menu
+     * 
+     * @return VBox
+     */
     private VBox createMenu() {
         VBox options = createOptions();
         FXGLTextFlow creditsText = createCredits();
-        
+
         SpaceButton buttonClassicMode = new SpaceButton("Play Classique", () -> {
             GameLauncher.setGameMode(GameMode.CLASSIQUE);
             fireNewGame();
@@ -107,6 +118,11 @@ public class NewMainMenu extends FXGLMenu {
         return box;
     }
 
+    /**
+     * Create the options menu
+     * 
+     * @return VBox
+     */
     private VBox createOptions() {
         var musicVolume = getSettings().getGlobalMusicVolume();
         var soundVolume = getSettings().getGlobalSoundVolume();
@@ -136,6 +152,11 @@ public class NewMainMenu extends FXGLMenu {
         return box;
     }
 
+    /**
+     * Create the credits menu
+     * 
+     * @return FXGLTextFlow
+     */
     private FXGLTextFlow createCredits() {
         String creditsString = getSettings().getCredits().toString().replace(",", "\n").replace("[", "")
                 .replace("]", "");
@@ -146,6 +167,18 @@ public class NewMainMenu extends FXGLMenu {
         return creditsText;
     }
 
+    /**
+     * Define the button
+     * 
+     * @param name
+     * @param action
+     * @return SpaceButton
+     * @see SpaceButton
+     * @see StackPane
+     * 
+     * @author MathieuDFS, jufch, LBF38
+     * @since 0.3.0
+     */
     private static class SpaceButton extends StackPane {
         private static final Color SELECTED_COLOR = Color.WHITE;
         private static final Color NOT_SELECTED_COLOR = Color.GRAY;

@@ -21,8 +21,6 @@ public class BulletBulletCollision extends CollisionHandler {
     /**
      * Constructeur de la classe BulletBulletCollision
      *
-     * @param bullet1
-     * @param bullet2
      */
     public BulletBulletCollision() {
         super(EntityType.BULLET, EntityType.BULLET);

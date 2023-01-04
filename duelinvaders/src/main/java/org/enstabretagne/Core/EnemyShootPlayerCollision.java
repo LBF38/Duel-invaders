@@ -24,8 +24,6 @@ public class EnemyShootPlayerCollision extends CollisionHandler {
     /**
      * Constructeur de la classe EnemyShootPlayerCollision
      * 
-     * @param enemy_shoot
-     * @param player
      */
     public EnemyShootPlayerCollision() {
         super(EntityType.ENEMY_SHOOT, EntityType.PLAYER);

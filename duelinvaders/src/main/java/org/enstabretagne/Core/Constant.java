@@ -43,8 +43,6 @@ public class Constant {
     public static final Duration FIRE_DURATION = Duration.seconds(0.2);
     public static final Duration SMOKE_DURATION = Duration.seconds(0.2);
 
-    public static final Double START_LIVES = 5.0;
-
     public enum Direction {
         UP, DOWN, LEFT, RIGHT
     }

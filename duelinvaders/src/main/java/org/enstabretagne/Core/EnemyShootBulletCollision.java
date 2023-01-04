@@ -21,8 +21,6 @@ public class EnemyShootBulletCollision extends CollisionHandler {
     /**
      * Constructeur de la classe EnemyShootBulletCollision
      *
-     * @param bullet
-     * @param enemyShoot
      */
     public EnemyShootBulletCollision() {
         super(EntityType.BULLET, EntityType.ENEMY_SHOOT);
