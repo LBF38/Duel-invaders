@@ -1,13 +1,12 @@
 
 package org.enstabretagne.Core;
 
-import static com.almasb.fxgl.dsl.FXGL.geti;
-import static com.almasb.fxgl.dsl.FXGL.inc;
 import static com.almasb.fxgl.dsl.FXGL.play;
 import static com.almasb.fxgl.dsl.FXGL.set;
 import static com.almasb.fxgl.dsl.FXGL.spawn;
 
 import org.enstabretagne.Component.EntityType;
+import org.enstabretagne.Component.PlayerComponent;
 import org.enstabretagne.Utils.assetNames;
 import org.enstabretagne.Utils.entityNames;
 
@@ -38,9 +37,9 @@ public class EnemyShootPlayerCollision extends CollisionHandler {
     @Override
     protected void onCollisionBegin(Entity enemy_shoot, Entity player) {
         enemy_shoot.removeFromWorld();
-
-        inc(GameVariableNames.PLAYERS_LIVES, -1);
-        if (geti(GameVariableNames.PLAYERS_LIVES) == 0) {
+        PlayerComponent playerComponent = player.getComponent(PlayerComponent.class);
+        playerComponent.decrementLife();
+        if (playerComponent.getLife() == 0) {
             spawn(entityNames.EXPLOSION_PLAYER_DEATH, player.getPosition());
             play(assetNames.sounds.EXPLOSION_PLAYER_DEATH);
             set(GameVariableNames.isGameOver, true);

@@ -1,7 +1,9 @@
 package org.enstabretagne.Component;
 
 import static com.almasb.fxgl.dsl.FXGL.getGameTimer;
+import static com.almasb.fxgl.dsl.FXGL.geti;
 import static com.almasb.fxgl.dsl.FXGL.runOnce;
+import static com.almasb.fxgl.dsl.FXGL.set;
 import static com.almasb.fxgl.dsl.FXGL.spawn;
 import static org.enstabretagne.Core.Constant.DELAY_BETWEEN_SHOOT;
 import static org.enstabretagne.Core.Constant.GAME_WIDTH;
@@ -10,6 +12,7 @@ import static org.enstabretagne.Core.Constant.SPEED_SPACESHIP;
 
 import org.enstabretagne.Core.Constant;
 import org.enstabretagne.Core.Constant.Direction;
+import org.enstabretagne.Core.GameVariableNames;
 import org.enstabretagne.Utils.entityNames;
 
 import com.almasb.fxgl.entity.Entity;
@@ -29,6 +32,17 @@ public class PlayerComponent extends Component {
     private Double last_shot = 0.0;
     private Direction side_shoot = Direction.LEFT;
     private Constant.Direction direction = Constant.Direction.UP;
+    private int id;
+    private static int counter;
+
+    public int getId() {
+        return id;
+    }
+
+    public PlayerComponent() {
+        super();
+        this.id = counter++;
+    }
 
     /**
      * Setter de la direction du joueur
@@ -117,6 +131,7 @@ public class PlayerComponent extends Component {
     private void createBullet(Point2D position) {
         Entity bullet = spawn(entityNames.BULLET, position);
         bullet.getComponent(BulletComponent.class).initialize(this.direction);
+        bullet.getComponent(BulletComponent.class).setPlayerId(this.getId());
         last_shot = getGameTimer().getNow();
         shootingRecoil();
     }
@@ -141,5 +156,86 @@ public class PlayerComponent extends Component {
             Entity shooting_smoke = spawn("shooting_smoke", position);
             shooting_smoke.getComponent(ShootingSmokeComponent.class).initialize(this.direction);
         }, Duration.seconds(0.2));
+    }
+
+    /**
+     * Score du joueur
+     */
+    public void incrementScore() {
+        if (isPlayer1())
+            set(GameVariableNames.PLAYER1_SCORE, geti(GameVariableNames.PLAYER1_SCORE) + 1);
+        else
+            set(GameVariableNames.PLAYER2_SCORE, geti(GameVariableNames.PLAYER2_SCORE) + 1);
+    }
+
+    private boolean isPlayer1() {
+        return id % 2 == 1;
+    }
+
+    public void initializeScore() {
+        if (isPlayer1())
+            set(GameVariableNames.PLAYER1_SCORE, 0);
+        else
+            set(GameVariableNames.PLAYER2_SCORE, 0);
+    }
+
+    public int getScore() {
+        if (isPlayer1())
+            return geti(GameVariableNames.PLAYER1_SCORE);
+        else
+            return geti(GameVariableNames.PLAYER2_SCORE);
+    }
+
+    public void setScore(int score) {
+        if (isPlayer1())
+            set(GameVariableNames.PLAYER1_SCORE, score);
+        else
+            set(GameVariableNames.PLAYER2_SCORE, score);
+    }
+
+    public void decrementScore() {
+        if (isPlayer1())
+            set(GameVariableNames.PLAYER1_SCORE, geti(GameVariableNames.PLAYER1_SCORE) - 1);
+        else
+            set(GameVariableNames.PLAYER2_SCORE, geti(GameVariableNames.PLAYER2_SCORE) - 1);
+    }
+
+    /**
+     * Vies du joueur
+     */
+    public void incrementLife() {
+        if (isPlayer1())
+            set(GameVariableNames.PLAYER1_LIFE, geti(GameVariableNames.PLAYER1_LIFE) + 1);
+        else
+            set(GameVariableNames.PLAYER2_LIFE, geti(GameVariableNames.PLAYER2_LIFE) + 1);
+    }
+
+    public void initializeLife() {
+        int life = 5;
+        if (isPlayer1())
+            set(GameVariableNames.PLAYER1_LIFE, life);
+        else
+            set(GameVariableNames.PLAYER2_LIFE, life);
+    }
+
+    public int getLife() {
+        if (isPlayer1())
+            return geti(GameVariableNames.PLAYER1_LIFE);
+        else
+            return geti(GameVariableNames.PLAYER2_LIFE);
+    }
+
+    public void setLife(int life) {
+        if (isPlayer1())
+            set(GameVariableNames.PLAYER1_LIFE, life);
+        else
+            set(GameVariableNames.PLAYER2_LIFE, life);
+    }
+
+    public void decrementLife() {
+        if (isPlayer1())
+            set(GameVariableNames.PLAYER1_LIFE, geti(GameVariableNames.PLAYER1_LIFE) - 1);
+        else
+            set(GameVariableNames.PLAYER2_LIFE, geti(GameVariableNames.PLAYER2_LIFE) - 1);
     }
 }
