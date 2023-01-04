@@ -28,6 +28,17 @@ mvn clean package
 > **Note**
 > Vous devez exécuter cette commande dans le dossier du projet contenant le fichier `pom.xml`. Ici, le dossier racine du projet est `duelinvaders`.
 
+Vous pouvez également compiler la javadoc du projet en exécutant la commande suivante :
+
+```bash
+mvn javadoc:javadoc
+```
+
+La javadoc sera générée dans le dossier `target/site/apidocs` du projet. (par défaut)
+
+> **Note**
+> Les releases fournissent la javadoc du projet en archive `.jar`. Ils sont builds avec la commande `mvn clean package javadoc:jar` et sont disponibles dans la section [Releases](https://github.com/LBF38/Duel-invaders/releases) du projet.
+
 ### Exécution
 
 > **Warning**

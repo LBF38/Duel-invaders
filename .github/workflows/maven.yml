@@ -6,7 +6,7 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: Java CI with Maven
+name: Verify Maven build and javadoc for Java project
 
 on:
   push:
@@ -29,4 +29,4 @@ jobs:
         distribution: 'temurin'
         cache: maven
     - name: Build with Maven
-      run: mvn -B package --file duelinvaders/pom.xml
+      run: mvn clean javadoc:jar -B package --file duelinvaders/pom.xml
