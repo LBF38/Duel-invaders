@@ -76,3 +76,6 @@ Ce projet utilise [FXGL](https://github.com/almasb/FXGL) pour la partie graphiqu
 - [@jufch](https://github.com/jufch)
 - [@MathieuDFS](https://github.com/MathieuDFS)
 - [@LBF38](https://github.com/LBF38)
+
+## :bar_chart: Activité
+[![Alt](https://repobeats.axiom.co/api/embed/ceac8d3530af4de23d7c090ec207ae2e9cf02298.svg)](#)
