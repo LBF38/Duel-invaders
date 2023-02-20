@@ -8,14 +8,10 @@ import static com.almasb.fxgl.dsl.FXGL.getPhysicsWorld;
 import static com.almasb.fxgl.dsl.FXGL.getUIFactoryService;
 import static com.almasb.fxgl.dsl.FXGL.getb;
 import static com.almasb.fxgl.dsl.FXGL.loopBGM;
-import static com.almasb.fxgl.dsl.FXGL.onKey;
 import static com.almasb.fxgl.dsl.FXGL.play;
 import static com.almasb.fxgl.dsl.FXGL.run;
 import static com.almasb.fxgl.dsl.FXGL.spawn;
 import static com.almasb.fxgl.dsl.FXGL.texture;
-import static org.enstabretagne.Utils.GameMode.CLASSIQUE;
-import static org.enstabretagne.Utils.GameMode.INFINITY_MODE;
-import static org.enstabretagne.Utils.GameMode.SOLO;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,17 +20,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.enstabretagne.Collision.AlienBulletCollision;
+import org.enstabretagne.Collision.AlienPlayerCollision;
+import org.enstabretagne.Collision.BulletBulletCollision;
+import org.enstabretagne.Collision.BulletPlayerCollision;
+import org.enstabretagne.Collision.EnemyShootBulletCollision;
+import org.enstabretagne.Collision.EnemyShootPlayerCollision;
 import org.enstabretagne.Component.AlienComponent;
 import org.enstabretagne.Component.PlayerComponent;
 import org.enstabretagne.Component.SpaceInvadersFactory;
-import org.enstabretagne.Core.AlienBulletCollision;
-import org.enstabretagne.Core.AlienPlayerCollision;
-import org.enstabretagne.Core.BulletBulletCollision;
-import org.enstabretagne.Core.BulletPlayerCollision;
-import org.enstabretagne.Core.EnemyShootBulletCollision;
-import org.enstabretagne.Core.EnemyShootPlayerCollision;
+import org.enstabretagne.Game.GameModes.ClassicGameMode;
+import org.enstabretagne.Game.GameModes.GameMode;
 import org.enstabretagne.Utils.EntityType;
-import org.enstabretagne.Utils.GameMode;
+import org.enstabretagne.Utils.GameModeTypes;
 import org.enstabretagne.Utils.GameVariableNames;
 import org.enstabretagne.Utils.Settings;
 import org.enstabretagne.Utils.assetNames;
@@ -50,7 +48,6 @@ import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.entity.Entity;
 
 import javafx.geometry.Pos;
-import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -65,18 +62,18 @@ import javafx.util.Duration;
  * @since 0.1.0
  */
 public class GameLauncher extends GameApplication {
-    private PlayerComponent playerComponent1;
-    private PlayerComponent playerComponent2;
-    private Entity player1;
-    private Entity player2;
+    private static GameMode game_mode = new ClassicGameMode();
     private long last_ambient_sound = System.currentTimeMillis();
     private int delay_ambient_sound = FXGLMath.random(Settings.AMBIENT_SOUND_DELAY_MIN,
             Settings.AMBIENT_SOUND_DELAY_MAX);
-    private static GameMode GameMode = CLASSIQUE;
     VBox playersUI = new VBox();
 
     public static void setGameMode(GameMode gameMode) {
-        GameMode = gameMode;
+        game_mode = gameMode;
+    }
+
+    public static GameModeTypes getGameModeType() {
+        return game_mode.getGameModeType();
     }
 
     /**
@@ -94,7 +91,7 @@ public class GameLauncher extends GameApplication {
         settings.setMainMenuEnabled(true);
         settings.setGameMenuEnabled(true);
         settings.setFullScreenAllowed(true);
-        settings.setFullScreenFromStart(true);
+        // settings.setFullScreenFromStart(true);
         settings.setCredits(Arrays.asList(
                 "Duel Invaders project by:",
                 "@MathieuDFS",
@@ -126,42 +123,7 @@ public class GameLauncher extends GameApplication {
      */
     @Override
     protected void initInput() {
-        onKey(KeyCode.ENTER, () -> {
-            playerComponent1.shoot();
-        });
-
-        onKey(KeyCode.RIGHT, () -> {
-            playerComponent1.moveRight();
-        });
-
-        onKey(KeyCode.LEFT, () -> {
-            playerComponent1.moveLeft();
-        });
-
-        onKey(KeyCode.SPACE, () -> {
-            if (GameMode == SOLO) {
-                playerComponent1.shoot();
-            } else {
-                playerComponent2.shoot();
-            }
-        });
-
-        onKey(KeyCode.D, () -> {
-            if (GameMode == SOLO) {
-                playerComponent1.moveRight();
-            } else {
-                playerComponent2.moveRight();
-            }
-        });
-
-        onKey(KeyCode.Q, () -> {
-            if (GameMode == SOLO) {
-                playerComponent1.moveLeft();
-            } else {
-                playerComponent2.moveLeft();
-            }
-        });
-
+        super.initInput();
     }
 
     /**
@@ -184,44 +146,37 @@ public class GameLauncher extends GameApplication {
         play(assetNames.sounds.START_CLAIRON);
         getGameWorld().addEntityFactory(new SpaceInvadersFactory());
 
-        player1 = spawn(entityNames.PLAYER);
-        player1.setX(Settings.GAME_WIDTH / 2);
-        player1.setY(Settings.GAME_HEIGHT - player1.getHeight());
-        playerComponent1 = player1.getComponent(PlayerComponent.class);
-        playerComponent1.setDirection(Settings.Direction.UP);
-        playerComponent1.initializeScore();
-        playerComponent1.initializeLife();
-
-        if (GameMode != SOLO) {
-            player2 = spawn(entityNames.PLAYER);
-            player2.setX(Settings.GAME_WIDTH / 2);
-            player2.setY(0);
-            playerComponent2 = player2.getComponent(PlayerComponent.class);
-            playerComponent2.setDirection(Settings.Direction.DOWN);
-            playerComponent2.initializeScore();
-            playerComponent2.initializeLife();
+        game_mode.initGameMode();
+        try {
+            game_mode.initInput();
+        } catch (Exception exception) {
+            System.out.println("Erreur lors de l'initialisation des inputs : " + exception.getMessage());
         }
 
-        if (GameMode == INFINITY_MODE) {
-            // spawn Aliens pour infinity mode
-            Entity alien1 = spawn(entityNames.ALIEN, 0, Settings.GAME_HEIGHT / 2 - Settings.ALIEN_HEIGHT);
-            alien1.getComponent(AlienComponent.class).initialize(Settings.Direction.UP);
-            Entity alien2 = spawn(entityNames.ALIEN, 0, Settings.GAME_HEIGHT / 2 - Settings.ALIEN_HEIGHT);
-            alien2.getComponent(AlienComponent.class).initialize(Settings.Direction.DOWN);
-            run(() -> {
-                Entity alien = spawn(entityNames.ALIEN, 0, Settings.GAME_HEIGHT / 2 - Settings.ALIEN_HEIGHT);
-                alien.getComponent(AlienComponent.class).initialize(Settings.Direction.UP);
-            }, Duration.seconds(1.4));
-            run(() -> {
-                Entity alien = spawn(entityNames.ALIEN, 0, Settings.GAME_HEIGHT / 2 - Settings.ALIEN_HEIGHT);
-                alien.getComponent(AlienComponent.class).initialize(Settings.Direction.DOWN);
-            }, Duration.seconds(1.5));
+        // if (GameModeType == INFINITY_MODE) {
+        // // spawn Aliens pour infinity mode
+        // Entity alien1 = spawn(entityNames.ALIEN, 0, Settings.GAME_HEIGHT / 2 -
+        // Settings.ALIEN_HEIGHT);
+        // alien1.getComponent(AlienComponent.class).initialize(Settings.Direction.UP);
+        // Entity alien2 = spawn(entityNames.ALIEN, 0, Settings.GAME_HEIGHT / 2 -
+        // Settings.ALIEN_HEIGHT);
+        // alien2.getComponent(AlienComponent.class).initialize(Settings.Direction.DOWN);
+        // run(() -> {
+        // Entity alien = spawn(entityNames.ALIEN, 0, Settings.GAME_HEIGHT / 2 -
+        // Settings.ALIEN_HEIGHT);
+        // alien.getComponent(AlienComponent.class).initialize(Settings.Direction.UP);
+        // }, Duration.seconds(1.4));
+        // run(() -> {
+        // Entity alien = spawn(entityNames.ALIEN, 0, Settings.GAME_HEIGHT / 2 -
+        // Settings.ALIEN_HEIGHT);
+        // alien.getComponent(AlienComponent.class).initialize(Settings.Direction.DOWN);
+        // }, Duration.seconds(1.5));
 
-        } else if (GameMode == CLASSIQUE) {
-            makeAlienBlock();
-        } else if (GameMode == SOLO) {
-            makeAlienBlockSolo();
-        }
+        // } else if (GameModeType == CLASSIQUE) {
+        // makeAlienBlock();
+        // } else if (GameModeType == SOLO) {
+        // makeAlienBlockSolo();
+        // }
 
         spawn(entityNames.BACKGROUND);
         loopBGM(assetNames.music.MUSIC_ACROSS_THE_UNIVERSE);
@@ -325,9 +280,9 @@ public class GameLauncher extends GameApplication {
     @Override
     protected void onUpdate(double tpf) {
         if (getb(GameVariableNames.isGameOver))
-            gameOverScreen();
+            gameOverScreen("to refactor", "to refactor"); // TODO : refactor
         if (getb(GameVariableNames.isGameWon))
-            winScreen();
+            winScreen("to refactor", "to refactor"); // TODO : refactor
 
         if ((System.currentTimeMillis() - last_ambient_sound) > delay_ambient_sound) {
             ambientSound();
@@ -347,12 +302,12 @@ public class GameLauncher extends GameApplication {
     /**
      * Affichage de l'écran de fin de partie
      */
-    private void gameOverScreen() {
+    private void gameOverScreen(String score_player1, String score_player2) {
         play(assetNames.sounds.DEFEAT_CLAIRON);
         String message = "Game Over ! \n Scores are as follows : \n" +
-                "Player 1 : " + playerComponent1.getScore() + "\n";
-        if (playerComponent2 != null) {
-            String player2 = "Player 2 : " + playerComponent2.getScore();
+                "Player 1 : " + score_player1 + "\n";
+        if (score_player2 != null) {
+            String player2 = "Player 2 : " + score_player2;
             message += player2;
         }
         getDialogService().showMessageBox(message, () -> {
@@ -373,12 +328,12 @@ public class GameLauncher extends GameApplication {
     /**
      * Affichage de l'écran de victoire
      */
-    private void winScreen() {
+    private void winScreen(String score_player1, String score_player2) {
         play(assetNames.sounds.VICTORY_CLAIRON);
         String message = "You won ! \n Scores are as follows : \n" +
-                "Player 1 : " + playerComponent1.getScore() + "\n";
-        if (playerComponent2 != null) {
-            String player2 = "Player 2 : " + playerComponent2.getScore();
+                "Player 1 : " + score_player1 + "\n";
+        if (score_player2 != null) {
+            String player2 = "Player 2 : " + score_player2;
             message += player2;
         }
         getDialogService().showMessageBox(message, () -> {

@@ -6,6 +6,6 @@ package org.enstabretagne.Utils;
  * @author LBF38, MathieuDFS, jufch
  * @since 0.2.0
  */
-public enum GameMode {
-    CLASSIQUE, INFINITY_MODE, SOLO, MUSIC_DEMO
+public enum GameModeTypes {
+    CLASSIQUE, INFINITY_MODE, SOLO, MUSIC_DEMO, MULTI
 }
