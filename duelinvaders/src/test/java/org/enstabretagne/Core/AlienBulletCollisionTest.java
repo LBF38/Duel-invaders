@@ -8,6 +8,7 @@ import com.almasb.fxgl.entity.GameWorld;
 
 // import static org.junit.jupiter.api.Assertions.*;
 import org.enstabretagne.Component.*;
+import org.enstabretagne.Utils.EntityType;
 
 // import static com.almasb.fxgl.dsl.FXGL.*;
 

@@ -13,9 +13,9 @@ import static com.almasb.fxgl.dsl.FXGL.play;
 import static com.almasb.fxgl.dsl.FXGL.run;
 import static com.almasb.fxgl.dsl.FXGL.spawn;
 import static com.almasb.fxgl.dsl.FXGL.texture;
-import static org.enstabretagne.Game.GameMode.CLASSIQUE;
-import static org.enstabretagne.Game.GameMode.INFINITY_MODE;
-import static org.enstabretagne.Game.GameMode.SOLO;
+import static org.enstabretagne.Utils.GameMode.CLASSIQUE;
+import static org.enstabretagne.Utils.GameMode.INFINITY_MODE;
+import static org.enstabretagne.Utils.GameMode.SOLO;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,17 +25,18 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.enstabretagne.Component.AlienComponent;
-import org.enstabretagne.Component.EntityType;
 import org.enstabretagne.Component.PlayerComponent;
 import org.enstabretagne.Component.SpaceInvadersFactory;
 import org.enstabretagne.Core.AlienBulletCollision;
 import org.enstabretagne.Core.AlienPlayerCollision;
 import org.enstabretagne.Core.BulletBulletCollision;
 import org.enstabretagne.Core.BulletPlayerCollision;
-import org.enstabretagne.Core.Constant;
 import org.enstabretagne.Core.EnemyShootBulletCollision;
 import org.enstabretagne.Core.EnemyShootPlayerCollision;
-import org.enstabretagne.Core.GameVariableNames;
+import org.enstabretagne.Utils.EntityType;
+import org.enstabretagne.Utils.GameMode;
+import org.enstabretagne.Utils.GameVariableNames;
+import org.enstabretagne.Utils.Settings;
 import org.enstabretagne.Utils.assetNames;
 import org.enstabretagne.Utils.entityNames;
 
@@ -69,8 +70,8 @@ public class GameLauncher extends GameApplication {
     private Entity player1;
     private Entity player2;
     private long last_ambient_sound = System.currentTimeMillis();
-    private int delay_ambient_sound = FXGLMath.random(Constant.AMBIENT_SOUND_DELAY_MIN,
-            Constant.AMBIENT_SOUND_DELAY_MAX);
+    private int delay_ambient_sound = FXGLMath.random(Settings.AMBIENT_SOUND_DELAY_MIN,
+            Settings.AMBIENT_SOUND_DELAY_MAX);
     private static GameMode GameMode = CLASSIQUE;
     VBox playersUI = new VBox();
 
@@ -85,8 +86,8 @@ public class GameLauncher extends GameApplication {
      */
     @Override
     protected void initSettings(GameSettings settings) {
-        settings.setWidth(Constant.GAME_WIDTH.intValue());
-        settings.setHeight(Constant.GAME_HEIGHT.intValue());
+        settings.setWidth(Settings.GAME_WIDTH.intValue());
+        settings.setHeight(Settings.GAME_HEIGHT.intValue());
         settings.setTitle("Duel Invaders");
         settings.setAppIcon(assetNames.textures.APP_ICON);
         settings.setVersion("0.2.0");
@@ -184,36 +185,36 @@ public class GameLauncher extends GameApplication {
         getGameWorld().addEntityFactory(new SpaceInvadersFactory());
 
         player1 = spawn(entityNames.PLAYER);
-        player1.setX(Constant.GAME_WIDTH / 2);
-        player1.setY(Constant.GAME_HEIGHT - player1.getHeight());
+        player1.setX(Settings.GAME_WIDTH / 2);
+        player1.setY(Settings.GAME_HEIGHT - player1.getHeight());
         playerComponent1 = player1.getComponent(PlayerComponent.class);
-        playerComponent1.setDirection(Constant.Direction.UP);
+        playerComponent1.setDirection(Settings.Direction.UP);
         playerComponent1.initializeScore();
         playerComponent1.initializeLife();
 
         if (GameMode != SOLO) {
             player2 = spawn(entityNames.PLAYER);
-            player2.setX(Constant.GAME_WIDTH / 2);
+            player2.setX(Settings.GAME_WIDTH / 2);
             player2.setY(0);
             playerComponent2 = player2.getComponent(PlayerComponent.class);
-            playerComponent2.setDirection(Constant.Direction.DOWN);
+            playerComponent2.setDirection(Settings.Direction.DOWN);
             playerComponent2.initializeScore();
             playerComponent2.initializeLife();
         }
 
         if (GameMode == INFINITY_MODE) {
             // spawn Aliens pour infinity mode
-            Entity alien1 = spawn(entityNames.ALIEN, 0, Constant.GAME_HEIGHT / 2 - Constant.ALIEN_HEIGHT);
-            alien1.getComponent(AlienComponent.class).initialize(Constant.Direction.UP);
-            Entity alien2 = spawn(entityNames.ALIEN, 0, Constant.GAME_HEIGHT / 2 - Constant.ALIEN_HEIGHT);
-            alien2.getComponent(AlienComponent.class).initialize(Constant.Direction.DOWN);
+            Entity alien1 = spawn(entityNames.ALIEN, 0, Settings.GAME_HEIGHT / 2 - Settings.ALIEN_HEIGHT);
+            alien1.getComponent(AlienComponent.class).initialize(Settings.Direction.UP);
+            Entity alien2 = spawn(entityNames.ALIEN, 0, Settings.GAME_HEIGHT / 2 - Settings.ALIEN_HEIGHT);
+            alien2.getComponent(AlienComponent.class).initialize(Settings.Direction.DOWN);
             run(() -> {
-                Entity alien = spawn(entityNames.ALIEN, 0, Constant.GAME_HEIGHT / 2 - Constant.ALIEN_HEIGHT);
-                alien.getComponent(AlienComponent.class).initialize(Constant.Direction.UP);
+                Entity alien = spawn(entityNames.ALIEN, 0, Settings.GAME_HEIGHT / 2 - Settings.ALIEN_HEIGHT);
+                alien.getComponent(AlienComponent.class).initialize(Settings.Direction.UP);
             }, Duration.seconds(1.4));
             run(() -> {
-                Entity alien = spawn(entityNames.ALIEN, 0, Constant.GAME_HEIGHT / 2 - Constant.ALIEN_HEIGHT);
-                alien.getComponent(AlienComponent.class).initialize(Constant.Direction.DOWN);
+                Entity alien = spawn(entityNames.ALIEN, 0, Settings.GAME_HEIGHT / 2 - Settings.ALIEN_HEIGHT);
+                alien.getComponent(AlienComponent.class).initialize(Settings.Direction.DOWN);
             }, Duration.seconds(1.5));
 
         } else if (GameMode == CLASSIQUE) {
@@ -228,21 +229,21 @@ public class GameLauncher extends GameApplication {
 
     private void makeAlienBlock() {
         for (int i = 0; i < 2; i++) {
-            makeAlienLine(i, Constant.Direction.DOWN);
-            makeAlienLine(i, Constant.Direction.UP);
+            makeAlienLine(i, Settings.Direction.DOWN);
+            makeAlienLine(i, Settings.Direction.UP);
         }
     }
 
-    private void makeAlienLine(int line, Constant.Direction direction) {
-        for (int i = 0; i < Constant.ALIENS_NUMBER; i++) {
-            if (direction == Constant.Direction.DOWN) {
-                Entity alien = spawn(entityNames.ALIEN, i * Constant.ALIEN_WIDTH,
-                        Constant.GAME_HEIGHT / 2 + (line - 1) * Constant.ALIEN_HEIGHT);
+    private void makeAlienLine(int line, Settings.Direction direction) {
+        for (int i = 0; i < Settings.ALIENS_NUMBER; i++) {
+            if (direction == Settings.Direction.DOWN) {
+                Entity alien = spawn(entityNames.ALIEN, i * Settings.ALIEN_WIDTH,
+                        Settings.GAME_HEIGHT / 2 + (line - 1) * Settings.ALIEN_HEIGHT);
                 alien.getComponent(AlienComponent.class).initialize(direction);
                 alien.getComponent(AlienComponent.class).setAlienNumber(i);
             } else {
-                Entity alien = spawn(entityNames.ALIEN, i * Constant.ALIEN_WIDTH,
-                        Constant.GAME_HEIGHT / 2 + (line - 2) * Constant.ALIEN_HEIGHT);
+                Entity alien = spawn(entityNames.ALIEN, i * Settings.ALIEN_WIDTH,
+                        Settings.GAME_HEIGHT / 2 + (line - 2) * Settings.ALIEN_HEIGHT);
                 alien.getComponent(AlienComponent.class).initialize(direction);
                 alien.getComponent(AlienComponent.class).setAlienNumber(i);
             }
@@ -251,9 +252,9 @@ public class GameLauncher extends GameApplication {
 
     private void makeAlienBlockSolo() {
         for (int line = 0; line < 4; line++) {
-            for (int k = 0; k < Constant.ALIENS_NUMBER; k++) {
-                Entity alien = spawn(entityNames.ALIEN, k * Constant.ALIEN_WIDTH, (line - 1) * Constant.ALIEN_HEIGHT);
-                alien.getComponent(AlienComponent.class).initialize(Constant.Direction.DOWN);
+            for (int k = 0; k < Settings.ALIENS_NUMBER; k++) {
+                Entity alien = spawn(entityNames.ALIEN, k * Settings.ALIEN_WIDTH, (line - 1) * Settings.ALIEN_HEIGHT);
+                alien.getComponent(AlienComponent.class).initialize(Settings.Direction.DOWN);
                 alien.getComponent(AlienComponent.class).setAlienNumber(k);
             }
         }
@@ -331,16 +332,16 @@ public class GameLauncher extends GameApplication {
         if ((System.currentTimeMillis() - last_ambient_sound) > delay_ambient_sound) {
             ambientSound();
             last_ambient_sound = System.currentTimeMillis();
-            delay_ambient_sound = FXGLMath.random(Constant.AMBIENT_SOUND_DELAY_MIN, Constant.AMBIENT_SOUND_DELAY_MAX);
+            delay_ambient_sound = FXGLMath.random(Settings.AMBIENT_SOUND_DELAY_MIN, Settings.AMBIENT_SOUND_DELAY_MAX);
         }
         if (getGameScene().getContentRoot().getChildren().contains(playersUI))
             showPlayersLivesAndScores();
         run(() -> {
             getGameWorld().getEntitiesByType(EntityType.ALIEN).forEach((alien) -> {
                 if (FXGLMath.randomBoolean(0.01))
-                    alien.getComponent(AlienComponent.class).randomShoot(Constant.ALIEN_SHOOT_CHANCE);
+                    alien.getComponent(AlienComponent.class).randomShoot(Settings.ALIEN_SHOOT_CHANCE);
             });
-        }, Duration.seconds(Constant.random.nextDouble() * 10));
+        }, Duration.seconds(Settings.random.nextDouble() * 10));
     }
 
     /**
@@ -390,7 +391,7 @@ public class GameLauncher extends GameApplication {
      */
     private void ambientSound() {
         String ambientMusic = assetNames.sounds.AMBIENT_SOUNDS
-                .get(FXGLMath.random(0, Constant.NUMBER_OF_AMBIENT_SOUND - 1));
+                .get(FXGLMath.random(0, Settings.NUMBER_OF_AMBIENT_SOUND - 1));
         play(ambientMusic);
     }
 

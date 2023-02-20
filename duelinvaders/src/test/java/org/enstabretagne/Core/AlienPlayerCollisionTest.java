@@ -1,8 +1,8 @@
 package org.enstabretagne.Core;
 
 import org.enstabretagne.Component.AlienComponent;
-import org.enstabretagne.Component.EntityType;
 import org.enstabretagne.Component.PlayerComponent;
+import org.enstabretagne.Utils.EntityType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

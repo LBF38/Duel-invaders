@@ -1,6 +1,6 @@
 package org.enstabretagne.Component;
 
-import org.enstabretagne.Core.Constant;
+import org.enstabretagne.Utils.Settings;
 
 import com.almasb.fxgl.entity.component.Component;
 
@@ -15,13 +15,13 @@ public class LifeComponent extends Component {
     /**
      * Initialise le composant affichage de vie
      */
-    public void initialize(Constant.Direction direction) {
-        if (direction == Constant.Direction.UP) {
-            entity.setX(Constant.GAME_WIDTH - Constant.LIFE_DISPLAY_WIDTH);
+    public void initialize(Settings.Direction direction) {
+        if (direction == Settings.Direction.UP) {
+            entity.setX(Settings.GAME_WIDTH - Settings.LIFE_DISPLAY_WIDTH);
             entity.setY(0);
-        } else if (direction == Constant.Direction.DOWN) {
-            entity.setX(Constant.GAME_WIDTH - Constant.LIFE_DISPLAY_WIDTH);
-            entity.setY(Constant.GAME_HEIGHT - Constant.LIFE_DISPLAY_HEIGHT);
+        } else if (direction == Settings.Direction.DOWN) {
+            entity.setX(Settings.GAME_WIDTH - Settings.LIFE_DISPLAY_WIDTH);
+            entity.setY(Settings.GAME_HEIGHT - Settings.LIFE_DISPLAY_HEIGHT);
         }
     }
 

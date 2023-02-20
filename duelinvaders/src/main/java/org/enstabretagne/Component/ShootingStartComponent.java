@@ -1,9 +1,9 @@
 package org.enstabretagne.Component;
 
-import static org.enstabretagne.Core.Constant.FIRE_DURATION;
-import static org.enstabretagne.Core.Constant.SHOOTING_START_WIDTH;
+import static org.enstabretagne.Utils.Settings.FIRE_DURATION;
+import static org.enstabretagne.Utils.Settings.SHOOTING_START_WIDTH;
 
-import org.enstabretagne.Core.Constant.Direction;
+import org.enstabretagne.Utils.Settings.Direction;
 
 import com.almasb.fxgl.dsl.components.ExpireCleanComponent;
 import com.almasb.fxgl.entity.component.Component;

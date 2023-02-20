@@ -1,4 +1,4 @@
-package org.enstabretagne.Game;
+package org.enstabretagne.Utils;
 
 /**
  * Modes de jeu disponibles

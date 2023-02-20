@@ -1,4 +1,4 @@
-package org.enstabretagne.Core;
+package org.enstabretagne.Utils;
 
 /**
  * Classe contenant les noms des variables de jeu

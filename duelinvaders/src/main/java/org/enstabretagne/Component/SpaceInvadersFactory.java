@@ -5,7 +5,8 @@ import static com.almasb.fxgl.dsl.FXGL.play;
 import static com.almasb.fxgl.dsl.FXGL.spawn;
 import static com.almasb.fxgl.dsl.FXGL.texture;
 
-import org.enstabretagne.Core.Constant;
+import org.enstabretagne.Utils.EntityType;
+import org.enstabretagne.Utils.Settings;
 import org.enstabretagne.Utils.assetNames;
 import org.enstabretagne.Utils.entityNames;
 
@@ -37,7 +38,7 @@ public class SpaceInvadersFactory implements EntityFactory {
      */
     @Spawns(entityNames.PLAYER)
     public Entity newPlayer(SpawnData data) {
-        Texture texture = texture(assetNames.textures.SPACESHIP, Constant.PLAYER_WIDTH, Constant.PLAYER_HEIGHT);
+        Texture texture = texture(assetNames.textures.SPACESHIP, Settings.PLAYER_WIDTH, Settings.PLAYER_HEIGHT);
 
         return entityBuilder()
                 .type(EntityType.PLAYER)
@@ -56,11 +57,11 @@ public class SpaceInvadersFactory implements EntityFactory {
      */
     @Spawns(entityNames.ALIEN)
     public Entity newAlien(SpawnData data) {
-        int randomIndex = Constant.random.nextInt(Constant.AlienColor.values().length);
-        Constant.AlienColor randomColor = Constant.AlienColor.values()[randomIndex];
+        int randomIndex = Settings.random.nextInt(Settings.AlienColor.values().length);
+        Settings.AlienColor randomColor = Settings.AlienColor.values()[randomIndex];
         Color color = Color.valueOf(randomColor.name());
 
-        Texture texture = texture(assetNames.textures.ALIEN, Constant.ALIEN_WIDTH, Constant.ALIEN_HEIGHT)
+        Texture texture = texture(assetNames.textures.ALIEN, Settings.ALIEN_WIDTH, Settings.ALIEN_HEIGHT)
                 .multiplyColor(color);
         return entityBuilder()
                 .type(EntityType.ALIEN)
@@ -109,7 +110,7 @@ public class SpaceInvadersFactory implements EntityFactory {
         int laserHeight = 20;
         Texture texture = texture(assetNames.textures.LASER, laserWidth, laserHeight);
         String randomLaserSound = assetNames.sounds.LASER_SOUNDS
-                .get(FXGLMath.random(0, Constant.NUMBER_OF_LASER_SOUNDS - 1));
+                .get(FXGLMath.random(0, Settings.NUMBER_OF_LASER_SOUNDS - 1));
         play(randomLaserSound);
 
         return entityBuilder()
@@ -152,7 +153,7 @@ public class SpaceInvadersFactory implements EntityFactory {
     public Entity newBackground(SpawnData data) {
         return entityBuilder()
                 .at(-10, -10)
-                .view(texture(assetNames.textures.GAME_BACKGROUND, Constant.GAME_WIDTH + 20, Constant.GAME_HEIGHT + 20))
+                .view(texture(assetNames.textures.GAME_BACKGROUND, Settings.GAME_WIDTH + 20, Settings.GAME_HEIGHT + 20))
                 .zIndex(-500)
                 .build();
     }
@@ -166,8 +167,8 @@ public class SpaceInvadersFactory implements EntityFactory {
      */
     @Spawns(entityNames.SHOOTING_START)
     public Entity shooting_start(SpawnData data) {
-        Texture texture = texture(assetNames.textures.FIRE, Constant.SHOOTING_START_WIDTH,
-                Constant.SHOOTING_START_HEIGHT);
+        Texture texture = texture(assetNames.textures.FIRE, Settings.SHOOTING_START_WIDTH,
+                Settings.SHOOTING_START_HEIGHT);
         texture.setRotate(180);
 
         return entityBuilder()
@@ -186,8 +187,8 @@ public class SpaceInvadersFactory implements EntityFactory {
      */
     @Spawns(entityNames.SHOOTING_SMOKE)
     public Entity shooting_smoke(SpawnData data) {
-        Texture texture = texture(assetNames.textures.SMOKE, Constant.SHOOTING_SMOKE_WIDTH,
-                Constant.SHOOTING_SMOKE_HEIGHT);
+        Texture texture = texture(assetNames.textures.SMOKE, Settings.SHOOTING_SMOKE_WIDTH,
+                Settings.SHOOTING_SMOKE_HEIGHT);
         return entityBuilder()
                 .at(data.getX(), data.getY())
                 .view(texture)
@@ -207,7 +208,7 @@ public class SpaceInvadersFactory implements EntityFactory {
         int explosion_width = 60;
         int explosion_height = 60;
         String randomTexture = assetNames.textures.EXPLOSIONS
-                .get(FXGLMath.random(0, Constant.NUMBER_OF_EXPLOSIONS - 1));
+                .get(FXGLMath.random(0, Settings.NUMBER_OF_EXPLOSIONS - 1));
         Texture texture = texture(randomTexture, explosion_width, explosion_height);
         return entityBuilder()
                 .at(data.getX(), data.getY())
@@ -271,8 +272,8 @@ public class SpaceInvadersFactory implements EntityFactory {
     @Spawns(entityNames.LIFE)
     public Entity life(SpawnData data) {
         int x = (int) data.getX();
-        Texture texture = texture(assetNames.textures.LIFES.get(x - 1), Constant.LIFE_DISPLAY_WIDTH,
-                Constant.LIFE_DISPLAY_HEIGHT);
+        Texture texture = texture(assetNames.textures.LIFES.get(x - 1), Settings.LIFE_DISPLAY_WIDTH,
+                Settings.LIFE_DISPLAY_HEIGHT);
         return entityBuilder()
                 .at(data.getX(), data.getY())
                 .view(texture)

@@ -5,15 +5,15 @@ import static com.almasb.fxgl.dsl.FXGL.geti;
 import static com.almasb.fxgl.dsl.FXGL.runOnce;
 import static com.almasb.fxgl.dsl.FXGL.set;
 import static com.almasb.fxgl.dsl.FXGL.spawn;
-import static org.enstabretagne.Core.Constant.DELAY_BETWEEN_SHOOT;
-import static org.enstabretagne.Core.Constant.GAME_WIDTH;
-import static org.enstabretagne.Core.Constant.PLAYER_HEIGHT;
-import static org.enstabretagne.Core.Constant.SPEED_SPACESHIP;
+import static org.enstabretagne.Utils.Settings.DELAY_BETWEEN_SHOOT;
+import static org.enstabretagne.Utils.Settings.GAME_WIDTH;
+import static org.enstabretagne.Utils.Settings.PLAYER_HEIGHT;
+import static org.enstabretagne.Utils.Settings.SPEED_SPACESHIP;
 
-import org.enstabretagne.Core.Constant;
-import org.enstabretagne.Core.Constant.Direction;
-import org.enstabretagne.Core.GameVariableNames;
+import org.enstabretagne.Utils.GameVariableNames;
+import org.enstabretagne.Utils.Settings;
 import org.enstabretagne.Utils.entityNames;
+import org.enstabretagne.Utils.Settings.Direction;
 
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.Component;
@@ -31,7 +31,7 @@ public class PlayerComponent extends Component {
     private Double dx;
     private Double last_shot = 0.0;
     private Direction side_shoot = Direction.LEFT;
-    private Constant.Direction direction = Constant.Direction.UP;
+    private Settings.Direction direction = Settings.Direction.UP;
     private int id;
     private static int counter;
 
@@ -51,8 +51,8 @@ public class PlayerComponent extends Component {
      * 
      * @param direction
      */
-    public void setDirection(Constant.Direction direction) {
-        if (direction == Constant.Direction.LEFT || direction == Constant.Direction.RIGHT)
+    public void setDirection(Settings.Direction direction) {
+        if (direction == Settings.Direction.LEFT || direction == Settings.Direction.RIGHT)
             return;
         if (this.direction == direction)
             return;
@@ -109,7 +109,7 @@ public class PlayerComponent extends Component {
         int decalage = 20;
         int shift_x;
         int shift_y;
-        if (this.direction == Constant.Direction.UP) {
+        if (this.direction == Settings.Direction.UP) {
             shift_y = -decalage;
         } else {
             shift_y = PLAYER_HEIGHT.intValue() + decalage;
@@ -140,7 +140,7 @@ public class PlayerComponent extends Component {
      * Simule le recul du vaisseau lors du tir
      */
     private void shootingRecoil() {
-        if (this.direction == Constant.Direction.DOWN) {
+        if (this.direction == Settings.Direction.DOWN) {
             this.entity.translateY(-10);
             runOnce(() -> this.entity.translateY(10), Duration.seconds(0.1));
         } else if (this.direction == Direction.UP) {

@@ -1,6 +1,6 @@
 package org.enstabretagne.Component;
 
-import org.enstabretagne.Core.Constant;
+import org.enstabretagne.Utils.Settings;
 
 import com.almasb.fxgl.dsl.components.ExpireCleanComponent;
 import com.almasb.fxgl.dsl.components.ProjectileComponent;
@@ -17,8 +17,8 @@ import javafx.util.Duration;
  * @since 0.1.0
  */
 public class BulletComponent extends Component {
-    private Double speed = Constant.SPEED_SHOOT;
-    private Duration duration = Constant.BULLET_DURATION;
+    private Double speed = Settings.SPEED_SHOOT;
+    private Duration duration = Settings.BULLET_DURATION;
     private Point2D direction = new Point2D(0, -1);
     private int playerId;
 
@@ -41,8 +41,8 @@ public class BulletComponent extends Component {
      * Ce sont des composants prédéfinis dans la librairie FXGL qui facilite la
      * création de projectiles
      */
-    public void initialize(Constant.Direction UporDown) {
-        this.direction = new Point2D(0, UporDown == Constant.Direction.UP ? -1 : 1);
+    public void initialize(Settings.Direction UporDown) {
+        this.direction = new Point2D(0, UporDown == Settings.Direction.UP ? -1 : 1);
         this.entity.addComponent(new ProjectileComponent(direction, speed));
         this.entity.addComponent(new ExpireCleanComponent(duration));
     }
