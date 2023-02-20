@@ -1,5 +1,5 @@
 
-package org.enstabretagne.Core;
+package org.enstabretagne.Collision;
 
 import static com.almasb.fxgl.dsl.FXGL.play;
 import static com.almasb.fxgl.dsl.FXGL.runOnce;

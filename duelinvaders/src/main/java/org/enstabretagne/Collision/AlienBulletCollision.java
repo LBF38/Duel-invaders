@@ -1,4 +1,4 @@
-package org.enstabretagne.Core;
+package org.enstabretagne.Collision;
 
 import static com.almasb.fxgl.dsl.FXGL.getGameWorld;
 import static com.almasb.fxgl.dsl.FXGL.play;

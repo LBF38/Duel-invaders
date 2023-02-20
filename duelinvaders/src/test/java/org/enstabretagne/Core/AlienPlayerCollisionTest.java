@@ -1,5 +1,6 @@
 package org.enstabretagne.Core;
 
+import org.enstabretagne.Collision.AlienPlayerCollision;
 import org.enstabretagne.Component.AlienComponent;
 import org.enstabretagne.Component.PlayerComponent;
 import org.enstabretagne.Utils.EntityType;
