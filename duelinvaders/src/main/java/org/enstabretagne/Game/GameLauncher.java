@@ -1,21 +1,8 @@
 package org.enstabretagne.Game;
 
-import static com.almasb.fxgl.dsl.FXGL.getDialogService;
-import static com.almasb.fxgl.dsl.FXGL.getGameController;
-import static com.almasb.fxgl.dsl.FXGL.getGameScene;
-import static com.almasb.fxgl.dsl.FXGL.getGameWorld;
-import static com.almasb.fxgl.dsl.FXGL.getPhysicsWorld;
-import static com.almasb.fxgl.dsl.FXGL.getUIFactoryService;
-import static com.almasb.fxgl.dsl.FXGL.getb;
-import static com.almasb.fxgl.dsl.FXGL.loopBGM;
-import static com.almasb.fxgl.dsl.FXGL.onKey;
-import static com.almasb.fxgl.dsl.FXGL.play;
-import static com.almasb.fxgl.dsl.FXGL.run;
-import static com.almasb.fxgl.dsl.FXGL.spawn;
-import static com.almasb.fxgl.dsl.FXGL.texture;
-import static org.enstabretagne.Game.GameMode.CLASSIQUE;
-import static org.enstabretagne.Game.GameMode.INFINITY_MODE;
-import static org.enstabretagne.Game.GameMode.SOLO;
+import static com.almasb.fxgl.dsl.FXGL.*;
+import static com.almasb.fxgl.dsl.FXGLForKtKt.runOnce;
+import static org.enstabretagne.Game.GameMode.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.almasb.fxgl.core.serialization.Bundle;
+import com.almasb.fxgl.net.Server;
 import org.enstabretagne.Component.AlienComponent;
 import org.enstabretagne.Component.EntityType;
 import org.enstabretagne.Component.PlayerComponent;
@@ -77,6 +66,8 @@ public class GameLauncher extends GameApplication {
     public static void setGameMode(GameMode gameMode) {
         GameMode = gameMode;
     }
+    private boolean isServer;
+    private Server<Bundle> server;
 
     /**
      * Initialisation des paramètres du jeu
@@ -93,7 +84,7 @@ public class GameLauncher extends GameApplication {
         settings.setMainMenuEnabled(true);
         settings.setGameMenuEnabled(true);
         settings.setFullScreenAllowed(true);
-        settings.setFullScreenFromStart(true);
+//        settings.setFullScreenFromStart(true);
         settings.setCredits(Arrays.asList(
                 "Duel Invaders project by:",
                 "@MathieuDFS",
@@ -180,6 +171,10 @@ public class GameLauncher extends GameApplication {
      */
     @Override
     protected void initGame() {
+        serverLogic();
+        if(GameMode == MULTI) {
+            isServer();
+        }
         play(assetNames.sounds.START_CLAIRON);
         getGameWorld().addEntityFactory(new SpaceInvadersFactory());
 
@@ -224,6 +219,34 @@ public class GameLauncher extends GameApplication {
 
         spawn(entityNames.BACKGROUND);
         loopBGM(assetNames.music.MUSIC_ACROSS_THE_UNIVERSE);
+    }
+
+    private void isServer(){
+        runOnce(() -> {
+            getDialogService().showConfirmationBox("Voulez-vous être le serveur ?", yes -> {
+                if (yes) {
+                    isServer = true;
+                    server = getNetService().newTCPServer(55555); // todo -> selection du port
+                    server.startAsync();
+                } else {
+                    isServer = false;
+                    var client = getNetService().newTCPClient("localhost", 55555); // todo -> selection du port
+
+                    // todo -> logique du client
+
+                    client.connectAsync();
+                }
+            });
+            return null;
+        },Duration.seconds(0.1));
+    }
+
+    private void serverLogic(){ //todo -> logique du serveur
+        var data = new Bundle("Player1");
+        data.put("message", "value");
+
+        if(isServer)
+            server.broadcast(data);
     }
 
     private void makeAlienBlock() {

@@ -80,6 +80,11 @@ public class NewMainMenu extends FXGLMenu {
             fireNewGame();
         });
 
+        SpaceButton buttonMultiMode = new SpaceButton("Play multi", () -> {
+            GameLauncher.setGameMode(GameMode.MULTI);
+            fireNewGame();
+        });
+
         SpaceButton buttonMusicDemo = new SpaceButton("Play Music Demo", () -> {
             GameLauncher.setGameMode(GameMode.MUSIC_DEMO);
             fireNewGame();
@@ -105,6 +110,7 @@ public class NewMainMenu extends FXGLMenu {
                 buttonClassicMode,
                 buttonInfinityMode,
                 buttonSoloMode,
+                buttonMultiMode,
                 buttonMusicDemo,
                 buttonOption,
                 buttonCredit,
@@ -169,9 +175,7 @@ public class NewMainMenu extends FXGLMenu {
 
     /**
      * Define the button
-     * 
-     * @param name
-     * @param action
+     *
      * @return SpaceButton
      * @see SpaceButton
      * @see StackPane
