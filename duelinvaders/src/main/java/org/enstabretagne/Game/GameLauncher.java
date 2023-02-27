@@ -280,6 +280,8 @@ public class GameLauncher extends GameApplication {
                             if (message.getName().equals("Player2")                             ) {
                                 player2.setX(message.get("x"));
                                 player2.setY(message.get("y"));
+                                playerComponent2.setScore(message.get("score"));
+                                playerComponent2.setLife(message.get("life"));
                             }else if (message.getName().equals("Player2Shoot")) {
                                 playerComponent2.shoot();
                             }
@@ -296,6 +298,8 @@ public class GameLauncher extends GameApplication {
                            if(message.getName().equals("Player1")){
                                 player1.setX(message.get("x"));
                                 player1.setY(message.get("y"));
+                                playerComponent1.setScore(message.get("score"));
+                                playerComponent1.setLife(message.get("life"));
                             } else if (message.getName().equals("Player1Shoot")) {
                                 playerComponent1.shoot();
                             }
@@ -314,6 +318,8 @@ public class GameLauncher extends GameApplication {
         bundle.put("type", "Player1");
         bundle.put("x", player1.getX());
         bundle.put("y", player1.getY());
+        bundle.put("score", playerComponent1.getScore());
+        bundle.put("life", playerComponent1.getLife());
         server.broadcast(bundle);
     }
 
@@ -322,6 +328,8 @@ public class GameLauncher extends GameApplication {
         bundle.put("type", "Player2");
         bundle.put("x", player2.getX());
         bundle.put("y", player2.getY());
+        bundle.put("score", playerComponent2.getScore());
+        bundle.put("life", playerComponent2.getLife());
         client.broadcast(bundle);
     }
 
