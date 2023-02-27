@@ -1,5 +1,11 @@
 package org.enstabretagne.Game.GameModes;
 
+import static com.almasb.fxgl.dsl.FXGL.spawn;
+import static com.almasb.fxgl.dsl.FXGL.*;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import org.enstabretagne.Component.AlienComponent;
 import org.enstabretagne.Component.PlayerComponent;
 import org.enstabretagne.Utils.GameModeTypes;
@@ -8,11 +14,11 @@ import org.enstabretagne.Utils.entityNames;
 
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.input.Input;
+import com.almasb.fxgl.input.KeyTrigger;
+import com.almasb.fxgl.input.Trigger;
 import com.almasb.fxgl.input.UserAction;
 
 import javafx.scene.input.KeyCode;
-
-import static com.almasb.fxgl.dsl.FXGL.*;
 
 public class ClassicGameMode implements GameMode {
     private PlayerComponent playerComponent1;
@@ -20,6 +26,52 @@ public class ClassicGameMode implements GameMode {
     private Entity player1;
     private Entity player2;
     private GameModeTypes gameModeType = GameModeTypes.CLASSIQUE;
+    UserAction player1_shoot = new UserAction("player1_shoot") {
+        @Override
+        protected void onAction() {
+            playerComponent1.shoot();
+        }
+    };
+    UserAction player1_moveLeft = new UserAction("player1_moveLeft") {
+        @Override
+        protected void onAction() {
+            playerComponent1.moveLeft();
+        }
+    };
+    UserAction player1_moveRight = new UserAction("player1_moveRight") {
+        @Override
+        protected void onAction() {
+            playerComponent1.moveRight();
+        }
+    };
+    UserAction player2_shoot = new UserAction("player2_shoot") {
+        @Override
+        protected void onAction() {
+            playerComponent2.shoot();
+        }
+    };
+    UserAction player2_moveLeft = new UserAction("player2_moveLeft") {
+        @Override
+        protected void onAction() {
+            playerComponent2.moveLeft();
+        }
+    };
+    UserAction player2_moveRight = new UserAction("player2_moveRight") {
+        @Override
+        protected void onAction() {
+            playerComponent2.moveRight();
+        }
+    };
+    Map<UserAction, Trigger> inputMap = new HashMap<UserAction, Trigger>() {
+        {
+            put(player1_shoot, new KeyTrigger(KeyCode.ENTER));
+            put(player1_moveLeft, new KeyTrigger(KeyCode.RIGHT));
+            put(player1_moveRight, new KeyTrigger(KeyCode.LEFT));
+            put(player2_shoot, new KeyTrigger(KeyCode.SPACE));
+            put(player2_moveLeft, new KeyTrigger(KeyCode.Q));
+            put(player2_moveRight, new KeyTrigger(KeyCode.D));
+        }
+    };
 
     @Override
     public void initGameMode() {
@@ -50,59 +102,13 @@ public class ClassicGameMode implements GameMode {
 
     @Override
     public void rebindInput(Input input) {
-        // TODO: Implementer les touches de jeu avec getInput.
-        // getInput().addAction(game_mode.getMoveLeft(), game_mode.getMoveLeftAction());
-        // getInput().addAction(() -> playerComponent1.moveLeft(), KeyCode.LEFT);
         if (playerComponent1 == null || playerComponent2 == null) {
             System.out.println("No PlayerComponent");
             return;
         } else {
             System.out.println("PlayerComponent OK");
         }
-        UserAction player1_shoot = new UserAction("player1_shoot") {
-            @Override
-            protected void onAction() {
-                playerComponent1.shoot();
-            }
-        };
-        getInput().rebind(player1_shoot, KeyCode.ENTER);
-        UserAction player1_moveLeft = new UserAction("player1_moveLeft") {
-            @Override
-            protected void onAction() {
-                playerComponent1.moveLeft();
-            }
-        };
-        UserAction player1_moveRight = new UserAction("player1_moveRight") {
-            @Override
-            protected void onAction() {
-                playerComponent1.moveRight();
-            }
-        };
-        UserAction player2_shoot = new UserAction("player2_shoot") {
-            @Override
-            protected void onAction() {
-                playerComponent2.shoot();
-            }
-        };
-        UserAction player2_moveLeft = new UserAction("player2_moveLeft") {
-            @Override
-            protected void onAction() {
-                playerComponent2.moveLeft();
-            }
-        };
-        UserAction player2_moveRight = new UserAction("player2_moveRight") {
-            @Override
-            protected void onAction() {
-                playerComponent2.moveRight();
-            }
-        };
-
-        input.addAction(player1_shoot, KeyCode.ENTER);
-        input.addAction(player1_moveLeft, KeyCode.LEFT);
-        input.addAction(player1_moveRight, KeyCode.RIGHT);
-        input.addAction(player2_shoot, KeyCode.SPACE);
-        input.addAction(player2_moveLeft, KeyCode.Q);
-        input.addAction(player2_moveRight, KeyCode.D);
+        input.getAllBindings().putAll(inputMap);
     }
 
     // Getters and Setters
@@ -137,7 +143,12 @@ public class ClassicGameMode implements GameMode {
 
     @Override
     public void initInput(Input input) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'initInput'");
+        if (playerComponent1 == null || playerComponent2 == null) {
+            System.out.println("No PlayerComponent");
+            return;
+        } else {
+            System.out.println("PlayerComponent OK");
+        }
+        input.getAllBindings().putAll(inputMap);
     }
 }
