@@ -171,7 +171,6 @@ public class GameLauncher extends GameApplication {
      */
     @Override
     protected void initGame() {
-        serverLogic();
         if(GameMode == MULTI) {
             isServer();
         }
@@ -219,6 +218,7 @@ public class GameLauncher extends GameApplication {
 
         spawn(entityNames.BACKGROUND);
         loopBGM(assetNames.music.MUSIC_ACROSS_THE_UNIVERSE);
+        serverLogic();
     }
 
     private void isServer(){
@@ -226,27 +226,53 @@ public class GameLauncher extends GameApplication {
             getDialogService().showConfirmationBox("Voulez-vous être le serveur ?", yes -> {
                 if (yes) {
                     isServer = true;
+                    System.out.println("server");
                     server = getNetService().newTCPServer(55555); // todo -> selection du port
+                    server.setOnConnected(connection -> {
+                        connection.addMessageHandlerFX((conn, message) -> {
+                            System.out.println("message from client");
+                            // do something with message when received from client
+                            // FX means this callback runs on JavaFX thread
+                        });
+                    });
                     server.startAsync();
                 } else {
                     isServer = false;
+                    System.out.println("client");
                     var client = getNetService().newTCPClient("localhost", 55555); // todo -> selection du port
-
+                    client.setOnConnected(connection -> {
+                        connection.addMessageHandlerFX((conn, message) -> {
+                            System.out.println("message from server");
+                            player1.setX(message.get("x"));
+                            player1.setY(message.get("y"));
+                            // do something with message when received from server
+                            // FX means this callback runs on JavaFX thread
+                        });
+                    });
                     // todo -> logique du client
-
                     client.connectAsync();
                 }
             });
             return null;
-        },Duration.seconds(0.1));
+        },Duration.seconds(0));
     }
 
     private void serverLogic(){ //todo -> logique du serveur
-        var data = new Bundle("Player1");
-        data.put("message", "value");
+        System.out.println("server logic");
+        //Broadcast player 1 Tcp
+        if (GameMode == MULTI) {
+            System.out.println("isServer : " + isServer);
+            Bundle bundle = new Bundle("Player1");
+            bundle.put("type", "Player1");
+            bundle.put("x", player1.getX());
+            bundle.put("y", player1.getY());
+            if (isServer) {
+                System.out.println("server broadcast");
+                server.broadcast(bundle);
+            }
+        }
+        //Broadcast player 1 Udp
 
-        if(isServer)
-            server.broadcast(data);
     }
 
     private void makeAlienBlock() {
@@ -346,6 +372,7 @@ public class GameLauncher extends GameApplication {
      */
     @Override
     protected void onUpdate(double tpf) {
+        serverLogic();
         if (getb(GameVariableNames.isGameOver))
             gameOverScreen();
         if (getb(GameVariableNames.isGameWon))
