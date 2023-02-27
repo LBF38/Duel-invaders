@@ -120,20 +120,52 @@ public class GameLauncher extends GameApplication {
     @Override
     protected void initInput() {
         onKey(KeyCode.ENTER, () -> {
-            playerComponent1.shoot();
+            if (multiplayerGameInProgress){
+                onShootBroadcastLogic();
+                if(isServer){
+                    playerComponent1.shoot();
+                }else {
+                    playerComponent2.shoot();
+                }
+            } else {
+                playerComponent1.shoot();
+            }
         });
 
         onKey(KeyCode.RIGHT, () -> {
-            playerComponent1.moveRight();
+            if (multiplayerGameInProgress) {
+                if(isServer) {
+                    playerComponent1.moveRight();
+                } else {
+                    playerComponent2.moveRight();
+                }
+            }else {
+                playerComponent1.moveRight();
+            }
         });
 
         onKey(KeyCode.LEFT, () -> {
-            playerComponent1.moveLeft();
+            if (multiplayerGameInProgress) {
+                if(isServer) {
+                    playerComponent1.moveLeft();
+                } else {
+                    playerComponent2.moveLeft();
+                }
+            }else {
+                playerComponent1.moveLeft();
+            }
         });
 
         onKey(KeyCode.SPACE, () -> {
             if (GameMode == SOLO) {
                 playerComponent1.shoot();
+            } else if (multiplayerGameInProgress){
+                onShootBroadcastLogic();
+                if(isServer){
+                    playerComponent1.shoot();
+                }else {
+                    playerComponent2.shoot();
+                }
             } else {
                 playerComponent2.shoot();
             }
@@ -142,7 +174,13 @@ public class GameLauncher extends GameApplication {
         onKey(KeyCode.D, () -> {
             if (GameMode == SOLO) {
                 playerComponent1.moveRight();
-            } else {
+            } else if (multiplayerGameInProgress) {
+                if(isServer) {
+                    playerComponent1.moveRight();
+                } else {
+                    playerComponent2.moveRight();
+                }
+            }else {
                 playerComponent2.moveRight();
             }
         });
@@ -150,6 +188,12 @@ public class GameLauncher extends GameApplication {
         onKey(KeyCode.Q, () -> {
             if (GameMode == SOLO) {
                 playerComponent1.moveLeft();
+            } else if (multiplayerGameInProgress) {
+                if(isServer) {
+                    playerComponent1.moveLeft();
+                } else {
+                    playerComponent2.moveLeft();
+                }
             } else {
                 playerComponent2.moveLeft();
             }
@@ -233,8 +277,12 @@ public class GameLauncher extends GameApplication {
                     server.setOnConnected(connection -> {
                         connection.addMessageHandlerFX((conn, message) -> {
                             System.out.println("message from client");
-                            player2.setX(message.get("x"));
-                            player2.setY(message.get("y"));
+                            if (message.getName().equals("Player2")                             ) {
+                                player2.setX(message.get("x"));
+                                player2.setY(message.get("y"));
+                            }else if (message.getName().equals("Player2Shoot")) {
+                                playerComponent2.shoot();
+                            }
                         });
                     });
                     server.startAsync();
@@ -245,12 +293,14 @@ public class GameLauncher extends GameApplication {
                     client = getNetService().newTCPClient("localhost", 55555); // todo -> selection du port
                     client.setOnConnected(connection -> {
                         connection.addMessageHandlerFX((conn, message) -> {
-                            System.out.println("message from server");
-                            player1.setX(message.get("x"));
-                            player1.setY(message.get("y"));
+                           if(message.getName().equals("Player1")){
+                                player1.setX(message.get("x"));
+                                player1.setY(message.get("y"));
+                            } else if (message.getName().equals("Player1Shoot")) {
+                                playerComponent1.shoot();
+                            }
                         });
                     });
-                    // todo -> logique du client
                     client.connectAsync();
                     multiplayerGameInProgress = true;
                 }
@@ -259,28 +309,29 @@ public class GameLauncher extends GameApplication {
         },Duration.seconds(0));
     }
 
-    private void onUpdateServerLogic(){ //todo -> logique du serveur
-        //Broadcast player 1
-        System.out.println("isServer : " + isServer);
+    private void onUpdateServerLogic(){
         Bundle bundle = new Bundle("Player1");
         bundle.put("type", "Player1");
         bundle.put("x", player1.getX());
         bundle.put("y", player1.getY());
-        if (isServer) {
-            System.out.println("server broadcast");
-            server.broadcast(bundle);
-        }
+        server.broadcast(bundle);
     }
 
     private void onUpdateClientLogic(){
-        //Broadcast player 2
         Bundle bundle = new Bundle("Player2");
         bundle.put("type", "Player2");
         bundle.put("x", player2.getX());
         bundle.put("y", player2.getY());
-        if (!isServer) {
+        client.broadcast(bundle);
+    }
+
+    private void onShootBroadcastLogic(){
+        if (isServer) {
+            System.out.println("server broadcast");
+            server.broadcast(new Bundle("Player1Shoot"));
+        } else {
             System.out.println("client broadcast");
-            client.broadcast(bundle);
+            client.broadcast(new Bundle("Player2Shoot"));
         }
     }
 
