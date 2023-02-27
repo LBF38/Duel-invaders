@@ -1,24 +1,21 @@
 package org.enstabretagne.Game;
 
-import static com.almasb.fxgl.dsl.FXGL.getDialogService;
-import static com.almasb.fxgl.dsl.FXGL.getGameController;
 import static com.almasb.fxgl.dsl.FXGL.getGameScene;
 import static com.almasb.fxgl.dsl.FXGL.getGameWorld;
 import static com.almasb.fxgl.dsl.FXGL.getPhysicsWorld;
-import static com.almasb.fxgl.dsl.FXGL.getUIFactoryService;
 import static com.almasb.fxgl.dsl.FXGL.getb;
 import static com.almasb.fxgl.dsl.FXGL.loopBGM;
 import static com.almasb.fxgl.dsl.FXGL.play;
 import static com.almasb.fxgl.dsl.FXGL.run;
 import static com.almasb.fxgl.dsl.FXGL.spawn;
-import static com.almasb.fxgl.dsl.FXGL.texture;
+import static org.enstabretagne.UI.UI_Factory.ambientSound;
+import static org.enstabretagne.UI.UI_Factory.gameOverScreen;
+import static org.enstabretagne.UI.UI_Factory.showPlayersLivesAndScores;
+import static org.enstabretagne.UI.UI_Factory.winScreen;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.enstabretagne.Collision.AlienBulletCollision;
 import org.enstabretagne.Collision.AlienPlayerCollision;
@@ -27,7 +24,6 @@ import org.enstabretagne.Collision.BulletPlayerCollision;
 import org.enstabretagne.Collision.EnemyShootBulletCollision;
 import org.enstabretagne.Collision.EnemyShootPlayerCollision;
 import org.enstabretagne.Component.AlienComponent;
-import org.enstabretagne.Component.PlayerComponent;
 import org.enstabretagne.Component.SpaceInvadersFactory;
 import org.enstabretagne.Game.GameModes.ClassicGameMode;
 import org.enstabretagne.Game.GameModes.GameMode;
@@ -47,11 +43,7 @@ import com.almasb.fxgl.app.scene.SceneFactory;
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.entity.Entity;
 
-import javafx.geometry.Pos;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 /**
@@ -184,29 +176,6 @@ public class GameLauncher extends GameApplication {
         loopBGM(assetNames.music.MUSIC_ACROSS_THE_UNIVERSE);
     }
 
-    private void makeAlienBlock() {
-        for (int i = 0; i < 2; i++) {
-            makeAlienLine(i, Settings.Direction.DOWN);
-            makeAlienLine(i, Settings.Direction.UP);
-        }
-    }
-
-    private void makeAlienLine(int line, Settings.Direction direction) {
-        for (int i = 0; i < Settings.ALIENS_NUMBER; i++) {
-            if (direction == Settings.Direction.DOWN) {
-                Entity alien = spawn(entityNames.ALIEN, i * Settings.ALIEN_WIDTH,
-                        Settings.GAME_HEIGHT / 2 + (line - 1) * Settings.ALIEN_HEIGHT);
-                alien.getComponent(AlienComponent.class).initialize(direction);
-                alien.getComponent(AlienComponent.class).setAlienNumber(i);
-            } else {
-                Entity alien = spawn(entityNames.ALIEN, i * Settings.ALIEN_WIDTH,
-                        Settings.GAME_HEIGHT / 2 + (line - 2) * Settings.ALIEN_HEIGHT);
-                alien.getComponent(AlienComponent.class).initialize(direction);
-                alien.getComponent(AlienComponent.class).setAlienNumber(i);
-            }
-        }
-    }
-
     private void makeAlienBlockSolo() {
         for (int line = 0; line < 4; line++) {
             for (int k = 0; k < Settings.ALIENS_NUMBER; k++) {
@@ -235,43 +204,7 @@ public class GameLauncher extends GameApplication {
      */
     @Override
     protected void initUI() {
-        showPlayersLivesAndScores();
-    }
-
-    private void showPlayersLivesAndScores() {
-        getGameScene().removeChild(playersUI);
-
-        List<HBox> playersViews = new ArrayList<>();
-        List<PlayerComponent> players = getGameWorld().getEntitiesByType(EntityType.PLAYER).stream()
-                .map(player -> player.getComponent(PlayerComponent.class)).collect(Collectors.toList());
-        for (PlayerComponent playerComponent : players) {
-            HBox scoreUI = createScoreUI(playerComponent.getScore(), playerComponent.getId());
-            scoreUI.setTranslateY(scoreUI.getHeight() * playerComponent.getId());
-            HBox lifeUI = createLifeUI(playerComponent.getLife());
-            var playerUI = new HBox(30, scoreUI, lifeUI);
-            playersViews.add(playerUI);
-        }
-        playersUI = new VBox(20, playersViews.toArray(new HBox[0]));
-        getGameScene().addChild(playersUI);
-    }
-
-    private HBox createScoreUI(int score, int player_id) {
-        Text scoreText = getUIFactoryService().newText(Integer.toString(score), Color.WHITE, 24.0);
-        Text playerText = getUIFactoryService().newText("Player " + Integer.toString(player_id % 2 + 1), Color.WHITE,
-                24.0);
-        var scoreView = new HBox(10, playerText, scoreText);
-        scoreView.setAlignment(Pos.CENTER);
-        return scoreView;
-    }
-
-    private HBox createLifeUI(int life) {
-        var lifeTexture = texture(assetNames.textures.LIFE, 30, 30);
-        var lifeView = new HBox(10);
-        for (int i = 0; i < life; i++) {
-            lifeView.getChildren().add(lifeTexture.copy());
-        }
-        lifeView.setAlignment(Pos.CENTER);
-        return lifeView;
+        showPlayersLivesAndScores(playersUI);
     }
 
     /**
@@ -292,64 +225,13 @@ public class GameLauncher extends GameApplication {
             delay_ambient_sound = FXGLMath.random(Settings.AMBIENT_SOUND_DELAY_MIN, Settings.AMBIENT_SOUND_DELAY_MAX);
         }
         if (getGameScene().getContentRoot().getChildren().contains(playersUI))
-            showPlayersLivesAndScores();
+            showPlayersLivesAndScores(playersUI);
         run(() -> {
             getGameWorld().getEntitiesByType(EntityType.ALIEN).forEach((alien) -> {
                 if (FXGLMath.randomBoolean(0.01))
                     alien.getComponent(AlienComponent.class).randomShoot(Settings.ALIEN_SHOOT_CHANCE);
             });
         }, Duration.seconds(Settings.random.nextDouble() * 10));
-    }
-
-    /**
-     * Affichage de l'écran de fin de partie
-     */
-    private void gameOverScreen(String score_player1, String score_player2) {
-        play(assetNames.sounds.DEFEAT_CLAIRON);
-        String message = "Game Over ! \n Scores are as follows : \n" +
-                "Player 1 : " + score_player1 + "\n";
-        if (score_player2 != null) {
-            String player2 = "Player 2 : " + score_player2;
-            message += player2;
-        }
-        getDialogService().showMessageBox(message, () -> {
-            getDialogService().showConfirmationBox("Do you want to play again?", (yes) -> playAgain(yes));
-        });
-    }
-
-    /**
-     * Affichage de l'écran pour jouer une nouvelle partie
-     */
-    private void playAgain(Boolean yes) {
-        if (yes)
-            getGameController().startNewGame();
-        else
-            getGameController().gotoMainMenu();
-    }
-
-    /**
-     * Affichage de l'écran de victoire
-     */
-    private void winScreen(String score_player1, String score_player2) {
-        play(assetNames.sounds.VICTORY_CLAIRON);
-        String message = "You won ! \n Scores are as follows : \n" +
-                "Player 1 : " + score_player1 + "\n";
-        if (score_player2 != null) {
-            String player2 = "Player 2 : " + score_player2;
-            message += player2;
-        }
-        getDialogService().showMessageBox(message, () -> {
-            getDialogService().showConfirmationBox("Do you want to play again?", (yes) -> playAgain(yes));
-        });
-    }
-
-    /**
-     * Joue un son d'ambiance aléatoire parmi ceux disponibles
-     */
-    private void ambientSound() {
-        String ambientMusic = assetNames.sounds.AMBIENT_SOUNDS
-                .get(FXGLMath.random(0, Settings.NUMBER_OF_AMBIENT_SOUND - 1));
-        play(ambientMusic);
     }
 
     public static void main(String[] args) {
