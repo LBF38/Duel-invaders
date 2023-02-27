@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.almasb.fxgl.core.serialization.Bundle;
+import com.almasb.fxgl.net.Client;
 import com.almasb.fxgl.net.Server;
 import org.enstabretagne.Component.AlienComponent;
 import org.enstabretagne.Component.EntityType;
@@ -68,6 +69,8 @@ public class GameLauncher extends GameApplication {
     }
     private boolean isServer;
     private Server<Bundle> server;
+    private Client<Bundle> client;
+    private boolean multiplayerGameInProgress = false;
 
     /**
      * Initialisation des paramètres du jeu
@@ -218,7 +221,6 @@ public class GameLauncher extends GameApplication {
 
         spawn(entityNames.BACKGROUND);
         loopBGM(assetNames.music.MUSIC_ACROSS_THE_UNIVERSE);
-        serverLogic();
     }
 
     private void isServer(){
@@ -231,48 +233,55 @@ public class GameLauncher extends GameApplication {
                     server.setOnConnected(connection -> {
                         connection.addMessageHandlerFX((conn, message) -> {
                             System.out.println("message from client");
-                            // do something with message when received from client
-                            // FX means this callback runs on JavaFX thread
+                            player2.setX(message.get("x"));
+                            player2.setY(message.get("y"));
                         });
                     });
                     server.startAsync();
+                    multiplayerGameInProgress = true;
                 } else {
                     isServer = false;
                     System.out.println("client");
-                    var client = getNetService().newTCPClient("localhost", 55555); // todo -> selection du port
+                    client = getNetService().newTCPClient("localhost", 55555); // todo -> selection du port
                     client.setOnConnected(connection -> {
                         connection.addMessageHandlerFX((conn, message) -> {
                             System.out.println("message from server");
                             player1.setX(message.get("x"));
                             player1.setY(message.get("y"));
-                            // do something with message when received from server
-                            // FX means this callback runs on JavaFX thread
                         });
                     });
                     // todo -> logique du client
                     client.connectAsync();
+                    multiplayerGameInProgress = true;
                 }
             });
             return null;
         },Duration.seconds(0));
     }
 
-    private void serverLogic(){ //todo -> logique du serveur
-        System.out.println("server logic");
-        //Broadcast player 1 Tcp
-        if (GameMode == MULTI) {
-            System.out.println("isServer : " + isServer);
-            Bundle bundle = new Bundle("Player1");
-            bundle.put("type", "Player1");
-            bundle.put("x", player1.getX());
-            bundle.put("y", player1.getY());
-            if (isServer) {
-                System.out.println("server broadcast");
-                server.broadcast(bundle);
-            }
+    private void onUpdateServerLogic(){ //todo -> logique du serveur
+        //Broadcast player 1
+        System.out.println("isServer : " + isServer);
+        Bundle bundle = new Bundle("Player1");
+        bundle.put("type", "Player1");
+        bundle.put("x", player1.getX());
+        bundle.put("y", player1.getY());
+        if (isServer) {
+            System.out.println("server broadcast");
+            server.broadcast(bundle);
         }
-        //Broadcast player 1 Udp
+    }
 
+    private void onUpdateClientLogic(){
+        //Broadcast player 2
+        Bundle bundle = new Bundle("Player2");
+        bundle.put("type", "Player2");
+        bundle.put("x", player2.getX());
+        bundle.put("y", player2.getY());
+        if (!isServer) {
+            System.out.println("client broadcast");
+            client.broadcast(bundle);
+        }
     }
 
     private void makeAlienBlock() {
@@ -372,7 +381,13 @@ public class GameLauncher extends GameApplication {
      */
     @Override
     protected void onUpdate(double tpf) {
-        serverLogic();
+        if (multiplayerGameInProgress) {
+            if (isServer) {
+                onUpdateServerLogic();
+            } else {
+                onUpdateClientLogic();
+            }
+        }
         if (getb(GameVariableNames.isGameOver))
             gameOverScreen();
         if (getb(GameVariableNames.isGameWon))
