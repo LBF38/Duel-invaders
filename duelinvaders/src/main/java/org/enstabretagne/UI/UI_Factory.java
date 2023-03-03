@@ -12,6 +12,7 @@ import org.enstabretagne.Utils.Settings;
 import org.enstabretagne.Utils.assetNames;
 
 import com.almasb.fxgl.core.math.FXGLMath;
+import com.almasb.fxgl.entity.GameWorld;
 
 import javafx.geometry.Pos;
 import javafx.scene.layout.HBox;
@@ -21,11 +22,12 @@ import javafx.scene.text.Text;
 
 public class UI_Factory {
 
-    public static void showPlayersLivesAndScores(VBox playersUI) {
-        getGameScene().removeChild(playersUI);
+    public static VBox showPlayersLivesAndScores(GameWorld gameWorld) {
+        // getGameScene().removeChild(playersUI);
+        // System.out.println("Players Lives and Scores");
 
         List<HBox> playersViews = new ArrayList<>();
-        List<PlayerComponent> players = getGameWorld().getEntitiesByType(EntityType.PLAYER).stream()
+        List<PlayerComponent> players = gameWorld.getEntitiesByType(EntityType.PLAYER).stream()
                 .map(player -> player.getComponent(PlayerComponent.class)).collect(Collectors.toList());
         for (PlayerComponent playerComponent : players) {
             HBox scoreUI = createScoreUI(playerComponent.getScore(), playerComponent.getId());
@@ -34,8 +36,9 @@ public class UI_Factory {
             var playerUI = new HBox(30, scoreUI, lifeUI);
             playersViews.add(playerUI);
         }
-        playersUI = new VBox(20, playersViews.toArray(new HBox[0]));
-        getGameScene().addChild(playersUI);
+        VBox players_ui = new VBox(20, playersViews.toArray(new HBox[0]));
+        return players_ui;
+        // getGameScene().addChild(players_ui);
     }
 
     public static HBox createScoreUI(int score, int player_id) {

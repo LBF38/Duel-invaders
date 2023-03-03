@@ -203,7 +203,8 @@ public class GameLauncher extends GameApplication {
      */
     @Override
     protected void initUI() {
-        showPlayersLivesAndScores(playersUI);
+        playersUI = showPlayersLivesAndScores(getGameWorld());
+        getGameScene().addChild(playersUI);
     }
 
     /**
@@ -223,8 +224,11 @@ public class GameLauncher extends GameApplication {
             last_ambient_sound = System.currentTimeMillis();
             delay_ambient_sound = FXGLMath.random(Settings.AMBIENT_SOUND_DELAY_MIN, Settings.AMBIENT_SOUND_DELAY_MAX);
         }
-        if (getGameScene().getContentRoot().getChildren().contains(playersUI))
-            showPlayersLivesAndScores(playersUI);
+        if (getGameScene().getContentRoot().getChildren().contains(playersUI)) {
+            getGameScene().removeChild(playersUI);
+            playersUI = showPlayersLivesAndScores(getGameWorld());
+            getGameScene().addChild(playersUI);
+        }
         run(() -> {
             getGameWorld().getEntitiesByType(EntityType.ALIEN).forEach((alien) -> {
                 if (FXGLMath.randomBoolean(0.01))
