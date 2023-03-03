@@ -116,7 +116,6 @@ public class GameLauncher extends GameApplication {
     @Override
     protected void initInput() {
         super.initInput();
-        game_mode.initInput(getGameScene().getInput());
     }
 
     /**
@@ -141,7 +140,7 @@ public class GameLauncher extends GameApplication {
 
         game_mode.initGameMode();
         try {
-            game_mode.rebindInput(getGameScene().getInput());
+            game_mode.initInput(getGameScene().getInput());
         } catch (Exception exception) {
             System.out.println("Erreur lors de l'initialisation des inputs : " +
                     exception.getMessage());
