@@ -338,9 +338,6 @@ public class GameLauncher extends GameApplication {
                     playerComponent2.setLife(message.get("life"));
                 } else if (message.getName().equals("Player2Shoot")) {
                     playerComponent2.shoot();
-                } else if (message.getName().equals("AlienClientShoot")){
-
-
                 }
             });
         });
@@ -386,21 +383,6 @@ public class GameLauncher extends GameApplication {
             });
         });
     }
-
-    private void AlienShoot(Entity alien){ // LBF : dans le mode multijoueur
-        if (isServer) {
-            Bundle bundle = new Bundle("AlienServerShoot");
-            bundle.put("x", alien.getX());
-            bundle.put("y", alien.getY());
-            server.broadcast(bundle);
-        } else {
-            Bundle bundle = new Bundle("AlienClientShoot");
-            bundle.put("x", alien.getX());
-            bundle.put("y", alien.getY());
-            client.broadcast(bundle);
-        }
-    }
-
 
     private void onShootBroadcastLogic(){ // LBF : dans le mode multijoueur
         if (isServer) {
@@ -541,13 +523,19 @@ public class GameLauncher extends GameApplication {
         }
         if (getGameScene().getContentRoot().getChildren().contains(playersUI))
             showPlayersLivesAndScores();
+
         run(() -> {
             getGameWorld().getEntitiesByType(EntityType.ALIEN).forEach((alien) -> {
-                if (FXGLMath.randomBoolean(0.0001)){
-                    alien.getComponent(AlienComponent.class).randomShoot(Constant.ALIEN_SHOOT_CHANCE);
-                    AlienShoot(alien);}
+                if (FXGLMath.randomBoolean(0.005)){
+                        if(isServer && alien.getComponent(AlienComponent.class).getDirection() == Constant.Direction.DOWN) {
+                            alien.getComponent(AlienComponent.class).randomShoot(Constant.ALIEN_SHOOT_CHANCE);
+                        } else if (!isServer && alien.getComponent(AlienComponent.class).getDirection() == Constant.Direction.UP) {
+                            alien.getComponent(AlienComponent.class).randomShoot(Constant.ALIEN_SHOOT_CHANCE);
+                        }
+                    }
             });
         }, Duration.seconds(Constant.random.nextDouble() * 10));
+
     }
 
     /**
