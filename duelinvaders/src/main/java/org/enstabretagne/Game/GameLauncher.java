@@ -339,7 +339,6 @@ public class GameLauncher extends GameApplication {
                 } else if (message.getName().equals("Client Connected")) {
                     server.broadcast(new Bundle("Server Start"));
                     multiplayerGameInProgress = true;
-
                 }
             });
         });
@@ -548,7 +547,7 @@ public class GameLauncher extends GameApplication {
                     }
                 });
             }, Duration.seconds(Constant.random.nextDouble() * 10));
-        } else {
+        } else { // LBF : dans le mode multijoueur
             //Synchronise le début de la partie entre les deux joueurs
             if(!isServer && multiplayerGameWaiting){
                 client.broadcast(new Bundle("Client Connected"));
