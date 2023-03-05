@@ -135,7 +135,7 @@ public class GameLauncher extends GameApplication {
                 }else {
                     playerComponent2.shoot();
                 }
-            } else {
+            } else if (!multiplayerGameWaiting){
                 playerComponent1.shoot();
             }
         });
@@ -147,7 +147,7 @@ public class GameLauncher extends GameApplication {
                 } else {
                     playerComponent2.moveRight();
                 }
-            }else {
+            }else if (!multiplayerGameWaiting) {
                 playerComponent1.moveRight();
             }
         });
@@ -159,7 +159,7 @@ public class GameLauncher extends GameApplication {
                 } else {
                     playerComponent2.moveLeft();
                 }
-            }else {
+            }else if (!multiplayerGameWaiting) {
                 playerComponent1.moveLeft();
             }
         });
@@ -174,7 +174,7 @@ public class GameLauncher extends GameApplication {
                 }else {
                     playerComponent2.shoot();
                 }
-            } else {
+            } else if (!multiplayerGameWaiting) {
                 playerComponent2.shoot();
             }
         });
@@ -188,7 +188,7 @@ public class GameLauncher extends GameApplication {
                 } else {
                     playerComponent2.moveRight();
                 }
-            }else {
+            }else if (!multiplayerGameWaiting) {
                 playerComponent2.moveRight();
             }
         });
@@ -202,7 +202,7 @@ public class GameLauncher extends GameApplication {
                 } else {
                     playerComponent2.moveLeft();
                 }
-            } else {
+            } else if (!multiplayerGameWaiting) {
                 playerComponent2.moveLeft();
             }
         });
@@ -232,7 +232,6 @@ public class GameLauncher extends GameApplication {
         if(GameMode == MULTI) { // LBF : dans le mode multijoueur
             isServer();
             }
-
 
         player1 = spawn(entityNames.PLAYER); // LBF : dans tous les modes de jeu
         player1.setX(Constant.GAME_WIDTH / 2);
