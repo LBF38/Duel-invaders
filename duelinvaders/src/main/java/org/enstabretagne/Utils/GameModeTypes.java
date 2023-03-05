@@ -7,5 +7,5 @@ package org.enstabretagne.Utils;
  * @since 0.2.0
  */
 public enum GameModeTypes {
-    CLASSIQUE, INFINITY_MODE, SOLO, MUSIC_DEMO, MULTI
+    CLASSIQUE, INFINITY_MODE, SOLO, DUO, MUSIC_DEMO, MULTI
 }

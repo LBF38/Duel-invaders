@@ -41,7 +41,6 @@ import com.almasb.fxgl.app.MenuItem;
 import com.almasb.fxgl.app.scene.FXGLMenu;
 import com.almasb.fxgl.app.scene.SceneFactory;
 import com.almasb.fxgl.core.math.FXGLMath;
-import com.almasb.fxgl.entity.Entity;
 
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
@@ -173,16 +172,6 @@ public class GameLauncher extends GameApplication {
 
         spawn(entityNames.BACKGROUND);
         loopBGM(assetNames.music.MUSIC_ACROSS_THE_UNIVERSE);
-    }
-
-    private void makeAlienBlockSolo() {
-        for (int line = 0; line < 4; line++) {
-            for (int k = 0; k < Settings.ALIENS_NUMBER; k++) {
-                Entity alien = spawn(entityNames.ALIEN, k * Settings.ALIEN_WIDTH, (line - 1) * Settings.ALIEN_HEIGHT);
-                alien.getComponent(AlienComponent.class).initialize(Settings.Direction.DOWN);
-                alien.getComponent(AlienComponent.class).setAlienNumber(k);
-            }
-        }
     }
 
     /**
