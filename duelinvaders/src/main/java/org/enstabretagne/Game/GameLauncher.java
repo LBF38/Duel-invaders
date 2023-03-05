@@ -274,37 +274,14 @@ public class GameLauncher extends GameApplication {
                     isServer = true;
                     System.out.println("server");
                     server = getNetService().newTCPServer(55555); // todo -> selection du port
-                    server.setOnConnected(connection -> {
-                        connection.addMessageHandlerFX((conn, message) -> {
-                            System.out.println("message from client");
-                            if (message.getName().equals("Player2")                             ) {
-                                player2.setX(message.get("x"));
-                                player2.setY(message.get("y"));
-                                playerComponent2.setScore(message.get("score"));
-                                playerComponent2.setLife(message.get("life"));
-                            }else if (message.getName().equals("Player2Shoot")) {
-                                playerComponent2.shoot();
-                            }
-                        });
-                    });
+                    onReceiveMessageServer();
                     server.startAsync();
                     multiplayerGameInProgress = true;
                 } else {
                     isServer = false;
                     System.out.println("client");
                     client = getNetService().newTCPClient("localhost", 55555); // todo -> selection du port
-                    client.setOnConnected(connection -> {
-                        connection.addMessageHandlerFX((conn, message) -> {
-                           if(message.getName().equals("Player1")){
-                                player1.setX(message.get("x"));
-                                player1.setY(message.get("y"));
-                                playerComponent1.setScore(message.get("score"));
-                                playerComponent1.setLife(message.get("life"));
-                            } else if (message.getName().equals("Player1Shoot")) {
-                                playerComponent1.shoot();
-                            }
-                        });
-                    });
+                    onReceiveMessageClient();
                     client.connectAsync();
                     multiplayerGameInProgress = true;
                 }
@@ -314,7 +291,7 @@ public class GameLauncher extends GameApplication {
     }
 
     /**
-     * Envoie des données du joueur 1 par le serveur
+     * Envoie des données du serveur vers le client
      */
     private void onUpdateServerLogic(){ // LBF : dans le mode multijoueur
         Bundle bundle = new Bundle("Player1");
@@ -327,7 +304,25 @@ public class GameLauncher extends GameApplication {
     }
 
     /**
-     * Envoie des données du joueur 2 par le client
+     * Logique lors de la réception des données du client par le serveur
+     */
+    private void onReceiveMessageServer(){ // LBF : dans le mode multijoueur
+        server.setOnConnected(connection -> {
+            connection.addMessageHandlerFX((conn, message) -> {
+                if (message.getName().equals("Player2")) {
+                    player2.setX(message.get("x"));
+                    player2.setY(message.get("y"));
+                    playerComponent2.setScore(message.get("score"));
+                    playerComponent2.setLife(message.get("life"));
+                }else if (message.getName().equals("Player2Shoot")) {
+                    playerComponent2.shoot();
+                }
+            });
+        });
+    }
+
+    /**
+     * Envoie des données du client vers le serveur
      */
     private void onUpdateClientLogic(){ // LBF : dans le mode multijoueur
         Bundle bundle = new Bundle("Player2");
@@ -339,12 +334,29 @@ public class GameLauncher extends GameApplication {
         client.broadcast(bundle);
     }
 
+    /**
+     * Logique lors de la réception des données du serveur par le client
+     */
+    private void onReceiveMessageClient() { // LBF : dans le mode multijoueur
+        client.setOnConnected(connection -> {
+            connection.addMessageHandlerFX((conn, message) -> {
+                if (message.getName().equals("Player1")) {
+                    player1.setX(message.get("x"));
+                    player1.setY(message.get("y"));
+                    playerComponent1.setScore(message.get("score"));
+                    playerComponent1.setLife(message.get("life"));
+                } else if (message.getName().equals("Player1Shoot")) {
+                    playerComponent1.shoot();
+                }
+            });
+        });
+    }
+
+
     private void onShootBroadcastLogic(){ // LBF : dans le mode multijoueur
         if (isServer) {
-            System.out.println("server broadcast");
             server.broadcast(new Bundle("Player1Shoot"));
         } else {
-            System.out.println("client broadcast");
             client.broadcast(new Bundle("Player2Shoot"));
         }
     }
