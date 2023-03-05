@@ -70,7 +70,8 @@ public class GameLauncher extends GameApplication {
     private boolean isServer;
     private Server<Bundle> server;
     private Client<Bundle> client;
-    private boolean multiplayerGameInProgress = false;
+    private boolean multiplayerGameInProgress = false; // indique si la partie multijoueur est lancée ou non
+    // LBF : dans le mode multi ???
 
     /**
      * Initialisation des paramètres du jeu
@@ -218,13 +219,13 @@ public class GameLauncher extends GameApplication {
      */
     @Override
     protected void initGame() {
-        if(GameMode == MULTI) {
+        if(GameMode == MULTI) { // LBF : dans le mode multijoueur
             isServer();
         }
         play(assetNames.sounds.START_CLAIRON);
         getGameWorld().addEntityFactory(new SpaceInvadersFactory());
 
-        player1 = spawn(entityNames.PLAYER);
+        player1 = spawn(entityNames.PLAYER); // LBF : dans tous les modes de jeu
         player1.setX(Constant.GAME_WIDTH / 2);
         player1.setY(Constant.GAME_HEIGHT - player1.getHeight());
         playerComponent1 = player1.getComponent(PlayerComponent.class);
@@ -232,7 +233,7 @@ public class GameLauncher extends GameApplication {
         playerComponent1.initializeScore();
         playerComponent1.initializeLife();
 
-        if (GameMode != SOLO) {
+        if (GameMode != SOLO) { // LBF : dans tous les modes de jeu sauf solo
             player2 = spawn(entityNames.PLAYER);
             player2.setX(Constant.GAME_WIDTH / 2);
             player2.setY(0);
@@ -242,8 +243,7 @@ public class GameLauncher extends GameApplication {
             playerComponent2.initializeLife();
         }
 
-        if (GameMode == INFINITY_MODE) {
-            // spawn Aliens pour infinity mode
+        if (GameMode == INFINITY_MODE) { // LBF : dans le mode infinity
             Entity alien1 = spawn(entityNames.ALIEN, 0, Constant.GAME_HEIGHT / 2 - Constant.ALIEN_HEIGHT);
             alien1.getComponent(AlienComponent.class).initialize(Constant.Direction.UP);
             Entity alien2 = spawn(entityNames.ALIEN, 0, Constant.GAME_HEIGHT / 2 - Constant.ALIEN_HEIGHT);
@@ -257,9 +257,9 @@ public class GameLauncher extends GameApplication {
                 alien.getComponent(AlienComponent.class).initialize(Constant.Direction.DOWN);
             }, Duration.seconds(1.5));
 
-        } else if (GameMode == CLASSIQUE) {
+        } else if (GameMode == CLASSIQUE) { // LBF : dans le mode classique
             makeAlienBlock();
-        } else if (GameMode == SOLO) {
+        } else if (GameMode == SOLO) { // LBF : dans le mode solo
             makeAlienBlockSolo();
         }
 
@@ -267,7 +267,7 @@ public class GameLauncher extends GameApplication {
         loopBGM(assetNames.music.MUSIC_ACROSS_THE_UNIVERSE);
     }
 
-    private void isServer(){
+    private void isServer(){ // LBF : dans le mode multijoueur
         runOnce(() -> {
             getDialogService().showConfirmationBox("Voulez-vous être le serveur ?", yes -> {
                 if (yes) {
@@ -313,7 +313,10 @@ public class GameLauncher extends GameApplication {
         },Duration.seconds(0));
     }
 
-    private void onUpdateServerLogic(){
+    /**
+     * Envoie des données du joueur 1 par le serveur
+     */
+    private void onUpdateServerLogic(){ // LBF : dans le mode multijoueur
         Bundle bundle = new Bundle("Player1");
         bundle.put("type", "Player1");
         bundle.put("x", player1.getX());
@@ -323,7 +326,10 @@ public class GameLauncher extends GameApplication {
         server.broadcast(bundle);
     }
 
-    private void onUpdateClientLogic(){
+    /**
+     * Envoie des données du joueur 2 par le client
+     */
+    private void onUpdateClientLogic(){ // LBF : dans le mode multijoueur
         Bundle bundle = new Bundle("Player2");
         bundle.put("type", "Player2");
         bundle.put("x", player2.getX());
@@ -333,7 +339,7 @@ public class GameLauncher extends GameApplication {
         client.broadcast(bundle);
     }
 
-    private void onShootBroadcastLogic(){
+    private void onShootBroadcastLogic(){ // LBF : dans le mode multijoueur
         if (isServer) {
             System.out.println("server broadcast");
             server.broadcast(new Bundle("Player1Shoot"));
@@ -440,7 +446,7 @@ public class GameLauncher extends GameApplication {
      */
     @Override
     protected void onUpdate(double tpf) {
-        if (multiplayerGameInProgress) {
+        if (multiplayerGameInProgress) { // LBF : dans le mode multijoueur ou réecrire autrement??
             if (isServer) {
                 onUpdateServerLogic();
             } else {
