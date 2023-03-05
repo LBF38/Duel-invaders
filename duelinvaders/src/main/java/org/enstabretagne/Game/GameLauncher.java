@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.almasb.fxgl.core.serialization.Bundle;
+import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.net.Client;
 import com.almasb.fxgl.net.Server;
 import org.enstabretagne.Component.AlienComponent;
@@ -73,6 +74,7 @@ public class GameLauncher extends GameApplication {
     private boolean multiplayerGameInProgress = false; // indique si la partie multijoueur est lancée ou non
     // LBF : dans le mode multi ???
 
+    private double alienTag= 0; //permet de numéroter les aliens
     /**
      * Initialisation des paramètres du jeu
      * 
@@ -219,11 +221,13 @@ public class GameLauncher extends GameApplication {
      */
     @Override
     protected void initGame() {
-        if(GameMode == MULTI) { // LBF : dans le mode multijoueur
-            isServer();
-        }
         play(assetNames.sounds.START_CLAIRON);
         getGameWorld().addEntityFactory(new SpaceInvadersFactory());
+
+        if(GameMode == MULTI) { // LBF : dans le mode multijoueur
+            isServer();
+            }
+
 
         player1 = spawn(entityNames.PLAYER); // LBF : dans tous les modes de jeu
         player1.setX(Constant.GAME_WIDTH / 2);
@@ -277,6 +281,14 @@ public class GameLauncher extends GameApplication {
                     onReceiveMessageServer();
                     server.startAsync();
                     multiplayerGameInProgress = true;
+                    if(isServer) {
+                        run(() -> {
+                            AlienSpawnAndBroadcast(Constant.Direction.UP);
+                        }, Duration.seconds(1.4));
+                        run(() -> {
+                            AlienSpawnAndBroadcast(Constant.Direction.DOWN);
+                        }, Duration.seconds(1.5));
+                    }
                 } else {
                     isServer = false;
                     System.out.println("client");
@@ -290,10 +302,19 @@ public class GameLauncher extends GameApplication {
         },Duration.seconds(0));
     }
 
+
+    private void onUpdateLogic(){// LBF : dans le mode multijoueur
+        if (isServer) {
+            Player1Broadcast();
+        } else {
+            Player2Broadcast();
+        }
+    }
+
     /**
      * Envoie des données du serveur vers le client
      */
-    private void onUpdateServerLogic(){ // LBF : dans le mode multijoueur
+    private void Player1Broadcast(){ // LBF : dans le mode multijoueur
         Bundle bundle = new Bundle("Player1");
         bundle.put("type", "Player1");
         bundle.put("x", player1.getX());
@@ -303,10 +324,11 @@ public class GameLauncher extends GameApplication {
         server.broadcast(bundle);
     }
 
+
     /**
      * Logique lors de la réception des données du client par le serveur
      */
-    private void onReceiveMessageServer(){ // LBF : dans le mode multijoueur
+    private void onReceiveMessageServer() { // LBF : dans le mode multijoueur
         server.setOnConnected(connection -> {
             connection.addMessageHandlerFX((conn, message) -> {
                 if (message.getName().equals("Player2")) {
@@ -314,8 +336,11 @@ public class GameLauncher extends GameApplication {
                     player2.setY(message.get("y"));
                     playerComponent2.setScore(message.get("score"));
                     playerComponent2.setLife(message.get("life"));
-                }else if (message.getName().equals("Player2Shoot")) {
+                } else if (message.getName().equals("Player2Shoot")) {
                     playerComponent2.shoot();
+                } else if (message.getName().equals("AlienClientShoot")){
+
+
                 }
             });
         });
@@ -324,7 +349,7 @@ public class GameLauncher extends GameApplication {
     /**
      * Envoie des données du client vers le serveur
      */
-    private void onUpdateClientLogic(){ // LBF : dans le mode multijoueur
+    private void Player2Broadcast(){ // LBF : dans le mode multijoueur
         Bundle bundle = new Bundle("Player2");
         bundle.put("type", "Player2");
         bundle.put("x", player2.getX());
@@ -347,9 +372,33 @@ public class GameLauncher extends GameApplication {
                     playerComponent1.setLife(message.get("life"));
                 } else if (message.getName().equals("Player1Shoot")) {
                     playerComponent1.shoot();
+                } else if (message.getName().equals("AlienSpawn")) {
+                    if (message.get("direction") == Constant.Direction.DOWN) {
+                        Entity alien = spawn(entityNames.ALIEN, 0, Constant.GAME_HEIGHT / 2 - Constant.ALIEN_HEIGHT);
+                        alien.getComponent(AlienComponent.class).initialize(Constant.Direction.DOWN);
+                        alien.getComponent(AlienComponent.class).alien_tag = message.get("alien_tag");
+                    } else{
+                        Entity alien = spawn(entityNames.ALIEN, 0, Constant.GAME_HEIGHT / 2 - Constant.ALIEN_HEIGHT);
+                        alien.getComponent(AlienComponent.class).initialize(Constant.Direction.UP);
+                        alien.getComponent(AlienComponent.class).alien_tag = message.get("alien_tag");
+                    }
                 }
             });
         });
+    }
+
+    private void AlienShoot(Entity alien){ // LBF : dans le mode multijoueur
+        if (isServer) {
+            Bundle bundle = new Bundle("AlienServerShoot");
+            bundle.put("x", alien.getX());
+            bundle.put("y", alien.getY());
+            server.broadcast(bundle);
+        } else {
+            Bundle bundle = new Bundle("AlienClientShoot");
+            bundle.put("x", alien.getX());
+            bundle.put("y", alien.getY());
+            client.broadcast(bundle);
+        }
     }
 
 
@@ -360,6 +409,25 @@ public class GameLauncher extends GameApplication {
             client.broadcast(new Bundle("Player2Shoot"));
         }
     }
+
+    private void AlienSpawnAndBroadcast(Constant.Direction direction) { // LBF : dans le mode multijoueur
+        if (direction == Constant.Direction.DOWN) {
+            Entity alien = spawn(entityNames.ALIEN, 0, Constant.GAME_HEIGHT / 2 - Constant.ALIEN_HEIGHT);
+            alien.getComponent(AlienComponent.class).initialize(Constant.Direction.DOWN);
+            alien.getComponent(AlienComponent.class).alien_tag = alienTag;
+            alienTag++;
+        } else{
+            Entity alien = spawn(entityNames.ALIEN, 0, Constant.GAME_HEIGHT / 2 - Constant.ALIEN_HEIGHT);
+            alien.getComponent(AlienComponent.class).initialize(Constant.Direction.UP);
+            alien.getComponent(AlienComponent.class).alien_tag = alienTag;
+            alienTag++;
+        }
+        Bundle bundle = new Bundle("AlienSpawn");
+        bundle.put("direction", direction);
+        bundle.put("alien_tag", alienTag);
+        server.broadcast(bundle);
+    }
+
 
     private void makeAlienBlock() {
         for (int i = 0; i < 2; i++) {
@@ -459,11 +527,7 @@ public class GameLauncher extends GameApplication {
     @Override
     protected void onUpdate(double tpf) {
         if (multiplayerGameInProgress) { // LBF : dans le mode multijoueur ou réecrire autrement??
-            if (isServer) {
-                onUpdateServerLogic();
-            } else {
-                onUpdateClientLogic();
-            }
+            onUpdateLogic();
         }
         if (getb(GameVariableNames.isGameOver))
             gameOverScreen();
@@ -479,8 +543,9 @@ public class GameLauncher extends GameApplication {
             showPlayersLivesAndScores();
         run(() -> {
             getGameWorld().getEntitiesByType(EntityType.ALIEN).forEach((alien) -> {
-                if (FXGLMath.randomBoolean(0.01))
+                if (FXGLMath.randomBoolean(0.0001)){
                     alien.getComponent(AlienComponent.class).randomShoot(Constant.ALIEN_SHOOT_CHANCE);
+                    AlienShoot(alien);}
             });
         }, Duration.seconds(Constant.random.nextDouble() * 10));
     }
