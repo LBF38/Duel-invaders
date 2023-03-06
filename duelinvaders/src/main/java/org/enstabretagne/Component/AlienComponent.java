@@ -24,7 +24,6 @@ public class AlienComponent extends Component {
     private Double last_shot = 0.0;
     private double limit_right = Constant.GAME_WIDTH;
     private double limit_left = 0.0;
-    public double alien_tag = -1; //sert à identifier l'alien en multi-joueur
 
     /**
      * Constructeur de la classe AlienComponent

@@ -15,4 +15,10 @@ public class GameVariableNames {
     public static final String PLAYER2_LIFE = "Player2_lives";
     public static final String isGameOver = "isGameOver";
     public static final String isGameWon = "isGameWon";
+
+
+    // LBF : dans le mode multi ??
+    //utile pour la synchro du lancement du multijoueur
+    public static boolean multiplayerGameInProgress = false;
+    public static boolean multiplayerGameWaiting = false;
 }

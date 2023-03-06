@@ -71,15 +71,8 @@ public class GameLauncher extends GameApplication {
     private Server<Bundle> server;
     private Client<Bundle> client;
 
-
-    // LBF : dans le mode multi ??
-    //utile pour la synchro du lancement du multijoueur
-    // todo : reinitialiser à false à chaque fin de partie ou lancement
-    private boolean multiplayerGameInProgress = false; // indique si la partie multijoueur est lancée ou non
-    private boolean multiplayerGameWaiting = false; // indique si une partie multijoueur est en attente
     private boolean alienSpawnStart = false; // indique si les aliens ont commencé à spawn
 
-    private double alienTag= 0; //permet de numéroter les aliens
     /**
      * Initialisation des paramètres du jeu
      * 
@@ -128,38 +121,38 @@ public class GameLauncher extends GameApplication {
     @Override
     protected void initInput() {
         onKey(KeyCode.ENTER, () -> {
-            if (multiplayerGameInProgress){
+            if (GameVariableNames.multiplayerGameInProgress){
                 onShootBroadcastLogic();
                 if(isServer){
                     playerComponent1.shoot();
                 }else {
                     playerComponent2.shoot();
                 }
-            } else if (!multiplayerGameWaiting){
+            } else if (!GameVariableNames.multiplayerGameWaiting){
                 playerComponent1.shoot();
             }
         });
 
         onKey(KeyCode.RIGHT, () -> {
-            if (multiplayerGameInProgress) {
+            if (GameVariableNames.multiplayerGameInProgress) {
                 if(isServer) {
                     playerComponent1.moveRight();
                 } else {
                     playerComponent2.moveRight();
                 }
-            }else if (!multiplayerGameWaiting) {
+            }else if (!GameVariableNames.multiplayerGameWaiting) {
                 playerComponent1.moveRight();
             }
         });
 
         onKey(KeyCode.LEFT, () -> {
-            if (multiplayerGameInProgress) {
+            if (GameVariableNames.multiplayerGameInProgress) {
                 if(isServer) {
                     playerComponent1.moveLeft();
                 } else {
                     playerComponent2.moveLeft();
                 }
-            }else if (!multiplayerGameWaiting) {
+            }else if (!GameVariableNames.multiplayerGameWaiting) {
                 playerComponent1.moveLeft();
             }
         });
@@ -167,14 +160,14 @@ public class GameLauncher extends GameApplication {
         onKey(KeyCode.SPACE, () -> {
             if (GameMode == SOLO) {
                 playerComponent1.shoot();
-            } else if (multiplayerGameInProgress){
+            } else if (GameVariableNames.multiplayerGameInProgress){
                 onShootBroadcastLogic();
                 if(isServer){
                     playerComponent1.shoot();
                 }else {
                     playerComponent2.shoot();
                 }
-            } else if (!multiplayerGameWaiting) {
+            } else if (!GameVariableNames.multiplayerGameWaiting) {
                 playerComponent2.shoot();
             }
         });
@@ -182,13 +175,13 @@ public class GameLauncher extends GameApplication {
         onKey(KeyCode.D, () -> {
             if (GameMode == SOLO) {
                 playerComponent1.moveRight();
-            } else if (multiplayerGameInProgress) {
+            } else if (GameVariableNames.multiplayerGameInProgress) {
                 if(isServer) {
                     playerComponent1.moveRight();
                 } else {
                     playerComponent2.moveRight();
                 }
-            }else if (!multiplayerGameWaiting) {
+            }else if (!GameVariableNames.multiplayerGameWaiting) {
                 playerComponent2.moveRight();
             }
         });
@@ -196,13 +189,13 @@ public class GameLauncher extends GameApplication {
         onKey(KeyCode.Q, () -> {
             if (GameMode == SOLO) {
                 playerComponent1.moveLeft();
-            } else if (multiplayerGameInProgress) {
+            } else if (GameVariableNames.multiplayerGameInProgress) {
                 if(isServer) {
                     playerComponent1.moveLeft();
                 } else {
                     playerComponent2.moveLeft();
                 }
-            } else if (!multiplayerGameWaiting) {
+            } else if (!GameVariableNames.multiplayerGameWaiting) {
                 playerComponent2.moveLeft();
             }
         });
@@ -218,6 +211,8 @@ public class GameLauncher extends GameApplication {
     protected void initGameVars(Map<String, Object> vars) {
         vars.put(GameVariableNames.isGameOver, false);
         vars.put(GameVariableNames.isGameWon, false);
+        GameVariableNames.multiplayerGameInProgress= false;
+        GameVariableNames.multiplayerGameWaiting= false;
     }
 
     /**
@@ -296,7 +291,7 @@ public class GameLauncher extends GameApplication {
         server = getNetService().newTCPServer(55555); // todo -> selection du port
         onReceiveMessageServer();
         server.startAsync();
-        multiplayerGameWaiting = true;
+        GameVariableNames.multiplayerGameWaiting = true;
     }
 
     /**
@@ -308,7 +303,7 @@ public class GameLauncher extends GameApplication {
         client = getNetService().newTCPClient("localhost", 55555); // todo -> selection du port
         onReceiveMessageClient();
         client.connectAsync();
-        multiplayerGameWaiting = true;
+        GameVariableNames.multiplayerGameWaiting = true;
     }
 
     private void startMultiGame(){
@@ -367,9 +362,9 @@ public class GameLauncher extends GameApplication {
                 } else if (message.getName().equals("Player2Shoot")) {
                     playerComponent2.shoot();
                 } else if (message.getName().equals("Client Connected")) {
-                    if(!multiplayerGameInProgress) {
+                    if(!GameVariableNames.multiplayerGameInProgress) {
                         server.broadcast(new Bundle("Server Start"));
-                        multiplayerGameInProgress = true;
+                        GameVariableNames.multiplayerGameInProgress = true;
                         startMultiGame();
                     }
                 } else{
@@ -396,14 +391,12 @@ public class GameLauncher extends GameApplication {
                     if (message.get("direction") == Constant.Direction.DOWN) {
                         Entity alien = spawn(entityNames.ALIEN, 0, Constant.GAME_HEIGHT / 2 - Constant.ALIEN_HEIGHT);
                         alien.getComponent(AlienComponent.class).initialize(Constant.Direction.DOWN);
-                        alien.getComponent(AlienComponent.class).alien_tag = message.get("alien_tag");
                     } else{
                         Entity alien = spawn(entityNames.ALIEN, 0, Constant.GAME_HEIGHT / 2 - Constant.ALIEN_HEIGHT);
                         alien.getComponent(AlienComponent.class).initialize(Constant.Direction.UP);
-                        alien.getComponent(AlienComponent.class).alien_tag = message.get("alien_tag");
                     }
                 } else if (message.getName().equals("Server Start")) {
-                    multiplayerGameInProgress = true;
+                    GameVariableNames.multiplayerGameInProgress = true;
                     startMultiGame();
                 } else{
                     System.out.println("Message non reconnu");
@@ -429,12 +422,9 @@ public class GameLauncher extends GameApplication {
     private void AlienSpawnAndBroadcast(Constant.Direction direction) { // LBF : dans le mode multijoueur
         Entity alien = spawn(entityNames.ALIEN, 0, Constant.GAME_HEIGHT / 2 - Constant.ALIEN_HEIGHT);
         alien.getComponent(AlienComponent.class).initialize(direction);
-        alien.getComponent(AlienComponent.class).alien_tag = alienTag;
-        alienTag++;
 
         Bundle bundle = new Bundle("AlienSpawn");
         bundle.put("direction", direction);
-        bundle.put("alien_tag", alienTag);
         server.broadcast(bundle);
     }
 
@@ -553,13 +543,13 @@ public class GameLauncher extends GameApplication {
         }
     }
     private void onUpdateMultiplayer(double tpf){ // LBF : dans le mode multijoueur
-        if (multiplayerGameInProgress) { // LBF : dans le mode multijoueur ou réecrire autrement??
+        if (GameVariableNames.multiplayerGameInProgress) { // LBF : dans le mode multijoueur ou réecrire autrement??
             onUpdateBroadcastLogic();
             onUpdateCommon(tpf);
 //            if(!alienSpawnStart && isServer){onStartAlienSpawnServer();}
         } else {
             //Synchronise le début de la partie entre les deux joueurs
-            if(!isServer && multiplayerGameWaiting){
+            if(!isServer && GameVariableNames.multiplayerGameWaiting){
                 client.broadcast(new Bundle("Client Connected"));
             }
         }
