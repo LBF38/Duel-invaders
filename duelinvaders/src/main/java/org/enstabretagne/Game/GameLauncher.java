@@ -311,6 +311,11 @@ public class GameLauncher extends GameApplication {
         multiplayerGameWaiting = true;
     }
 
+    private void startMultiGame(){
+        long startGameTime = System.currentTimeMillis();
+        System.out.println("startGameTime : " + startGameTime);
+        makeAlienBlock();
+    }
     /**
      * Logique d'envoi des données à chaque frame
      */
@@ -362,8 +367,11 @@ public class GameLauncher extends GameApplication {
                 } else if (message.getName().equals("Player2Shoot")) {
                     playerComponent2.shoot();
                 } else if (message.getName().equals("Client Connected")) {
-                    server.broadcast(new Bundle("Server Start"));
-                    multiplayerGameInProgress = true;
+                    if(!multiplayerGameInProgress) {
+                        server.broadcast(new Bundle("Server Start"));
+                        multiplayerGameInProgress = true;
+                        startMultiGame();
+                    }
                 } else{
                     System.out.println("Message non reconnu");
                 }
@@ -396,6 +404,7 @@ public class GameLauncher extends GameApplication {
                     }
                 } else if (message.getName().equals("Server Start")) {
                     multiplayerGameInProgress = true;
+                    startMultiGame();
                 } else{
                     System.out.println("Message non reconnu");
                 }
@@ -536,7 +545,7 @@ public class GameLauncher extends GameApplication {
      * @param tpf
      */
     @Override
-    protected void onUpdate(double tpf) {
+    protected void onUpdate(double tpf ) {
         if(GameMode == MULTI){
             onUpdateMultiplayer(tpf);
         } else{
@@ -547,7 +556,7 @@ public class GameLauncher extends GameApplication {
         if (multiplayerGameInProgress) { // LBF : dans le mode multijoueur ou réecrire autrement??
             onUpdateBroadcastLogic();
             onUpdateCommon(tpf);
-            if(!alienSpawnStart && isServer){onStartAlienSpawnServer();}
+//            if(!alienSpawnStart && isServer){onStartAlienSpawnServer();}
         } else {
             //Synchronise le début de la partie entre les deux joueurs
             if(!isServer && multiplayerGameWaiting){
