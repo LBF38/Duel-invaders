@@ -39,11 +39,9 @@ public abstract class TwoPlayerGameMode extends OnePlayerGameMode {
     @Override
     public void gameFinished() {
         if (getb(GameVariableNames.isGameOver)) {
-            // getGameScene().removeChild(playersUI);
             gameOverScreen(playerComponent1.getScore(), playerComponent2.getScore());
         }
         if (getb(GameVariableNames.isGameWon)) {
-            // getGameScene().removeChild(playersUI);
             winScreen(playerComponent1.getScore(), playerComponent2.getScore());
         }
     }

@@ -12,6 +12,7 @@ import org.enstabretagne.Utils.EntityType;
 import org.enstabretagne.Utils.Settings;
 import org.enstabretagne.Utils.assetNames;
 
+import com.almasb.fxgl.app.scene.GameScene;
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.entity.GameWorld;
 
@@ -22,9 +23,11 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 
 public class UI_Factory {
+    private static VBox playersUI = new VBox();
 
-    public static VBox showPlayersLivesAndScores(GameWorld gameWorld) {
-        // getGameScene().removeChild(playersUI);
+    public static VBox showPlayersLivesAndScores(GameWorld gameWorld,GameScene gameScene) {
+        if (getGameScene().getContentRoot().getChildren().contains(playersUI))
+            getGameScene().removeChild(playersUI);
         // System.out.println("Players Lives and Scores");
 
         List<HBox> playersViews = new ArrayList<>();
@@ -37,14 +40,15 @@ public class UI_Factory {
             var playerUI = new HBox(30, scoreUI, lifeUI);
             playersViews.add(playerUI);
         }
-        VBox players_ui = new VBox(20, playersViews.toArray(new HBox[0]));
-        return players_ui;
-        // getGameScene().addChild(players_ui);
+        playersUI = new VBox(20, playersViews.toArray(new HBox[0]));
+
+        getGameScene().addChild(playersUI);
+        return playersUI;
     }
 
     public static HBox createScoreUI(int score, int player_id) {
         Text scoreText = getUIFactoryService().newText(Integer.toString(score), Color.WHITE, 24.0);
-        Text playerText = getUIFactoryService().newText("Player " + Integer.toString(player_id % 2 + 1), Color.WHITE,
+        Text playerText = getUIFactoryService().newText("Player " + Integer.toString(player_id), Color.WHITE,
                 24.0);
         var scoreView = new HBox(10, playerText, scoreText);
         scoreView.setAlignment(Pos.CENTER);

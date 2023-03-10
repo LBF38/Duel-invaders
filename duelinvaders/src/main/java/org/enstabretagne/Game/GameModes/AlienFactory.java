@@ -1,13 +1,16 @@
 package org.enstabretagne.Game.GameModes;
 
+import static com.almasb.fxgl.dsl.FXGL.getGameWorld;
 import static com.almasb.fxgl.dsl.FXGL.run;
 import static com.almasb.fxgl.dsl.FXGL.spawn;
 
 import org.enstabretagne.Component.AlienComponent;
+import org.enstabretagne.Utils.EntityType;
 import org.enstabretagne.Utils.Settings;
 import org.enstabretagne.Utils.entityNames;
 import org.enstabretagne.Utils.Settings.Direction;
 
+import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.entity.Entity;
 
 import javafx.util.Duration;
@@ -58,5 +61,14 @@ public class AlienFactory {
     static protected void makeOneAlien(Direction direction) {
         Entity alien = spawn(entityNames.ALIEN, 0, Settings.GAME_HEIGHT / 2 - Settings.ALIEN_HEIGHT);
         alien.getComponent(AlienComponent.class).initialize(direction);
+    }
+
+    public static void aliensRandomlyShoot() {
+        run(() -> {
+            getGameWorld().getEntitiesByType(EntityType.ALIEN).forEach((alien) -> {
+                if (FXGLMath.randomBoolean(0.01))
+                    alien.getComponent(AlienComponent.class).randomShoot(Settings.ALIEN_SHOOT_CHANCE);
+            });
+        }, Duration.seconds(Settings.random.nextDouble() * 10));
     }
 }

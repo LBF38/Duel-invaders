@@ -6,7 +6,6 @@ import static com.almasb.fxgl.dsl.FXGL.getPhysicsWorld;
 import static com.almasb.fxgl.dsl.FXGL.getb;
 import static com.almasb.fxgl.dsl.FXGL.loopBGM;
 import static com.almasb.fxgl.dsl.FXGL.play;
-import static com.almasb.fxgl.dsl.FXGL.run;
 import static com.almasb.fxgl.dsl.FXGL.spawn;
 import static org.enstabretagne.UI.UI_Factory.ambientSound;
 import static org.enstabretagne.UI.UI_Factory.showPlayersLivesAndScores;
@@ -21,12 +20,11 @@ import org.enstabretagne.Collision.BulletBulletCollision;
 import org.enstabretagne.Collision.BulletPlayerCollision;
 import org.enstabretagne.Collision.EnemyShootBulletCollision;
 import org.enstabretagne.Collision.EnemyShootPlayerCollision;
-import org.enstabretagne.Component.AlienComponent;
 import org.enstabretagne.Component.SpaceInvadersFactory;
+import org.enstabretagne.Game.GameModes.AlienFactory;
 import org.enstabretagne.Game.GameModes.ClassicGameMode;
 import org.enstabretagne.Game.GameModes.GameMode;
 import org.enstabretagne.Game.GameModes.GameModeTypes;
-import org.enstabretagne.Utils.EntityType;
 import org.enstabretagne.Utils.GameVariableNames;
 import org.enstabretagne.Utils.Settings;
 import org.enstabretagne.Utils.assetNames;
@@ -40,9 +38,6 @@ import com.almasb.fxgl.app.scene.FXGLMenu;
 import com.almasb.fxgl.app.scene.SceneFactory;
 import com.almasb.fxgl.core.math.FXGLMath;
 
-import javafx.scene.layout.VBox;
-import javafx.util.Duration;
-
 /**
  * Classe principale du jeu
  * C'est la classe qui lance le jeu et gère les fonctions principales
@@ -55,7 +50,6 @@ public class GameLauncher extends GameApplication {
     private long last_ambient_sound = System.currentTimeMillis();
     private int delay_ambient_sound = FXGLMath.random(Settings.AMBIENT_SOUND_DELAY_MIN,
             Settings.AMBIENT_SOUND_DELAY_MAX);
-    VBox playersUI = new VBox();
 
     public static void setGameMode(GameMode gameMode) {
         game_mode = gameMode;
@@ -165,10 +159,7 @@ public class GameLauncher extends GameApplication {
      */
     @Override
     protected void initUI() {
-        if (getGameScene().getContentRoot().getChildren().contains(playersUI))
-            getGameScene().removeChild(playersUI);
-        playersUI = showPlayersLivesAndScores(getGameWorld());
-        getGameScene().addChild(playersUI);
+        showPlayersLivesAndScores(getGameWorld(), getGameScene());
     }
 
     /**
@@ -179,25 +170,18 @@ public class GameLauncher extends GameApplication {
     @Override
     protected void onUpdate(double tpf) {
         if (getb(GameVariableNames.isGameOver) || getb(GameVariableNames.isGameWon)) {
-            getGameScene().removeChild(playersUI);
             game_mode.gameFinished();
         }
+
         if ((System.currentTimeMillis() - last_ambient_sound) > delay_ambient_sound) {
             ambientSound();
             last_ambient_sound = System.currentTimeMillis();
             delay_ambient_sound = FXGLMath.random(Settings.AMBIENT_SOUND_DELAY_MIN, Settings.AMBIENT_SOUND_DELAY_MAX);
         }
-        if (getGameScene().getContentRoot().getChildren().contains(playersUI)) {
-            getGameScene().removeChild(playersUI);
-            playersUI = showPlayersLivesAndScores(getGameWorld());
-            getGameScene().addChild(playersUI);
-        }
-        run(() -> {
-            getGameWorld().getEntitiesByType(EntityType.ALIEN).forEach((alien) -> {
-                if (FXGLMath.randomBoolean(0.01))
-                    alien.getComponent(AlienComponent.class).randomShoot(Settings.ALIEN_SHOOT_CHANCE);
-            });
-        }, Duration.seconds(Settings.random.nextDouble() * 10));
+
+        showPlayersLivesAndScores(getGameWorld(), getGameScene());
+
+        AlienFactory.aliensRandomlyShoot();
     }
 
     public static void main(String[] args) {

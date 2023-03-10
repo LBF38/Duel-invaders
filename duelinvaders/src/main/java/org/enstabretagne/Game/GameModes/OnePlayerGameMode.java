@@ -61,7 +61,6 @@ public abstract class OnePlayerGameMode implements GameMode {
             gameOverScreen(Integer.toString(playerComponent1.getScore()));
         }
         if (getb(GameVariableNames.isGameWon)) {
-            // getGameScene().removeChild(playersUI);
             winScreen(Integer.toString(playerComponent1.getScore()));
         }
     }
