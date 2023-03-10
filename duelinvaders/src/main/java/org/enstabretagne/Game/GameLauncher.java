@@ -73,6 +73,9 @@ public class GameLauncher extends GameApplication {
 
     private boolean alienSpawnStart = false; // indique si les aliens ont commencé à spawn
 
+    private int Port;
+    private String IP;
+
     /**
      * Initialisation des paramètres du jeu
      * 
@@ -276,7 +279,13 @@ public class GameLauncher extends GameApplication {
     private void isServer(){ // LBF : dans le mode multijoueur
         runOnce(() -> {
             getDialogService().showConfirmationBox("Voulez-vous être le serveur ?", yes -> {
-                if (yes) { isServer_ServerInit(); } else { isServer_ClientInit(); }
+                if (yes) {
+                    isServer = true;
+                    PortSelection();
+                } else {
+                    isServer = false;
+                    PortSelection();
+                }
             });
             return null;
         },Duration.seconds(0));
@@ -286,9 +295,8 @@ public class GameLauncher extends GameApplication {
      * Initialisation du serveur
      */
     private void isServer_ServerInit(){
-        isServer = true;
         System.out.println("server");
-        server = getNetService().newTCPServer(55555); // todo -> selection du port
+        server = getNetService().newTCPServer(Port);
         onReceiveMessageServer();
         server.startAsync();
         GameVariableNames.multiplayerGameWaiting = true;
@@ -298,12 +306,46 @@ public class GameLauncher extends GameApplication {
      * Initialisation du client
      */
     private void isServer_ClientInit(){
-        isServer = false;
         System.out.println("client");
-        client = getNetService().newTCPClient("localhost", 55555); // todo -> selection du port
+        client = getNetService().newTCPClient(IP, Port);
         onReceiveMessageClient();
         client.connectAsync();
         GameVariableNames.multiplayerGameWaiting = true;
+    }
+
+    private void PortSelection(){
+        runOnce(() -> {
+            getDialogService().showInputBox("Entrez le port (ex:55555)", port -> {
+                if (port != null) {
+                    Port = Integer.parseInt(port);
+                }
+                else {
+                    Port = 55555;
+                }
+                System.out.println("Port : " + Port);
+                if(!isServer){
+                    IPSelection();
+                }
+                else{
+                    isServer_ServerInit();
+                }
+            });
+            return null;
+        },Duration.seconds(0));
+    }
+    private void IPSelection() {
+        runOnce(() -> {
+            getDialogService().showInputBox("Entrez l'adresse IP du serveur (ex: localhost ou 111.222.333.444)", ip -> {
+                if (ip != null) {
+                    IP = ip;
+                } else {
+                    IP = "localhost";
+                }
+                System.out.println("IP : " + IP);
+                isServer_ClientInit();
+            });
+            return null;
+        }, Duration.seconds(0));
     }
 
     private void startMultiGame(){
