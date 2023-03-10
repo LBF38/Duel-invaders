@@ -11,4 +11,5 @@ public interface GameMode {
     public void initGameMode();
     public void initInput(Input input);
     public GameModeTypes getGameModeType();
+    public void gameFinished();
 }

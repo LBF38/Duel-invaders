@@ -1,9 +1,10 @@
 package org.enstabretagne.Game.GameModes;
 
 import org.enstabretagne.Component.PlayerComponent;
+import org.enstabretagne.Utils.GameVariableNames;
 import org.enstabretagne.Utils.Settings;
 import org.enstabretagne.Utils.Settings.Direction;
-
+import static org.enstabretagne.UI.UI_Factory.*;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.input.Input;
 import static com.almasb.fxgl.dsl.FXGL.*;
@@ -35,4 +36,15 @@ public abstract class TwoPlayerGameMode extends OnePlayerGameMode {
         onKey(KeyCode.Q, () -> playerComponent2.moveLeft());
     }
 
+    @Override
+    public void gameFinished() {
+        if (getb(GameVariableNames.isGameOver)) {
+            // getGameScene().removeChild(playersUI);
+            gameOverScreen(playerComponent1.getScore(), playerComponent2.getScore());
+        }
+        if (getb(GameVariableNames.isGameWon)) {
+            // getGameScene().removeChild(playersUI);
+            winScreen(playerComponent1.getScore(), playerComponent2.getScore());
+        }
+    }
 }

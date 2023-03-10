@@ -4,6 +4,7 @@ import static com.almasb.fxgl.dsl.FXGL.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import org.enstabretagne.Component.PlayerComponent;
@@ -75,15 +76,27 @@ public class UI_Factory {
      */
     public static void winScreen(String score_player1, String score_player2) {
         play(assetNames.sounds.VICTORY_CLAIRON);
-        String message = "You won ! \n Scores are as follows : \n" +
+        String message = "You won ! \nScores are as follows : \n" +
                 "Player 1 : " + score_player1 + "\n";
         if (score_player2 != null) {
             String player2 = "Player 2 : " + score_player2;
             message += player2;
         }
+        askConfirmationToUser(message, (yes) -> playAgain(yes));
+    }
+
+    private static void askConfirmationToUser(String message, Consumer<Boolean> responseCallback) {
         getDialogService().showMessageBox(message, () -> {
-            getDialogService().showConfirmationBox("Do you want to play again?", (yes) -> playAgain(yes));
+            getDialogService().showConfirmationBox("Do you want to play again?", responseCallback);
         });
+    }
+
+    public static void winScreen(String score_player1) {
+        winScreen(score_player1, null);
+    }
+
+    public static void winScreen(int score_player1, int score_player2) {
+        winScreen(Integer.toString(score_player1), Integer.toString(score_player2));
     }
 
     /**
@@ -91,15 +104,21 @@ public class UI_Factory {
      */
     public static void gameOverScreen(String score_player1, String score_player2) {
         play(assetNames.sounds.DEFEAT_CLAIRON);
-        String message = "Game Over ! \n Scores are as follows : \n" +
+        String message = "Game Over ! \nScores are as follows : \n" +
                 "Player 1 : " + score_player1 + "\n";
         if (score_player2 != null) {
             String player2 = "Player 2 : " + score_player2;
             message += player2;
         }
-        getDialogService().showMessageBox(message, () -> {
-            getDialogService().showConfirmationBox("Do you want to play again?", (yes) -> playAgain(yes));
-        });
+        askConfirmationToUser(message, (yes) -> playAgain(yes));
+    }
+
+    public static void gameOverScreen(String score_player1) {
+        gameOverScreen(score_player1, null);
+    }
+
+    public static void gameOverScreen(int score_player1, int score_player2) {
+        gameOverScreen(Integer.toString(score_player1), Integer.toString(score_player2));
     }
 
     /**

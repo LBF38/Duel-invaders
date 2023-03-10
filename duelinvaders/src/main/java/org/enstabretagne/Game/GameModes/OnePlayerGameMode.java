@@ -1,9 +1,11 @@
 package org.enstabretagne.Game.GameModes;
 
 import org.enstabretagne.Component.PlayerComponent;
+import org.enstabretagne.Utils.GameVariableNames;
 import org.enstabretagne.Utils.Settings;
 import org.enstabretagne.Utils.entityNames;
 import org.enstabretagne.Utils.Settings.Direction;
+import static org.enstabretagne.UI.UI_Factory.*;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
 import com.almasb.fxgl.entity.Entity;
@@ -51,6 +53,17 @@ public abstract class OnePlayerGameMode implements GameMode {
         onKey(KeyCode.SPACE, () -> playerComponent1.shoot());
         onKey(KeyCode.D, () -> playerComponent1.moveRight());
         onKey(KeyCode.Q, () -> playerComponent1.moveLeft());
+    }
+
+    @Override
+    public void gameFinished() {
+        if (getb(GameVariableNames.isGameOver)) {
+            gameOverScreen(Integer.toString(playerComponent1.getScore()));
+        }
+        if (getb(GameVariableNames.isGameWon)) {
+            // getGameScene().removeChild(playersUI);
+            winScreen(Integer.toString(playerComponent1.getScore()));
+        }
     }
 
 }
