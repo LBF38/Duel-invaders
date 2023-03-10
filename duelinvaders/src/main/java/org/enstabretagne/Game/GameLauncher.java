@@ -458,17 +458,6 @@ public class GameLauncher extends GameApplication {
         }
     }
 
-    /**
-     * Logique d'envoi des données lors de l'apparition d'un alien
-     */
-    private void AlienSpawnAndBroadcast(Constant.Direction direction) { // LBF : dans le mode multijoueur
-        Entity alien = spawn(entityNames.ALIEN, 0, Constant.GAME_HEIGHT / 2 - Constant.ALIEN_HEIGHT);
-        alien.getComponent(AlienComponent.class).initialize(direction);
-
-        Bundle bundle = new Bundle("AlienSpawn");
-        bundle.put("direction", direction);
-        server.broadcast(bundle);
-    }
 
 
     private void makeAlienBlock() {
@@ -502,16 +491,6 @@ public class GameLauncher extends GameApplication {
                 alien.getComponent(AlienComponent.class).setAlienNumber(k);
             }
         }
-    }
-
-    private void onStartAlienSpawnServer(){
-        run(() -> {
-            AlienSpawnAndBroadcast(Constant.Direction.UP);
-        }, Duration.seconds(1.4));
-        run(() -> {
-            AlienSpawnAndBroadcast(Constant.Direction.DOWN);
-        }, Duration.seconds(1.5));
-        alienSpawnStart = true;
     }
 
     /**
@@ -588,7 +567,6 @@ public class GameLauncher extends GameApplication {
         if (GameVariableNames.multiplayerGameInProgress) { // LBF : dans le mode multijoueur ou réecrire autrement??
             onUpdateBroadcastLogic();
             onUpdateCommon(tpf);
-//            if(!alienSpawnStart && isServer){onStartAlienSpawnServer();}
         } else {
             //Synchronise le début de la partie entre les deux joueurs
             if(!isServer && GameVariableNames.multiplayerGameWaiting){
@@ -612,7 +590,7 @@ public class GameLauncher extends GameApplication {
 
         run(() -> {
             getGameWorld().getEntitiesByType(EntityType.ALIEN).forEach((alien) -> {
-                if (FXGLMath.randomBoolean(0.005)) {
+                if (FXGLMath.randomBoolean(0.005)) { // LBF : dans le mode multijoeur (tir unidirectionnel)
                     if (isServer && alien.getComponent(AlienComponent.class).getDirection() == Constant.Direction.DOWN) {
                         alien.getComponent(AlienComponent.class).randomShoot(Constant.ALIEN_SHOOT_CHANCE);
                     } else if (!isServer && alien.getComponent(AlienComponent.class).getDirection() == Constant.Direction.UP) {
@@ -631,7 +609,7 @@ public class GameLauncher extends GameApplication {
         play(assetNames.sounds.DEFEAT_CLAIRON);
         String message = "Game Over ! \n Scores are as follows : \n" +
                 "Player 1 : " + playerComponent1.getScore() + "\n";
-        if (playerComponent2 != null) {
+        if (playerComponent2 != null ) {
             String player2 = "Player 2 : " + playerComponent2.getScore();
             message += player2;
         }
