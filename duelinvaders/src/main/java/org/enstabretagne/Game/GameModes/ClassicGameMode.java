@@ -2,8 +2,6 @@ package org.enstabretagne.Game.GameModes;
 
 import static org.enstabretagne.Game.GameModes.AlienFactory.makeAlienBlock;
 
-import org.enstabretagne.Utils.GameModeTypes;
-
 public class ClassicGameMode extends TwoPlayerGameMode {
 
     @Override
@@ -19,7 +17,7 @@ public class ClassicGameMode extends TwoPlayerGameMode {
 
     @Override
     public GameModeTypes getGameModeType() {
-        return GameModeTypes.CLASSIQUE;
+        return GameModeTypes.CLASSIC;
     }
 
 }

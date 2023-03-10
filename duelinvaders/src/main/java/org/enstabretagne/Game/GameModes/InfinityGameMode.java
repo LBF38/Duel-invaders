@@ -1,7 +1,6 @@
 package org.enstabretagne.Game.GameModes;
 
 import org.enstabretagne.Component.AlienComponent;
-import org.enstabretagne.Utils.GameModeTypes;
 import org.enstabretagne.Utils.Settings;
 import org.enstabretagne.Utils.entityNames;
 
@@ -36,7 +35,7 @@ public class InfinityGameMode extends TwoPlayerGameMode {
 
     @Override
     public GameModeTypes getGameModeType() {
-        return GameModeTypes.INFINITY_MODE;
+        return GameModeTypes.INFINITY;
     }
 
 }

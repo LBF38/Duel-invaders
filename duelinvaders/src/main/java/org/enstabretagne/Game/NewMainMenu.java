@@ -69,7 +69,7 @@ public class NewMainMenu extends FXGLMenu {
         VBox options = createOptions();
         FXGLTextFlow creditsText = createCredits();
 
-        SpaceButton buttonClassicMode = new SpaceButton("Play Classique", () -> {
+        SpaceButton buttonClassicMode = new SpaceButton("Play Classic", () -> {
             GameLauncher.setGameMode(new ClassicGameMode());
             fireNewGame();
         });

@@ -2,8 +2,6 @@ package org.enstabretagne.Game.GameModes;
 
 import static org.enstabretagne.Game.GameModes.AlienFactory.makeAlienBlockSolo;
 
-import org.enstabretagne.Utils.GameModeTypes;
-
 public class SoloGameMode extends OnePlayerGameMode {
 
     @Override

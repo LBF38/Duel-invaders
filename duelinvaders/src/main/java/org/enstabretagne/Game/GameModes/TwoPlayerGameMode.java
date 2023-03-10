@@ -1,7 +1,6 @@
 package org.enstabretagne.Game.GameModes;
 
 import org.enstabretagne.Component.PlayerComponent;
-import org.enstabretagne.Utils.GameModeTypes;
 import org.enstabretagne.Utils.Settings;
 import org.enstabretagne.Utils.Settings.Direction;
 
