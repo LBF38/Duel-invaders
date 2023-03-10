@@ -7,6 +7,8 @@ import org.enstabretagne.Utils.entityNames;
 import org.enstabretagne.Utils.Settings.Direction;
 import static org.enstabretagne.UI.UI_Factory.*;
 
+import java.util.Map;
+
 import static com.almasb.fxgl.dsl.FXGL.*;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.input.Input;
@@ -16,6 +18,7 @@ import javafx.scene.input.KeyCode;
 public abstract class OnePlayerGameMode implements GameMode {
     protected Entity player1;
     protected PlayerComponent playerComponent1;
+    protected Map<KeyCode, Runnable> keyBindings;
 
     @Override
     public GameModeTypes getGameModeType() {
@@ -47,12 +50,18 @@ public abstract class OnePlayerGameMode implements GameMode {
 
     @Override
     public void initInput(Input input) {
-        onKey(KeyCode.ENTER, () -> playerComponent1.shoot());
-        onKey(KeyCode.RIGHT, () -> playerComponent1.moveRight());
-        onKey(KeyCode.LEFT, () -> playerComponent1.moveLeft());
-        onKey(KeyCode.SPACE, () -> playerComponent1.shoot());
-        onKey(KeyCode.D, () -> playerComponent1.moveRight());
-        onKey(KeyCode.Q, () -> playerComponent1.moveLeft());
+        keyBindings = Map.of(KeyCode.ENTER, () -> playerComponent1.shoot(), KeyCode.RIGHT,
+                () -> playerComponent1.moveRight(), KeyCode.LEFT, () -> playerComponent1.moveLeft(),
+                KeyCode.SPACE, () -> playerComponent1.shoot(), KeyCode.D, () -> playerComponent1.moveRight(),
+                KeyCode.Q, () -> playerComponent1.moveLeft());
+
+        try {
+            input.clearAll();
+            input.getAllBindings().clear();
+            keyBindings.forEach((keycode, action) -> onKey(keycode, action));
+        } catch (Exception e) {
+            System.out.println("Error while initializing input :" + e.getMessage());
+        }
     }
 
     @Override
