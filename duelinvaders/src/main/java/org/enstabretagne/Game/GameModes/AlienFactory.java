@@ -1,11 +1,16 @@
 package org.enstabretagne.Game.GameModes;
 
+import static com.almasb.fxgl.dsl.FXGL.run;
+import static com.almasb.fxgl.dsl.FXGL.spawn;
+
 import org.enstabretagne.Component.AlienComponent;
 import org.enstabretagne.Utils.Settings;
 import org.enstabretagne.Utils.entityNames;
-import static com.almasb.fxgl.dsl.FXGL.*;
+import org.enstabretagne.Utils.Settings.Direction;
 
 import com.almasb.fxgl.entity.Entity;
+
+import javafx.util.Duration;
 
 public class AlienFactory {
     static protected void makeAlienBlock() {
@@ -39,5 +44,19 @@ public class AlienFactory {
                 alien.getComponent(AlienComponent.class).setAlienNumber(k);
             }
         }
+    }
+
+    static protected void makeAliensInfinitely() {
+        makeOneAlien(Direction.UP);
+        makeOneAlien(Direction.DOWN);
+        run(() -> {
+            makeOneAlien(Direction.UP);
+            makeOneAlien(Direction.DOWN);
+        }, Duration.seconds(1.5));
+    }
+
+    static protected void makeOneAlien(Direction direction) {
+        Entity alien = spawn(entityNames.ALIEN, 0, Settings.GAME_HEIGHT / 2 - Settings.ALIEN_HEIGHT);
+        alien.getComponent(AlienComponent.class).initialize(direction);
     }
 }

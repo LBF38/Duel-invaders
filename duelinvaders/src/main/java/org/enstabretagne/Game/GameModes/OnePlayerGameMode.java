@@ -45,12 +45,6 @@ public abstract class OnePlayerGameMode implements GameMode {
 
     @Override
     public void initInput(Input input) {
-        if (playerComponent1 == null) {
-            System.out.println("No PlayerComponent");
-            return;
-        } else {
-            System.out.println("PlayerComponent OK");
-        }
         onKey(KeyCode.ENTER, () -> playerComponent1.shoot());
         onKey(KeyCode.RIGHT, () -> playerComponent1.moveRight());
         onKey(KeyCode.LEFT, () -> playerComponent1.moveLeft());
