@@ -98,14 +98,15 @@ public class AlienComponent extends Component {
     public void moveRight(Double dx) {
         if (this.entity.getRightX() + dx <= limit_right) {
             this.entity.translateX(dx);
-        } else {
-            if (this.globalDirection == Settings.Direction.DOWN) {
-                this.entity.translateY(dy);
-            } else if (this.globalDirection == Settings.Direction.UP) {
-                this.entity.translateY(-dy);
-            }
-            this.movementDirection = Direction.LEFT;
+            return;
         }
+
+        if (this.globalDirection == Settings.Direction.DOWN) {
+            this.entity.translateY(dy);
+        } else if (this.globalDirection == Settings.Direction.UP) {
+            this.entity.translateY(-dy);
+        }
+        this.movementDirection = Direction.LEFT;
     }
 
     /**
@@ -116,14 +117,15 @@ public class AlienComponent extends Component {
     public void moveLeft(Double dx) {
         if (this.entity.getX() - dx >= limit_left) {
             this.entity.translateX(-dx);
-        } else {
-            if (this.globalDirection == Settings.Direction.DOWN) {
-                this.entity.translateY(dy);
-            } else if (this.globalDirection == Settings.Direction.UP) {
-                this.entity.translateY(-dy);
-            }
-            this.movementDirection = Direction.RIGHT;
+            return;
         }
+
+        if (this.globalDirection == Settings.Direction.DOWN) {
+            this.entity.translateY(dy);
+        } else if (this.globalDirection == Settings.Direction.UP) {
+            this.entity.translateY(-dy);
+        }
+        this.movementDirection = Direction.RIGHT;
     }
 
     public void setAlienNumber(int AlienNumber) {
