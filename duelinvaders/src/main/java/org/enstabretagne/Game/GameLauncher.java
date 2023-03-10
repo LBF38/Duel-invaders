@@ -145,31 +145,6 @@ public class GameLauncher extends GameApplication {
                     exception.getMessage());
         }
 
-        // if (GameModeType == INFINITY_MODE) {
-        // // spawn Aliens pour infinity mode
-        // Entity alien1 = spawn(entityNames.ALIEN, 0, Settings.GAME_HEIGHT / 2 -
-        // Settings.ALIEN_HEIGHT);
-        // alien1.getComponent(AlienComponent.class).initialize(Settings.Direction.UP);
-        // Entity alien2 = spawn(entityNames.ALIEN, 0, Settings.GAME_HEIGHT / 2 -
-        // Settings.ALIEN_HEIGHT);
-        // alien2.getComponent(AlienComponent.class).initialize(Settings.Direction.DOWN);
-        // run(() -> {
-        // Entity alien = spawn(entityNames.ALIEN, 0, Settings.GAME_HEIGHT / 2 -
-        // Settings.ALIEN_HEIGHT);
-        // alien.getComponent(AlienComponent.class).initialize(Settings.Direction.UP);
-        // }, Duration.seconds(1.4));
-        // run(() -> {
-        // Entity alien = spawn(entityNames.ALIEN, 0, Settings.GAME_HEIGHT / 2 -
-        // Settings.ALIEN_HEIGHT);
-        // alien.getComponent(AlienComponent.class).initialize(Settings.Direction.DOWN);
-        // }, Duration.seconds(1.5));
-
-        // } else if (GameModeType == CLASSIQUE) {
-        // makeAlienBlock();
-        // } else if (GameModeType == SOLO) {
-        // makeAlienBlockSolo();
-        // }
-
         spawn(entityNames.BACKGROUND);
         loopBGM(assetNames.music.MUSIC_ACROSS_THE_UNIVERSE);
     }

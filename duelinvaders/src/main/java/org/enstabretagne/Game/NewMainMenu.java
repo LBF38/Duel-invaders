@@ -6,6 +6,9 @@ import static com.almasb.fxgl.dsl.FXGL.getWindowService;
 import static com.almasb.fxgl.dsl.FXGL.texture;
 
 import org.enstabretagne.Game.GameModes.ClassicGameMode;
+import org.enstabretagne.Game.GameModes.InfinityGameMode;
+import org.enstabretagne.Game.GameModes.MusicDemoGameMode;
+import org.enstabretagne.Game.GameModes.SoloGameMode;
 import org.enstabretagne.Utils.Settings;
 import org.enstabretagne.Utils.assetNames;
 
@@ -72,17 +75,17 @@ public class NewMainMenu extends FXGLMenu {
         });
 
         SpaceButton buttonInfinityMode = new SpaceButton("Play Infinity", () -> {
-            GameLauncher.setGameMode(new ClassicGameMode()); // TODO: change for infinity mode
+            GameLauncher.setGameMode(new InfinityGameMode());
             fireNewGame();
         });
 
         SpaceButton buttonSoloMode = new SpaceButton("Play Solo", () -> {
-            GameLauncher.setGameMode(new ClassicGameMode()); // TODO: change for solo mode
+            GameLauncher.setGameMode(new SoloGameMode());
             fireNewGame();
         });
 
         SpaceButton buttonMusicDemo = new SpaceButton("Play Music Demo", () -> {
-            GameLauncher.setGameMode(new ClassicGameMode()); // TODO: change for music demo mode
+            GameLauncher.setGameMode(new MusicDemoGameMode());
             fireNewGame();
         });
 
