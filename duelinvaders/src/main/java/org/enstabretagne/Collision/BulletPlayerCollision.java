@@ -43,14 +43,14 @@ public class BulletPlayerCollision extends CollisionHandler {
         if (bullet.hasComponent(PlayerComponent.class)) {
             bullet.getComponent(PlayerComponent.class).incrementScore();
         }
-        if (playerComponent.getLife() == 0) {
-            spawn(entityNames.EXPLOSION_PLAYER_DEATH, player.getPosition());
-            player.removeFromWorld();
-            play(assetNames.sounds.EXPLOSION_PLAYER_DEATH);
-            runOnce(() -> set(GameVariableNames.isGameOver, true), Duration.seconds(2));
-        } else {
+        if (playerComponent.getLife() != 0) {
             spawn(entityNames.EXPLOSION_PLAYER_BULLET, bullet.getPosition());
             play(assetNames.sounds.EXPLOSION_PLAYER_LIFE);
+            return;
         }
+        spawn(entityNames.EXPLOSION_PLAYER_DEATH, player.getPosition());
+        player.removeFromWorld();
+        play(assetNames.sounds.EXPLOSION_PLAYER_DEATH);
+        runOnce(() -> set(GameVariableNames.isGameOver, true), Duration.seconds(2));
     }
 }

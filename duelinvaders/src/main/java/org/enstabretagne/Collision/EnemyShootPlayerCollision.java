@@ -37,14 +37,14 @@ public class EnemyShootPlayerCollision extends CollisionHandler {
         enemy_shoot.removeFromWorld();
         PlayerComponent playerComponent = player.getComponent(PlayerComponent.class);
         playerComponent.decrementLife();
-        if (playerComponent.getLife() == 0) {
-            spawn(entityNames.EXPLOSION_PLAYER_DEATH, player.getPosition());
-            play(assetNames.sounds.EXPLOSION_PLAYER_DEATH);
-            set(GameVariableNames.isGameOver, true);
-            player.removeFromWorld();
-        } else {
+        if (playerComponent.getLife() != 0) {
             spawn(entityNames.EXPLOSION_PLAYER_BULLET, enemy_shoot.getPosition());
             play(assetNames.sounds.EXPLOSION_PLAYER_LIFE);
+            return;
         }
+        spawn(entityNames.EXPLOSION_PLAYER_DEATH, player.getPosition());
+        play(assetNames.sounds.EXPLOSION_PLAYER_DEATH);
+        set(GameVariableNames.isGameOver, true);
+        player.removeFromWorld();
     }
 }
