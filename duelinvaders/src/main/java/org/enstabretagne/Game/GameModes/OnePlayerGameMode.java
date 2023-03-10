@@ -21,9 +21,9 @@ public abstract class OnePlayerGameMode implements GameMode {
         return GameModeTypes.SOLO;
     }
 
-    @Override
-    public void initGameMode() {
-        player1 = initPlayer(player1, Settings.GAME_WIDTH / 2, Settings.GAME_HEIGHT - player1.getHeight());
+    public void initOnePlayerGameMode() {
+        player1 = initPlayer(player1, Settings.GAME_WIDTH / 2);
+        player1.setY(Settings.GAME_HEIGHT - player1.getHeight());
         playerComponent1 = initPlayerComponent(player1, Direction.UP);
     }
 
@@ -34,11 +34,13 @@ public abstract class OnePlayerGameMode implements GameMode {
         return player;
     }
 
+    protected Entity initPlayer(Entity player, double positionX) {
+        return initPlayer(player, positionX, 0);
+    }
+
     protected PlayerComponent initPlayerComponent(Entity player, Direction direction) {
         PlayerComponent playerComponent = player.getComponent(PlayerComponent.class);
         playerComponent.setDirection(direction);
-        playerComponent.initializeScore();
-        playerComponent.initializeLife();
         return playerComponent;
     }
 

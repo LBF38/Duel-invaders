@@ -20,11 +20,10 @@ public abstract class TwoPlayerGameMode extends OnePlayerGameMode {
         return GameModeTypes.DUO;
     }
 
-    @Override
-    public void initGameMode() {
-        super.initGameMode();
+    public void initTwoPlayerGameMode() {
+        super.initOnePlayerGameMode();
         player2 = initPlayer(player2, Settings.GAME_WIDTH / 2, 0);
-        playerComponent2 = initPlayerComponent(player1, Direction.DOWN);
+        playerComponent2 = initPlayerComponent(player2, Direction.DOWN);
     }
 
     @Override

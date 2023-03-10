@@ -192,6 +192,8 @@ public class GameLauncher extends GameApplication {
      */
     @Override
     protected void initUI() {
+        if (getGameScene().getContentRoot().getChildren().contains(playersUI))
+            getGameScene().removeUINode(playersUI);
         playersUI = showPlayersLivesAndScores(getGameWorld());
         getGameScene().addChild(playersUI);
     }
@@ -203,10 +205,14 @@ public class GameLauncher extends GameApplication {
      */
     @Override
     protected void onUpdate(double tpf) {
-        if (getb(GameVariableNames.isGameOver))
-            gameOverScreen("to refactor", "to refactor"); // TODO : refactor
-        if (getb(GameVariableNames.isGameWon))
+        if (getb(GameVariableNames.isGameOver)) {
+            getGameScene().removeChild(playersUI);
+            gameOverScreen("to refactor", "to refactor");
+        } // TODO : refactor
+        if (getb(GameVariableNames.isGameWon)) {
+            getGameScene().removeChild(playersUI);
             winScreen("to refactor", "to refactor"); // TODO : refactor
+        }
 
         if ((System.currentTimeMillis() - last_ambient_sound) > delay_ambient_sound) {
             ambientSound();

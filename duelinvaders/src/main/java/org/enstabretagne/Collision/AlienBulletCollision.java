@@ -44,10 +44,8 @@ public class AlienBulletCollision extends CollisionHandler {
     protected void onCollisionBegin(Entity bullet, Entity alien) {
         bullet.removeFromWorld();
         alien.removeFromWorld();
-        int playerId = bullet.getComponent(BulletComponent.class).getPlayerId();
-        Entity player = getGameWorld().getEntitiesByType(EntityType.PLAYER).stream()
-                .filter(p -> p.getComponent(PlayerComponent.class).getId() == playerId).findFirst().get();
-        player.getComponent(PlayerComponent.class).incrementScore();
+        PlayerComponent playerComponent = bullet.getComponent(BulletComponent.class).getPlayerComponent();
+        playerComponent.incrementScore();
 
         spawn(entityNames.EXPLOSION_ALIEN, alien.getPosition());
         play(assetNames.sounds.EXPLOSION_ALIEN);

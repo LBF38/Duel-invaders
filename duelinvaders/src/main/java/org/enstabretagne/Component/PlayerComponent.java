@@ -1,19 +1,16 @@
 package org.enstabretagne.Component;
 
 import static com.almasb.fxgl.dsl.FXGL.getGameTimer;
-import static com.almasb.fxgl.dsl.FXGL.geti;
 import static com.almasb.fxgl.dsl.FXGL.runOnce;
-import static com.almasb.fxgl.dsl.FXGL.set;
 import static com.almasb.fxgl.dsl.FXGL.spawn;
 import static org.enstabretagne.Utils.Settings.DELAY_BETWEEN_SHOOT;
 import static org.enstabretagne.Utils.Settings.GAME_WIDTH;
 import static org.enstabretagne.Utils.Settings.PLAYER_HEIGHT;
 import static org.enstabretagne.Utils.Settings.SPEED_SPACESHIP;
 
-import org.enstabretagne.Utils.GameVariableNames;
 import org.enstabretagne.Utils.Settings;
-import org.enstabretagne.Utils.entityNames;
 import org.enstabretagne.Utils.Settings.Direction;
+import org.enstabretagne.Utils.entityNames;
 
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.Component;
@@ -33,7 +30,9 @@ public class PlayerComponent extends Component {
     private Direction side_shoot = Direction.LEFT;
     private Settings.Direction direction = Settings.Direction.UP;
     private int id;
-    private static int counter;
+    private static int counter = 1;
+    private int score = 0;
+    private int life = 5;
 
     public int getId() {
         return id;
@@ -131,7 +130,7 @@ public class PlayerComponent extends Component {
     private void createBullet(Point2D position) {
         Entity bullet = spawn(entityNames.BULLET, position);
         bullet.getComponent(BulletComponent.class).initialize(this.direction);
-        bullet.getComponent(BulletComponent.class).setPlayerId(this.getId());
+        bullet.getComponent(BulletComponent.class).setPlayer(this);
         last_shot = getGameTimer().getNow();
         shootingRecoil();
     }
@@ -162,104 +161,54 @@ public class PlayerComponent extends Component {
      * Incrémente le score du joueur
      */
     public void incrementScore() {
-        if (isPlayer1())
-            set(GameVariableNames.PLAYER1_SCORE, geti(GameVariableNames.PLAYER1_SCORE) + 1);
-        else
-            set(GameVariableNames.PLAYER2_SCORE, geti(GameVariableNames.PLAYER2_SCORE) + 1);
-    }
-
-    /**
-     * @return boolean
-     */
-    private boolean isPlayer1() {
-        return id % 2 == 1;
-    }
-
-    /**
-     * Initialisation du score du joueur
-     */
-    public void initializeScore() {
-        if (isPlayer1())
-            set(GameVariableNames.PLAYER1_SCORE, 0);
-        else
-            set(GameVariableNames.PLAYER2_SCORE, 0);
+        setScore(getScore() + 1);
+        System.out.println("Score Player " + getId() + ": " + getScore());
     }
 
     /**
      * @return int
      */
     public int getScore() {
-        if (isPlayer1())
-            return geti(GameVariableNames.PLAYER1_SCORE);
-        else
-            return geti(GameVariableNames.PLAYER2_SCORE);
+        return score;
     }
 
     /**
      * @param score
      */
-    public void setScore(int score) {
-        if (isPlayer1())
-            set(GameVariableNames.PLAYER1_SCORE, score);
-        else
-            set(GameVariableNames.PLAYER2_SCORE, score);
+    public void setScore(int newScore) {
+        score = Math.max(0, newScore);
     }
 
     public void decrementScore() {
-        if (isPlayer1())
-            set(GameVariableNames.PLAYER1_SCORE, geti(GameVariableNames.PLAYER1_SCORE) - 1);
-        else
-            set(GameVariableNames.PLAYER2_SCORE, geti(GameVariableNames.PLAYER2_SCORE) - 1);
+        setScore(getScore() - 1);
     }
 
     /**
      * Incrémente le nombre de vie du joueur
      */
     public void incrementLife() {
-        if (isPlayer1())
-            set(GameVariableNames.PLAYER1_LIFE, geti(GameVariableNames.PLAYER1_LIFE) + 1);
-        else
-            set(GameVariableNames.PLAYER2_LIFE, geti(GameVariableNames.PLAYER2_LIFE) + 1);
-    }
-
-    /**
-     * Initialise le nombre de vie du joueur
-     */
-    public void initializeLife() {
-        int life = 5;
-        if (isPlayer1())
-            set(GameVariableNames.PLAYER1_LIFE, life);
-        else
-            set(GameVariableNames.PLAYER2_LIFE, life);
+        setLife(getLife() + 1);
     }
 
     /**
      * @return int
      */
     public int getLife() {
-        if (isPlayer1())
-            return geti(GameVariableNames.PLAYER1_LIFE);
-        else
-            return geti(GameVariableNames.PLAYER2_LIFE);
+        return life;
     }
 
     /**
      * @param life
      */
-    public void setLife(int life) {
-        if (isPlayer1())
-            set(GameVariableNames.PLAYER1_LIFE, life);
-        else
-            set(GameVariableNames.PLAYER2_LIFE, life);
+    public void setLife(int newLife) {
+        life = Math.max(0, newLife);
     }
 
     /**
      * Décrémente le nombre de vie du joueur
      */
     public void decrementLife() {
-        if (isPlayer1())
-            set(GameVariableNames.PLAYER1_LIFE, geti(GameVariableNames.PLAYER1_LIFE) - 1);
-        else
-            set(GameVariableNames.PLAYER2_LIFE, geti(GameVariableNames.PLAYER2_LIFE) - 1);
+        setLife(getLife() - 1);
+        System.out.println("Player " + getId() + " lost a life" + " (" + getLife() + " left)");
     }
 }

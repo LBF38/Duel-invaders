@@ -20,14 +20,14 @@ public class BulletComponent extends Component {
     private Double speed = Settings.SPEED_SHOOT;
     private Duration duration = Settings.BULLET_DURATION;
     private Point2D direction = new Point2D(0, -1);
-    private int playerId;
+    private PlayerComponent playerComponent;
 
-    public int getPlayerId() {
-        return playerId;
+    public PlayerComponent getPlayerComponent() {
+        return playerComponent;
     }
 
-    public void setPlayerId(int player_id) {
-        this.playerId = player_id;
+    public void setPlayer(PlayerComponent playerComponent) {
+        this.playerComponent = playerComponent;
     }
 
     public BulletComponent() {
