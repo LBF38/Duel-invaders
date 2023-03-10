@@ -404,12 +404,19 @@ public class GameLauncher extends GameApplication {
                 } else if (message.getName().equals("Player2Shoot")) {
                     playerComponent2.shoot();
                 } else if (message.getName().equals("Client Connected")) {
-                    if(!GameVariableNames.multiplayerGameInProgress) {
+                    if (!GameVariableNames.multiplayerGameInProgress) {
                         server.broadcast(new Bundle("Server Start"));
                         GameVariableNames.multiplayerGameInProgress = true;
                         startMultiGame();
                     }
-                } else{
+                } else if (message.getName().equals("Game End")) {
+                    System.out.println("Game End Received");
+                    if(message.get("type").equals("Game Over")){
+                        gameOverScreen();
+                    } else if(message.get("type").equals("Game Win")){
+                        winScreen();
+                    }
+                }else{
                     System.out.println("Message non reconnu");
                 }
             });
@@ -440,6 +447,13 @@ public class GameLauncher extends GameApplication {
                 } else if (message.getName().equals("Server Start")) {
                     GameVariableNames.multiplayerGameInProgress = true;
                     startMultiGame();
+                } else if (message.getName().equals("Game End")) {
+                    System.out.println("Game End Received");
+                    if(message.get("type").equals("Game Over")){
+                        gameOverScreen();
+                    } else if(message.get("type").equals("Game Win")){
+                        winScreen();
+                    }
                 } else{
                     System.out.println("Message non reconnu");
                 }
@@ -574,12 +588,15 @@ public class GameLauncher extends GameApplication {
             }
         }
     }
-    private void onUpdateCommon(double tpf){ // LBF : dans tous les modes de jeu
-        if (getb(GameVariableNames.isGameOver))
+    private void onUpdateCommon(double tpf) { // LBF : dans tous les modes de jeu
+        if (getb(GameVariableNames.isGameOver)){
+            GameEndBroadcastLogic("Game Over");
             gameOverScreen();
-        if (getb(GameVariableNames.isGameWon))
+        }
+        if (getb(GameVariableNames.isGameWon)) {
+            GameEndBroadcastLogic("Game Win");
             winScreen();
-
+        }
         if ((System.currentTimeMillis() - last_ambient_sound) > delay_ambient_sound) {
             ambientSound();
             last_ambient_sound = System.currentTimeMillis();
@@ -601,6 +618,15 @@ public class GameLauncher extends GameApplication {
         }, Duration.seconds(Constant.random.nextDouble() * 10));
     }
 
+    private void GameEndBroadcastLogic(String message){
+        Bundle bundle = new Bundle("Game End");
+        bundle.put("type", message);
+        if(isServer){
+            server.broadcast(bundle);
+        } else {
+            client.broadcast(bundle);
+        }
+    }
 
     /**
      * Affichage de l'écran de fin de partie
