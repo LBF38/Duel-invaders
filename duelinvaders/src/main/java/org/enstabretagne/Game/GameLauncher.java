@@ -95,7 +95,7 @@ public class GameLauncher extends GameApplication {
                 "Sounds effect from:",
                 "https://universal-soundbank.com/"));
         settings.setEnabledMenuItems(EnumSet.of(MenuItem.EXTRA));
-        settings.setApplicationMode(ApplicationMode.RELEASE);
+        settings.setApplicationMode(ApplicationMode.DEBUG); // TODO: change to RELEASE
         settings.setSceneFactory(new SceneFactory() {
             @Override
             public FXGLMenu newMainMenu() {
