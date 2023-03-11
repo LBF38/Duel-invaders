@@ -1,41 +1,33 @@
 package org.enstabretagne.Game;
 
-import static com.almasb.fxgl.dsl.FXGL.getDialogService;
-import static com.almasb.fxgl.dsl.FXGL.getGameController;
 import static com.almasb.fxgl.dsl.FXGL.getGameScene;
 import static com.almasb.fxgl.dsl.FXGL.getGameWorld;
 import static com.almasb.fxgl.dsl.FXGL.getPhysicsWorld;
-import static com.almasb.fxgl.dsl.FXGL.getUIFactoryService;
 import static com.almasb.fxgl.dsl.FXGL.getb;
 import static com.almasb.fxgl.dsl.FXGL.loopBGM;
 import static com.almasb.fxgl.dsl.FXGL.onKey;
 import static com.almasb.fxgl.dsl.FXGL.play;
-import static com.almasb.fxgl.dsl.FXGL.run;
 import static com.almasb.fxgl.dsl.FXGL.spawn;
-import static com.almasb.fxgl.dsl.FXGL.texture;
-import static org.enstabretagne.Game.GameMode.CLASSIQUE;
-import static org.enstabretagne.Game.GameMode.INFINITY_MODE;
-import static org.enstabretagne.Game.GameMode.SOLO;
+import static org.enstabretagne.UI.UI_Factory.ambientSound;
+import static org.enstabretagne.UI.UI_Factory.showPlayersLivesAndScores;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
-import org.enstabretagne.Component.AlienComponent;
-import org.enstabretagne.Component.EntityType;
-import org.enstabretagne.Component.PlayerComponent;
+import org.enstabretagne.Collision.AlienBulletCollision;
+import org.enstabretagne.Collision.AlienPlayerCollision;
+import org.enstabretagne.Collision.BulletBulletCollision;
+import org.enstabretagne.Collision.BulletPlayerCollision;
+import org.enstabretagne.Collision.EnemyShootBulletCollision;
+import org.enstabretagne.Collision.EnemyShootPlayerCollision;
 import org.enstabretagne.Component.SpaceInvadersFactory;
-import org.enstabretagne.Core.AlienBulletCollision;
-import org.enstabretagne.Core.AlienPlayerCollision;
-import org.enstabretagne.Core.BulletBulletCollision;
-import org.enstabretagne.Core.BulletPlayerCollision;
-import org.enstabretagne.Core.Constant;
-import org.enstabretagne.Core.EnemyShootBulletCollision;
-import org.enstabretagne.Core.EnemyShootPlayerCollision;
-import org.enstabretagne.Core.GameVariableNames;
+import org.enstabretagne.Game.GameModes.AlienFactory;
+import org.enstabretagne.Game.GameModes.ClassicGameMode;
+import org.enstabretagne.Game.GameModes.GameMode;
+import org.enstabretagne.Game.GameModes.GameModeTypes;
+import org.enstabretagne.Utils.GameVariableNames;
+import org.enstabretagne.Utils.Settings;
 import org.enstabretagne.Utils.assetNames;
 import org.enstabretagne.Utils.entityNames;
 
@@ -46,15 +38,8 @@ import com.almasb.fxgl.app.MenuItem;
 import com.almasb.fxgl.app.scene.FXGLMenu;
 import com.almasb.fxgl.app.scene.SceneFactory;
 import com.almasb.fxgl.core.math.FXGLMath;
-import com.almasb.fxgl.entity.Entity;
 
-import javafx.geometry.Pos;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
-import javafx.util.Duration;
 
 /**
  * Classe principale du jeu
@@ -64,18 +49,17 @@ import javafx.util.Duration;
  * @since 0.1.0
  */
 public class GameLauncher extends GameApplication {
-    private PlayerComponent playerComponent1;
-    private PlayerComponent playerComponent2;
-    private Entity player1;
-    private Entity player2;
+    private static GameMode game_mode = new ClassicGameMode();
     private long last_ambient_sound = System.currentTimeMillis();
-    private int delay_ambient_sound = FXGLMath.random(Constant.AMBIENT_SOUND_DELAY_MIN,
-            Constant.AMBIENT_SOUND_DELAY_MAX);
-    private static GameMode GameMode = CLASSIQUE;
-    VBox playersUI = new VBox();
+    private int delay_ambient_sound = FXGLMath.random(Settings.AMBIENT_SOUND_DELAY_MIN,
+            Settings.AMBIENT_SOUND_DELAY_MAX);
 
     public static void setGameMode(GameMode gameMode) {
-        GameMode = gameMode;
+        game_mode = gameMode;
+    }
+
+    public static GameModeTypes getGameModeType() {
+        return game_mode.getGameModeType();
     }
 
     /**
@@ -85,15 +69,15 @@ public class GameLauncher extends GameApplication {
      */
     @Override
     protected void initSettings(GameSettings settings) {
-        settings.setWidth(Constant.GAME_WIDTH.intValue());
-        settings.setHeight(Constant.GAME_HEIGHT.intValue());
+        settings.setWidth(Settings.GAME_WIDTH.intValue());
+        settings.setHeight(Settings.GAME_HEIGHT.intValue());
         settings.setTitle("Duel Invaders");
         settings.setAppIcon(assetNames.textures.APP_ICON);
         settings.setVersion("0.2.0");
         settings.setMainMenuEnabled(true);
         settings.setGameMenuEnabled(true);
         settings.setFullScreenAllowed(true);
-        settings.setFullScreenFromStart(true);
+        // settings.setFullScreenFromStart(true);
         settings.setCredits(Arrays.asList(
                 "Duel Invaders project by:",
                 "@MathieuDFS",
@@ -125,42 +109,24 @@ public class GameLauncher extends GameApplication {
      */
     @Override
     protected void initInput() {
-        onKey(KeyCode.ENTER, () -> {
-            playerComponent1.shoot();
-        });
-
-        onKey(KeyCode.RIGHT, () -> {
-            playerComponent1.moveRight();
-        });
-
-        onKey(KeyCode.LEFT, () -> {
-            playerComponent1.moveLeft();
-        });
-
-        onKey(KeyCode.SPACE, () -> {
-            if (GameMode == SOLO) {
-                playerComponent1.shoot();
-            } else {
-                playerComponent2.shoot();
-            }
-        });
-
-        onKey(KeyCode.D, () -> {
-            if (GameMode == SOLO) {
-                playerComponent1.moveRight();
-            } else {
-                playerComponent2.moveRight();
-            }
-        });
-
         onKey(KeyCode.Q, () -> {
-            if (GameMode == SOLO) {
-                playerComponent1.moveLeft();
-            } else {
-                playerComponent2.moveLeft();
-            }
+            game_mode.getPlayerComponent1().moveLeft();
         });
-
+        onKey(KeyCode.D, () -> {
+            game_mode.getPlayerComponent1().moveRight();
+        });
+        onKey(KeyCode.SPACE, () -> {
+            game_mode.getPlayerComponent1().shoot();
+        });
+        onKey(KeyCode.ENTER, () -> {
+            game_mode.getPlayerComponent2().shoot();
+        });
+        onKey(KeyCode.LEFT, () -> {
+            game_mode.getPlayerComponent2().moveLeft();
+        });
+        onKey(KeyCode.RIGHT, () -> {
+            game_mode.getPlayerComponent2().moveRight();
+        });
     }
 
     /**
@@ -183,80 +149,10 @@ public class GameLauncher extends GameApplication {
         play(assetNames.sounds.START_CLAIRON);
         getGameWorld().addEntityFactory(new SpaceInvadersFactory());
 
-        player1 = spawn(entityNames.PLAYER);
-        player1.setX(Constant.GAME_WIDTH / 2);
-        player1.setY(Constant.GAME_HEIGHT - player1.getHeight());
-        playerComponent1 = player1.getComponent(PlayerComponent.class);
-        playerComponent1.setDirection(Constant.Direction.UP);
-        playerComponent1.initializeScore();
-        playerComponent1.initializeLife();
-
-        if (GameMode != SOLO) {
-            player2 = spawn(entityNames.PLAYER);
-            player2.setX(Constant.GAME_WIDTH / 2);
-            player2.setY(0);
-            playerComponent2 = player2.getComponent(PlayerComponent.class);
-            playerComponent2.setDirection(Constant.Direction.DOWN);
-            playerComponent2.initializeScore();
-            playerComponent2.initializeLife();
-        }
-
-        if (GameMode == INFINITY_MODE) {
-            // spawn Aliens pour infinity mode
-            Entity alien1 = spawn(entityNames.ALIEN, 0, Constant.GAME_HEIGHT / 2 - Constant.ALIEN_HEIGHT);
-            alien1.getComponent(AlienComponent.class).initialize(Constant.Direction.UP);
-            Entity alien2 = spawn(entityNames.ALIEN, 0, Constant.GAME_HEIGHT / 2 - Constant.ALIEN_HEIGHT);
-            alien2.getComponent(AlienComponent.class).initialize(Constant.Direction.DOWN);
-            run(() -> {
-                Entity alien = spawn(entityNames.ALIEN, 0, Constant.GAME_HEIGHT / 2 - Constant.ALIEN_HEIGHT);
-                alien.getComponent(AlienComponent.class).initialize(Constant.Direction.UP);
-            }, Duration.seconds(1.4));
-            run(() -> {
-                Entity alien = spawn(entityNames.ALIEN, 0, Constant.GAME_HEIGHT / 2 - Constant.ALIEN_HEIGHT);
-                alien.getComponent(AlienComponent.class).initialize(Constant.Direction.DOWN);
-            }, Duration.seconds(1.5));
-
-        } else if (GameMode == CLASSIQUE) {
-            makeAlienBlock();
-        } else if (GameMode == SOLO) {
-            makeAlienBlockSolo();
-        }
+        game_mode.initGameMode();
 
         spawn(entityNames.BACKGROUND);
         loopBGM(assetNames.music.MUSIC_ACROSS_THE_UNIVERSE);
-    }
-
-    private void makeAlienBlock() {
-        for (int i = 0; i < 2; i++) {
-            makeAlienLine(i, Constant.Direction.DOWN);
-            makeAlienLine(i, Constant.Direction.UP);
-        }
-    }
-
-    private void makeAlienLine(int line, Constant.Direction direction) {
-        for (int i = 0; i < Constant.ALIENS_NUMBER; i++) {
-            if (direction == Constant.Direction.DOWN) {
-                Entity alien = spawn(entityNames.ALIEN, i * Constant.ALIEN_WIDTH,
-                        Constant.GAME_HEIGHT / 2 + (line - 1) * Constant.ALIEN_HEIGHT);
-                alien.getComponent(AlienComponent.class).initialize(direction);
-                alien.getComponent(AlienComponent.class).setAlienNumber(i);
-            } else {
-                Entity alien = spawn(entityNames.ALIEN, i * Constant.ALIEN_WIDTH,
-                        Constant.GAME_HEIGHT / 2 + (line - 2) * Constant.ALIEN_HEIGHT);
-                alien.getComponent(AlienComponent.class).initialize(direction);
-                alien.getComponent(AlienComponent.class).setAlienNumber(i);
-            }
-        }
-    }
-
-    private void makeAlienBlockSolo() {
-        for (int line = 0; line < 4; line++) {
-            for (int k = 0; k < Constant.ALIENS_NUMBER; k++) {
-                Entity alien = spawn(entityNames.ALIEN, k * Constant.ALIEN_WIDTH, (line - 1) * Constant.ALIEN_HEIGHT);
-                alien.getComponent(AlienComponent.class).initialize(Constant.Direction.DOWN);
-                alien.getComponent(AlienComponent.class).setAlienNumber(k);
-            }
-        }
     }
 
     /**
@@ -277,43 +173,7 @@ public class GameLauncher extends GameApplication {
      */
     @Override
     protected void initUI() {
-        showPlayersLivesAndScores();
-    }
-
-    private void showPlayersLivesAndScores() {
-        getGameScene().removeChild(playersUI);
-
-        List<HBox> playersViews = new ArrayList<>();
-        List<PlayerComponent> players = getGameWorld().getEntitiesByType(EntityType.PLAYER).stream()
-                .map(player -> player.getComponent(PlayerComponent.class)).collect(Collectors.toList());
-        for (PlayerComponent playerComponent : players) {
-            HBox scoreUI = createScoreUI(playerComponent.getScore(), playerComponent.getId());
-            scoreUI.setTranslateY(scoreUI.getHeight() * playerComponent.getId());
-            HBox lifeUI = createLifeUI(playerComponent.getLife());
-            var playerUI = new HBox(30, scoreUI, lifeUI);
-            playersViews.add(playerUI);
-        }
-        playersUI = new VBox(20, playersViews.toArray(new HBox[0]));
-        getGameScene().addChild(playersUI);
-    }
-
-    private HBox createScoreUI(int score, int player_id) {
-        Text scoreText = getUIFactoryService().newText(Integer.toString(score), Color.WHITE, 24.0);
-        Text playerText = getUIFactoryService().newText("Player " + Integer.toString(player_id % 2 + 1), Color.WHITE,
-                24.0);
-        var scoreView = new HBox(10, playerText, scoreText);
-        scoreView.setAlignment(Pos.CENTER);
-        return scoreView;
-    }
-
-    private HBox createLifeUI(int life) {
-        var lifeTexture = texture(assetNames.textures.LIFE, 30, 30);
-        var lifeView = new HBox(10);
-        for (int i = 0; i < life; i++) {
-            lifeView.getChildren().add(lifeTexture.copy());
-        }
-        lifeView.setAlignment(Pos.CENTER);
-        return lifeView;
+        showPlayersLivesAndScores(getGameWorld(), getGameScene());
     }
 
     /**
@@ -323,75 +183,19 @@ public class GameLauncher extends GameApplication {
      */
     @Override
     protected void onUpdate(double tpf) {
-        if (getb(GameVariableNames.isGameOver))
-            gameOverScreen();
-        if (getb(GameVariableNames.isGameWon))
-            winScreen();
+        if (getb(GameVariableNames.isGameOver) || getb(GameVariableNames.isGameWon)) {
+            game_mode.gameFinished();
+        }
 
         if ((System.currentTimeMillis() - last_ambient_sound) > delay_ambient_sound) {
             ambientSound();
             last_ambient_sound = System.currentTimeMillis();
-            delay_ambient_sound = FXGLMath.random(Constant.AMBIENT_SOUND_DELAY_MIN, Constant.AMBIENT_SOUND_DELAY_MAX);
+            delay_ambient_sound = FXGLMath.random(Settings.AMBIENT_SOUND_DELAY_MIN, Settings.AMBIENT_SOUND_DELAY_MAX);
         }
-        if (getGameScene().getContentRoot().getChildren().contains(playersUI))
-            showPlayersLivesAndScores();
-        run(() -> {
-            getGameWorld().getEntitiesByType(EntityType.ALIEN).forEach((alien) -> {
-                if (FXGLMath.randomBoolean(0.01))
-                    alien.getComponent(AlienComponent.class).randomShoot(Constant.ALIEN_SHOOT_CHANCE);
-            });
-        }, Duration.seconds(Constant.random.nextDouble() * 10));
-    }
 
-    /**
-     * Affichage de l'écran de fin de partie
-     */
-    private void gameOverScreen() {
-        play(assetNames.sounds.DEFEAT_CLAIRON);
-        String message = "Game Over ! \n Scores are as follows : \n" +
-                "Player 1 : " + playerComponent1.getScore() + "\n";
-        if (playerComponent2 != null) {
-            String player2 = "Player 2 : " + playerComponent2.getScore();
-            message += player2;
-        }
-        getDialogService().showMessageBox(message, () -> {
-            getDialogService().showConfirmationBox("Do you want to play again?", (yes) -> playAgain(yes));
-        });
-    }
+        showPlayersLivesAndScores(getGameWorld(), getGameScene());
 
-    /**
-     * Affichage de l'écran pour jouer une nouvelle partie
-     */
-    private void playAgain(Boolean yes) {
-        if (yes)
-            getGameController().startNewGame();
-        else
-            getGameController().gotoMainMenu();
-    }
-
-    /**
-     * Affichage de l'écran de victoire
-     */
-    private void winScreen() {
-        play(assetNames.sounds.VICTORY_CLAIRON);
-        String message = "You won ! \n Scores are as follows : \n" +
-                "Player 1 : " + playerComponent1.getScore() + "\n";
-        if (playerComponent2 != null) {
-            String player2 = "Player 2 : " + playerComponent2.getScore();
-            message += player2;
-        }
-        getDialogService().showMessageBox(message, () -> {
-            getDialogService().showConfirmationBox("Do you want to play again?", (yes) -> playAgain(yes));
-        });
-    }
-
-    /**
-     * Joue un son d'ambiance aléatoire parmi ceux disponibles
-     */
-    private void ambientSound() {
-        String ambientMusic = assetNames.sounds.AMBIENT_SOUNDS
-                .get(FXGLMath.random(0, Constant.NUMBER_OF_AMBIENT_SOUND - 1));
-        play(ambientMusic);
+        AlienFactory.aliensRandomlyShoot();
     }
 
     public static void main(String[] args) {

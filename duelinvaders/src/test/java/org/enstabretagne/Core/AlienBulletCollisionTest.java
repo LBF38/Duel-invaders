@@ -6,8 +6,10 @@ import org.junit.jupiter.api.Test;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.GameWorld;
 
+import org.enstabretagne.Collision.AlienBulletCollision;
 // import static org.junit.jupiter.api.Assertions.*;
 import org.enstabretagne.Component.*;
+import org.enstabretagne.Utils.EntityType;
 
 // import static com.almasb.fxgl.dsl.FXGL.*;
 

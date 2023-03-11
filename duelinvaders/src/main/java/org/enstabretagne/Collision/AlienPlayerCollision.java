@@ -1,10 +1,11 @@
-package org.enstabretagne.Core;
+package org.enstabretagne.Collision;
 
 import static com.almasb.fxgl.dsl.FXGL.play;
 import static com.almasb.fxgl.dsl.FXGL.set;
 import static com.almasb.fxgl.dsl.FXGL.spawn;
 
-import org.enstabretagne.Component.EntityType;
+import org.enstabretagne.Utils.EntityType;
+import org.enstabretagne.Utils.GameVariableNames;
 import org.enstabretagne.Utils.assetNames;
 import org.enstabretagne.Utils.entityNames;
 
