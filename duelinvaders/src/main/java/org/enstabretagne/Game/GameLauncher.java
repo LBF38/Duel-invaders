@@ -5,6 +5,7 @@ import static com.almasb.fxgl.dsl.FXGL.getGameWorld;
 import static com.almasb.fxgl.dsl.FXGL.getPhysicsWorld;
 import static com.almasb.fxgl.dsl.FXGL.getb;
 import static com.almasb.fxgl.dsl.FXGL.loopBGM;
+import static com.almasb.fxgl.dsl.FXGL.onKey;
 import static com.almasb.fxgl.dsl.FXGL.play;
 import static com.almasb.fxgl.dsl.FXGL.spawn;
 import static org.enstabretagne.UI.UI_Factory.ambientSound;
@@ -37,6 +38,8 @@ import com.almasb.fxgl.app.MenuItem;
 import com.almasb.fxgl.app.scene.FXGLMenu;
 import com.almasb.fxgl.app.scene.SceneFactory;
 import com.almasb.fxgl.core.math.FXGLMath;
+
+import javafx.scene.input.KeyCode;
 
 /**
  * Classe principale du jeu
@@ -106,7 +109,24 @@ public class GameLauncher extends GameApplication {
      */
     @Override
     protected void initInput() {
-        super.initInput();
+        onKey(KeyCode.Q, () -> {
+            game_mode.getPlayerComponent1().moveLeft();
+        });
+        onKey(KeyCode.D, () -> {
+            game_mode.getPlayerComponent1().moveRight();
+        });
+        onKey(KeyCode.SPACE, () -> {
+            game_mode.getPlayerComponent1().shoot();
+        });
+        onKey(KeyCode.ENTER, () -> {
+            game_mode.getPlayerComponent2().shoot();
+        });
+        onKey(KeyCode.LEFT, () -> {
+            game_mode.getPlayerComponent2().moveLeft();
+        });
+        onKey(KeyCode.RIGHT, () -> {
+            game_mode.getPlayerComponent2().moveRight();
+        });
     }
 
     /**
@@ -130,12 +150,6 @@ public class GameLauncher extends GameApplication {
         getGameWorld().addEntityFactory(new SpaceInvadersFactory());
 
         game_mode.initGameMode();
-        try {
-            game_mode.initInput(getGameScene().getInput());
-        } catch (Exception exception) {
-            System.out.println("Erreur lors de l'initialisation des inputs : " +
-                    exception.getMessage());
-        }
 
         spawn(entityNames.BACKGROUND);
         loopBGM(assetNames.music.MUSIC_ACROSS_THE_UNIVERSE);

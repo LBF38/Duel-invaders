@@ -1,6 +1,6 @@
 package org.enstabretagne.Game.GameModes;
 
-import com.almasb.fxgl.input.Input;
+import org.enstabretagne.Component.PlayerComponent;
 
 /**
  * Defines the contract for a game mode.
@@ -8,8 +8,13 @@ import com.almasb.fxgl.input.Input;
  * @author LBF38
  */
 public interface GameMode {
+    public PlayerComponent getPlayerComponent1();
+
+    public PlayerComponent getPlayerComponent2();
+
     public void initGameMode();
-    public void initInput(Input input);
+
     public GameModeTypes getGameModeType();
+
     public void gameFinished();
 }
