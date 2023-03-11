@@ -7,6 +7,7 @@ import static com.almasb.fxgl.dsl.FXGL.texture;
 
 import org.enstabretagne.Game.GameModes.ClassicGameMode;
 import org.enstabretagne.Game.GameModes.InfinityGameMode;
+import org.enstabretagne.Game.GameModes.MultiplayerGameMode;
 import org.enstabretagne.Game.GameModes.MusicDemoGameMode;
 import org.enstabretagne.Game.GameModes.SoloGameMode;
 import org.enstabretagne.Utils.Settings;
@@ -84,8 +85,8 @@ public class NewMainMenu extends FXGLMenu {
             fireNewGame();
         });
 
-        SpaceButton buttonMultiMode = new SpaceButton("Play multi", () -> {
-            GameLauncher.setGameMode(GameMode.MULTI);
+        SpaceButton buttonMultiMode = new SpaceButton("Play Multiplayer", () -> {
+            GameLauncher.setGameMode(new MultiplayerGameMode());
             fireNewGame();
         });
 
@@ -94,14 +95,14 @@ public class NewMainMenu extends FXGLMenu {
             fireNewGame();
         });
 
-        SpaceButton buttonOption = new SpaceButton("Option", () -> {
+        SpaceButton buttonOption = new SpaceButton("Options", () -> {
             if (!getContentRoot().getChildren().contains(options)) {
                 getWindowService().getCurrentScene().removeChild(creditsText);
                 getContentRoot().getChildren().add(options);
             }
         });
 
-        SpaceButton buttonCredit = new SpaceButton("Credit", () -> {
+        SpaceButton buttonCredit = new SpaceButton("Credits", () -> {
             if (!getContentRoot().getChildren().contains(creditsText)) {
                 getWindowService().getCurrentScene().removeChild(options);
                 getContentRoot().getChildren().add(creditsText);

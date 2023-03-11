@@ -7,5 +7,5 @@ package org.enstabretagne.Game.GameModes;
  * @since 0.2.0
  */
 public enum GameModeTypes {
-    CLASSIC, INFINITY, SOLO, DUO, MUSIC_DEMO, MULTI
+    CLASSIC, INFINITY, SOLO, DUO, MUSIC_DEMO, MULTIPLAYER
 }
