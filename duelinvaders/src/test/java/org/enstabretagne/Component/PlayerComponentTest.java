@@ -1,6 +1,7 @@
 package org.enstabretagne.Component;
 
-import org.enstabretagne.Core.Constant;
+import org.enstabretagne.Utils.EntityType;
+import org.enstabretagne.Utils.Settings;
 import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -8,7 +9,7 @@ import static com.almasb.fxgl.dsl.FXGL.*;
 
 public class PlayerComponentTest {
     private PlayerComponent playerComponent;
-    private Double dx = Constant.SPEED_SPACESHIP;
+    private Double dx = Settings.SPEED_SPACESHIP;
 
     @BeforeEach
     public void setup() {

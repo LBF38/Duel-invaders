@@ -2,8 +2,6 @@ package org.enstabretagne.Utils;
 
 import java.util.ArrayList;
 
-import org.enstabretagne.Core.Constant;
-
 /**
  * Classe contenant les noms des assets du jeu
  * Cela permet d'éviter les risques de fautes de frappe et centralise l'ensemble
@@ -27,7 +25,7 @@ public class assetNames {
         public static final String EXPLOSION_FINAL = "explosion_final.png";
         public static final ArrayList<String> EXPLOSIONS = new ArrayList<String>() {
             {
-                for (int i = 1; i <= Constant.NUMBER_OF_EXPLOSIONS; i++) {
+                for (int i = 1; i <= Settings.NUMBER_OF_EXPLOSIONS; i++) {
                     add("explosion" + i + ".png");
                 }
             }
@@ -62,7 +60,7 @@ public class assetNames {
         public static final String VICTORY_CLAIRON = "autre/claironVictory.wav";
         public static final ArrayList<String> AMBIENT_SOUNDS = new ArrayList<String>() {
             {
-                for (int i = 1; i < Constant.NUMBER_OF_AMBIENT_SOUND + 1; i++) {
+                for (int i = 1; i < Settings.NUMBER_OF_AMBIENT_SOUND + 1; i++) {
                     add("ambiance/ambientSound" + i + ".wav");
                 }
             }
@@ -70,7 +68,7 @@ public class assetNames {
         public static final String CANNON_SHOT = "Tir/canon.wav";
         public static final ArrayList<String> LASER_SOUNDS = new ArrayList<>() {
             {
-                for (int i = 1; i <= Constant.NUMBER_OF_LASER_SOUNDS; i++) {
+                for (int i = 1; i <= Settings.NUMBER_OF_LASER_SOUNDS; i++) {
                     add("Tir/laser" + i + ".wav");
                 }
             }

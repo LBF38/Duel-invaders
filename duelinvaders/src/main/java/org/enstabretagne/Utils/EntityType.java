@@ -1,4 +1,4 @@
-package org.enstabretagne.Component;
+package org.enstabretagne.Utils;
 
 /**
  * Définition des types d'entités disponibles dans le jeu

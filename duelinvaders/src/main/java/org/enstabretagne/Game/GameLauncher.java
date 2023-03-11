@@ -1,31 +1,37 @@
 package org.enstabretagne.Game;
 
-import static com.almasb.fxgl.dsl.FXGL.*;
-import static com.almasb.fxgl.dsl.FXGLForKtKt.runOnce;
-import static org.enstabretagne.Game.GameMode.*;
+import static com.almasb.fxgl.dsl.FXGL.getDialogService;
+import static com.almasb.fxgl.dsl.FXGL.getGameScene;
+import static com.almasb.fxgl.dsl.FXGL.getGameWorld;
+import static com.almasb.fxgl.dsl.FXGL.getNetService;
+import static com.almasb.fxgl.dsl.FXGL.getPhysicsWorld;
+import static com.almasb.fxgl.dsl.FXGL.getb;
+import static com.almasb.fxgl.dsl.FXGL.loopBGM;
+import static com.almasb.fxgl.dsl.FXGL.onKey;
+import static com.almasb.fxgl.dsl.FXGL.play;
+import static com.almasb.fxgl.dsl.FXGL.runOnce;
+import static com.almasb.fxgl.dsl.FXGL.spawn;
+import static org.enstabretagne.UI.UI_Factory.ambientSound;
+import static org.enstabretagne.UI.UI_Factory.showPlayersLivesAndScores;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
-import com.almasb.fxgl.core.serialization.Bundle;
-import com.almasb.fxgl.net.Client;
-import com.almasb.fxgl.net.Server;
+import org.enstabretagne.Collision.AlienBulletCollision;
+import org.enstabretagne.Collision.AlienPlayerCollision;
+import org.enstabretagne.Collision.BulletBulletCollision;
+import org.enstabretagne.Collision.BulletPlayerCollision;
+import org.enstabretagne.Collision.EnemyShootBulletCollision;
+import org.enstabretagne.Collision.EnemyShootPlayerCollision;
 import org.enstabretagne.Component.AlienComponent;
-import org.enstabretagne.Component.EntityType;
-import org.enstabretagne.Component.PlayerComponent;
 import org.enstabretagne.Component.SpaceInvadersFactory;
-import org.enstabretagne.Core.AlienBulletCollision;
-import org.enstabretagne.Core.AlienPlayerCollision;
-import org.enstabretagne.Core.BulletBulletCollision;
-import org.enstabretagne.Core.BulletPlayerCollision;
-import org.enstabretagne.Core.Constant;
-import org.enstabretagne.Core.EnemyShootBulletCollision;
-import org.enstabretagne.Core.EnemyShootPlayerCollision;
-import org.enstabretagne.Core.GameVariableNames;
+import org.enstabretagne.Game.GameModes.AlienFactory;
+import org.enstabretagne.Game.GameModes.ClassicGameMode;
+import org.enstabretagne.Game.GameModes.GameMode;
+import org.enstabretagne.Game.GameModes.GameModeTypes;
+import org.enstabretagne.Utils.GameVariableNames;
+import org.enstabretagne.Utils.Settings;
 import org.enstabretagne.Utils.assetNames;
 import org.enstabretagne.Utils.entityNames;
 
@@ -36,14 +42,12 @@ import com.almasb.fxgl.app.MenuItem;
 import com.almasb.fxgl.app.scene.FXGLMenu;
 import com.almasb.fxgl.app.scene.SceneFactory;
 import com.almasb.fxgl.core.math.FXGLMath;
+import com.almasb.fxgl.core.serialization.Bundle;
 import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.net.Client;
+import com.almasb.fxgl.net.Server;
 
-import javafx.geometry.Pos;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 /**
@@ -54,19 +58,19 @@ import javafx.util.Duration;
  * @since 0.1.0
  */
 public class GameLauncher extends GameApplication {
-    private PlayerComponent playerComponent1;
-    private PlayerComponent playerComponent2;
-    private Entity player1;
-    private Entity player2;
+    private static GameMode game_mode = new ClassicGameMode();
     private long last_ambient_sound = System.currentTimeMillis();
-    private int delay_ambient_sound = FXGLMath.random(Constant.AMBIENT_SOUND_DELAY_MIN,
-            Constant.AMBIENT_SOUND_DELAY_MAX);
-    private static GameMode GameMode = CLASSIQUE;
-    VBox playersUI = new VBox();
+    private int delay_ambient_sound = FXGLMath.random(Settings.AMBIENT_SOUND_DELAY_MIN,
+            Settings.AMBIENT_SOUND_DELAY_MAX);
 
     public static void setGameMode(GameMode gameMode) {
-        GameMode = gameMode;
+        game_mode = gameMode;
     }
+
+    public static GameModeTypes getGameModeType() {
+        return game_mode.getGameModeType();
+    }
+
     private boolean isServer;
     private Server<Bundle> server;
     private Client<Bundle> client;
@@ -83,15 +87,15 @@ public class GameLauncher extends GameApplication {
      */
     @Override
     protected void initSettings(GameSettings settings) {
-        settings.setWidth(Constant.GAME_WIDTH.intValue());
-        settings.setHeight(Constant.GAME_HEIGHT.intValue());
+        settings.setWidth(Settings.GAME_WIDTH.intValue());
+        settings.setHeight(Settings.GAME_HEIGHT.intValue());
         settings.setTitle("Duel Invaders");
         settings.setAppIcon(assetNames.textures.APP_ICON);
         settings.setVersion("0.2.0");
         settings.setMainMenuEnabled(true);
         settings.setGameMenuEnabled(true);
         settings.setFullScreenAllowed(true);
-//        settings.setFullScreenFromStart(true);
+        // settings.setFullScreenFromStart(true);
         settings.setCredits(Arrays.asList(
                 "Duel Invaders project by:",
                 "@MathieuDFS",
@@ -123,86 +127,24 @@ public class GameLauncher extends GameApplication {
      */
     @Override
     protected void initInput() {
-        onKey(KeyCode.ENTER, () -> {
-            if (GameVariableNames.multiplayerGameInProgress){
-                onShootBroadcastLogic();
-                if(isServer){
-                    playerComponent1.shoot();
-                }else {
-                    playerComponent2.shoot();
-                }
-            } else if (!GameVariableNames.multiplayerGameWaiting){
-                playerComponent1.shoot();
-            }
-        });
-
-        onKey(KeyCode.RIGHT, () -> {
-            if (GameVariableNames.multiplayerGameInProgress) {
-                if(isServer) {
-                    playerComponent1.moveRight();
-                } else {
-                    playerComponent2.moveRight();
-                }
-            }else if (!GameVariableNames.multiplayerGameWaiting) {
-                playerComponent1.moveRight();
-            }
-        });
-
-        onKey(KeyCode.LEFT, () -> {
-            if (GameVariableNames.multiplayerGameInProgress) {
-                if(isServer) {
-                    playerComponent1.moveLeft();
-                } else {
-                    playerComponent2.moveLeft();
-                }
-            }else if (!GameVariableNames.multiplayerGameWaiting) {
-                playerComponent1.moveLeft();
-            }
-        });
-
-        onKey(KeyCode.SPACE, () -> {
-            if (GameMode == SOLO) {
-                playerComponent1.shoot();
-            } else if (GameVariableNames.multiplayerGameInProgress){
-                onShootBroadcastLogic();
-                if(isServer){
-                    playerComponent1.shoot();
-                }else {
-                    playerComponent2.shoot();
-                }
-            } else if (!GameVariableNames.multiplayerGameWaiting) {
-                playerComponent2.shoot();
-            }
-        });
-
-        onKey(KeyCode.D, () -> {
-            if (GameMode == SOLO) {
-                playerComponent1.moveRight();
-            } else if (GameVariableNames.multiplayerGameInProgress) {
-                if(isServer) {
-                    playerComponent1.moveRight();
-                } else {
-                    playerComponent2.moveRight();
-                }
-            }else if (!GameVariableNames.multiplayerGameWaiting) {
-                playerComponent2.moveRight();
-            }
-        });
-
         onKey(KeyCode.Q, () -> {
-            if (GameMode == SOLO) {
-                playerComponent1.moveLeft();
-            } else if (GameVariableNames.multiplayerGameInProgress) {
-                if(isServer) {
-                    playerComponent1.moveLeft();
-                } else {
-                    playerComponent2.moveLeft();
-                }
-            } else if (!GameVariableNames.multiplayerGameWaiting) {
-                playerComponent2.moveLeft();
-            }
+            game_mode.getPlayerComponent1().moveLeft();
         });
-
+        onKey(KeyCode.D, () -> {
+            game_mode.getPlayerComponent1().moveRight();
+        });
+        onKey(KeyCode.SPACE, () -> {
+            game_mode.getPlayerComponent1().shoot();
+        });
+        onKey(KeyCode.ENTER, () -> {
+            game_mode.getPlayerComponent2().shoot();
+        });
+        onKey(KeyCode.LEFT, () -> {
+            game_mode.getPlayerComponent2().moveLeft();
+        });
+        onKey(KeyCode.RIGHT, () -> {
+            game_mode.getPlayerComponent2().moveRight();
+        });
     }
 
     /**
@@ -214,8 +156,8 @@ public class GameLauncher extends GameApplication {
     protected void initGameVars(Map<String, Object> vars) {
         vars.put(GameVariableNames.isGameOver, false);
         vars.put(GameVariableNames.isGameWon, false);
-        GameVariableNames.multiplayerGameInProgress= false;
-        GameVariableNames.multiplayerGameWaiting= false;
+        GameVariableNames.multiplayerGameInProgress = false;
+        GameVariableNames.multiplayerGameWaiting = false;
     }
 
     /**
@@ -227,47 +169,7 @@ public class GameLauncher extends GameApplication {
         play(assetNames.sounds.START_CLAIRON);
         getGameWorld().addEntityFactory(new SpaceInvadersFactory());
 
-        if(GameMode == MULTI) { // LBF : dans le mode multijoueur
-            isServer();
-            }
-
-        player1 = spawn(entityNames.PLAYER); // LBF : dans tous les modes de jeu
-        player1.setX(Constant.GAME_WIDTH / 2);
-        player1.setY(Constant.GAME_HEIGHT - player1.getHeight());
-        playerComponent1 = player1.getComponent(PlayerComponent.class);
-        playerComponent1.setDirection(Constant.Direction.UP);
-        playerComponent1.initializeScore();
-        playerComponent1.initializeLife();
-
-        if (GameMode != SOLO) { // LBF : dans tous les modes de jeu sauf solo
-            player2 = spawn(entityNames.PLAYER);
-            player2.setX(Constant.GAME_WIDTH / 2);
-            player2.setY(0);
-            playerComponent2 = player2.getComponent(PlayerComponent.class);
-            playerComponent2.setDirection(Constant.Direction.DOWN);
-            playerComponent2.initializeScore();
-            playerComponent2.initializeLife();
-        }
-
-        if (GameMode == INFINITY_MODE) { // LBF : dans le mode infinity
-            Entity alien1 = spawn(entityNames.ALIEN, 0, Constant.GAME_HEIGHT / 2 - Constant.ALIEN_HEIGHT);
-            alien1.getComponent(AlienComponent.class).initialize(Constant.Direction.UP);
-            Entity alien2 = spawn(entityNames.ALIEN, 0, Constant.GAME_HEIGHT / 2 - Constant.ALIEN_HEIGHT);
-            alien2.getComponent(AlienComponent.class).initialize(Constant.Direction.DOWN);
-            run(() -> {
-                Entity alien = spawn(entityNames.ALIEN, 0, Constant.GAME_HEIGHT / 2 - Constant.ALIEN_HEIGHT);
-                alien.getComponent(AlienComponent.class).initialize(Constant.Direction.UP);
-            }, Duration.seconds(1.4));
-            run(() -> {
-                Entity alien = spawn(entityNames.ALIEN, 0, Constant.GAME_HEIGHT / 2 - Constant.ALIEN_HEIGHT);
-                alien.getComponent(AlienComponent.class).initialize(Constant.Direction.DOWN);
-            }, Duration.seconds(1.5));
-
-        } else if (GameMode == CLASSIQUE) { // LBF : dans le mode classique
-            makeAlienBlock();
-        } else if (GameMode == SOLO) { // LBF : dans le mode solo
-            makeAlienBlockSolo();
-        }
+        game_mode.initGameMode();
 
         spawn(entityNames.BACKGROUND);
         loopBGM(assetNames.music.MUSIC_ACROSS_THE_UNIVERSE);
@@ -276,7 +178,7 @@ public class GameLauncher extends GameApplication {
     /**
      * Input box pour le choix héberger/rejoindre une partie multijoueur
      */
-    private void isServer(){ // LBF : dans le mode multijoueur
+    private void isServer() {
         runOnce(() -> {
             getDialogService().showConfirmationBox("Voulez-vous être le serveur ?", yes -> {
                 if (yes) {
@@ -287,14 +189,14 @@ public class GameLauncher extends GameApplication {
                     PortSelection();
                 }
             });
-            return null;
-        },Duration.seconds(0));
+            return;
+        }, Duration.seconds(0));
     }
 
     /**
      * Initialisation du serveur
      */
-    private void isServer_ServerInit(){
+    private void isServer_ServerInit() {
         System.out.println("server");
         server = getNetService().newTCPServer(Port);
         onReceiveMessageServer();
@@ -305,7 +207,7 @@ public class GameLauncher extends GameApplication {
     /**
      * Initialisation du client
      */
-    private void isServer_ClientInit(){
+    private void isServer_ClientInit() {
         System.out.println("client");
         client = getNetService().newTCPClient(IP, Port);
         onReceiveMessageClient();
@@ -313,26 +215,25 @@ public class GameLauncher extends GameApplication {
         GameVariableNames.multiplayerGameWaiting = true;
     }
 
-    private void PortSelection(){
+    private void PortSelection() {
         runOnce(() -> {
             getDialogService().showInputBox("Entrez le port (ex:55555)", port -> {
                 if (port != null) {
                     Port = Integer.parseInt(port);
-                }
-                else {
+                } else {
                     Port = 55555;
                 }
                 System.out.println("Port : " + Port);
-                if(!isServer){
+                if (!isServer) {
                     IPSelection();
-                }
-                else{
+                } else {
                     isServer_ServerInit();
                 }
             });
-            return null;
-        },Duration.seconds(0));
+            return;
+        }, Duration.seconds(0));
     }
+
     private void IPSelection() {
         runOnce(() -> {
             getDialogService().showInputBox("Entrez l'adresse IP du serveur (ex: localhost ou 111.222.333.444)", ip -> {
@@ -344,30 +245,32 @@ public class GameLauncher extends GameApplication {
                 System.out.println("IP : " + IP);
                 isServer_ClientInit();
             });
-            return null;
+            return;
         }, Duration.seconds(0));
     }
 
-    private void startMultiGame(){
+    private void startMultiGame() {
         long startGameTime = System.currentTimeMillis();
         System.out.println("startGameTime : " + startGameTime);
-        makeAlienBlock();
+        AlienFactory.makeAlienBlock();
     }
+
     /**
      * Logique d'envoi des données à chaque frame
      */
-    private void onUpdateBroadcastLogic(){// LBF : dans le mode multijoueur
+    private void onUpdateBroadcastLogic() {// LBF : dans le mode multijoueur
         if (isServer) {
             Player1Broadcast();
         } else {
             Player2Broadcast();
-        } //Ne sert à rien pour le moment mais utile si plus de choses à transférer à chaque frame
+        } // Ne sert à rien pour le moment mais utile si plus de choses à transférer à
+          // chaque frame
     }
 
     /**
      * Envoie des données du joueur 1 du serveur vers le client
      */
-    private void Player1Broadcast(){ // LBF : dans le mode multijoueur
+    private void Player1Broadcast() { // LBF : dans le mode multijoueur
         Bundle bundle = new Bundle("Player1");
         bundle.put("type", "Player1");
         bundle.put("x", player1.getX());
@@ -380,7 +283,7 @@ public class GameLauncher extends GameApplication {
     /**
      * Envoie des données du joueur 2 du client vers le serveur
      */
-    private void Player2Broadcast(){ // LBF : dans le mode multijoueur
+    private void Player2Broadcast() { // LBF : dans le mode multijoueur
         Bundle bundle = new Bundle("Player2");
         bundle.put("type", "Player2");
         bundle.put("x", player2.getX());
@@ -411,12 +314,12 @@ public class GameLauncher extends GameApplication {
                     }
                 } else if (message.getName().equals("Game End")) {
                     System.out.println("Game End Received");
-                    if(message.get("type").equals("Game Over")){
+                    if (message.get("type").equals("Game Over")) {
                         gameOverScreen();
-                    } else if(message.get("type").equals("Game Win")){
+                    } else if (message.get("type").equals("Game Win")) {
                         winScreen();
                     }
-                }else{
+                } else {
                     System.out.println("Message non reconnu");
                 }
             });
@@ -440,7 +343,7 @@ public class GameLauncher extends GameApplication {
                     if (message.get("direction") == Constant.Direction.DOWN) {
                         Entity alien = spawn(entityNames.ALIEN, 0, Constant.GAME_HEIGHT / 2 - Constant.ALIEN_HEIGHT);
                         alien.getComponent(AlienComponent.class).initialize(Constant.Direction.DOWN);
-                    } else{
+                    } else {
                         Entity alien = spawn(entityNames.ALIEN, 0, Constant.GAME_HEIGHT / 2 - Constant.ALIEN_HEIGHT);
                         alien.getComponent(AlienComponent.class).initialize(Constant.Direction.UP);
                     }
@@ -449,12 +352,12 @@ public class GameLauncher extends GameApplication {
                     startMultiGame();
                 } else if (message.getName().equals("Game End")) {
                     System.out.println("Game End Received");
-                    if(message.get("type").equals("Game Over")){
+                    if (message.get("type").equals("Game Over")) {
                         gameOverScreen();
-                    } else if(message.get("type").equals("Game Win")){
+                    } else if (message.get("type").equals("Game Win")) {
                         winScreen();
                     }
-                } else{
+                } else {
                     System.out.println("Message non reconnu");
                 }
             });
@@ -464,46 +367,11 @@ public class GameLauncher extends GameApplication {
     /**
      * Logique d'envoi des données lors du tir d'un joueur
      */
-    private void onShootBroadcastLogic(){ // LBF : dans le mode multijoueur
+    private void onShootBroadcastLogic() { // LBF : dans le mode multijoueur
         if (isServer) {
             server.broadcast(new Bundle("Player1Shoot"));
         } else {
             client.broadcast(new Bundle("Player2Shoot"));
-        }
-    }
-
-
-
-    private void makeAlienBlock() {
-        for (int i = 0; i < 2; i++) {
-            makeAlienLine(i, Constant.Direction.DOWN);
-            makeAlienLine(i, Constant.Direction.UP);
-        }
-    }
-
-    private void makeAlienLine(int line, Constant.Direction direction) {
-        for (int i = 0; i < Constant.ALIENS_NUMBER; i++) {
-            if (direction == Constant.Direction.DOWN) {
-                Entity alien = spawn(entityNames.ALIEN, i * Constant.ALIEN_WIDTH,
-                        Constant.GAME_HEIGHT / 2 + (line - 1) * Constant.ALIEN_HEIGHT);
-                alien.getComponent(AlienComponent.class).initialize(direction);
-                alien.getComponent(AlienComponent.class).setAlienNumber(i);
-            } else {
-                Entity alien = spawn(entityNames.ALIEN, i * Constant.ALIEN_WIDTH,
-                        Constant.GAME_HEIGHT / 2 + (line - 2) * Constant.ALIEN_HEIGHT);
-                alien.getComponent(AlienComponent.class).initialize(direction);
-                alien.getComponent(AlienComponent.class).setAlienNumber(i);
-            }
-        }
-    }
-
-    private void makeAlienBlockSolo() {
-        for (int line = 0; line < 4; line++) {
-            for (int k = 0; k < Constant.ALIENS_NUMBER; k++) {
-                Entity alien = spawn(entityNames.ALIEN, k * Constant.ALIEN_WIDTH, (line - 1) * Constant.ALIEN_HEIGHT);
-                alien.getComponent(AlienComponent.class).initialize(Constant.Direction.DOWN);
-                alien.getComponent(AlienComponent.class).setAlienNumber(k);
-            }
         }
     }
 
@@ -525,43 +393,7 @@ public class GameLauncher extends GameApplication {
      */
     @Override
     protected void initUI() {
-        showPlayersLivesAndScores();
-    }
-
-    private void showPlayersLivesAndScores() {
-        getGameScene().removeChild(playersUI);
-
-        List<HBox> playersViews = new ArrayList<>();
-        List<PlayerComponent> players = getGameWorld().getEntitiesByType(EntityType.PLAYER).stream()
-                .map(player -> player.getComponent(PlayerComponent.class)).collect(Collectors.toList());
-        for (PlayerComponent playerComponent : players) {
-            HBox scoreUI = createScoreUI(playerComponent.getScore(), playerComponent.getId());
-            scoreUI.setTranslateY(scoreUI.getHeight() * playerComponent.getId());
-            HBox lifeUI = createLifeUI(playerComponent.getLife());
-            var playerUI = new HBox(30, scoreUI, lifeUI);
-            playersViews.add(playerUI);
-        }
-        playersUI = new VBox(20, playersViews.toArray(new HBox[0]));
-        getGameScene().addChild(playersUI);
-    }
-
-    private HBox createScoreUI(int score, int player_id) {
-        Text scoreText = getUIFactoryService().newText(Integer.toString(score), Color.WHITE, 24.0);
-        Text playerText = getUIFactoryService().newText("Player " + Integer.toString(player_id % 2 + 1), Color.WHITE,
-                24.0);
-        var scoreView = new HBox(10, playerText, scoreText);
-        scoreView.setAlignment(Pos.CENTER);
-        return scoreView;
-    }
-
-    private HBox createLifeUI(int life) {
-        var lifeTexture = texture(assetNames.textures.LIFE, 30, 30);
-        var lifeView = new HBox(10);
-        for (int i = 0; i < life; i++) {
-            lifeView.getChildren().add(lifeTexture.copy());
-        }
-        lifeView.setAlignment(Pos.CENTER);
-        return lifeView;
+        showPlayersLivesAndScores(getGameWorld(), getGameScene());
     }
 
     /**
@@ -570,113 +402,20 @@ public class GameLauncher extends GameApplication {
      * @param tpf
      */
     @Override
-    protected void onUpdate(double tpf ) {
-        if(GameMode == MULTI){
-            onUpdateMultiplayer(tpf);
-        } else{
-            onUpdateCommon(tpf);
+    protected void onUpdate(double tpf) {
+        if (getb(GameVariableNames.isGameOver) || getb(GameVariableNames.isGameWon)) {
+            game_mode.gameFinished();
         }
-    }
-    private void onUpdateMultiplayer(double tpf){ // LBF : dans le mode multijoueur
-        if (GameVariableNames.multiplayerGameInProgress) { // LBF : dans le mode multijoueur ou réecrire autrement??
-            onUpdateBroadcastLogic();
-            onUpdateCommon(tpf);
-        } else {
-            //Synchronise le début de la partie entre les deux joueurs
-            if(!isServer && GameVariableNames.multiplayerGameWaiting){
-                client.broadcast(new Bundle("Client Connected"));
-            }
-        }
-    }
-    private void onUpdateCommon(double tpf) { // LBF : dans tous les modes de jeu
-        if (getb(GameVariableNames.isGameOver)){
-            GameEndBroadcastLogic("Game Over");
-            gameOverScreen();
-        }
-        if (getb(GameVariableNames.isGameWon)) {
-            GameEndBroadcastLogic("Game Win");
-            winScreen();
-        }
+
         if ((System.currentTimeMillis() - last_ambient_sound) > delay_ambient_sound) {
             ambientSound();
             last_ambient_sound = System.currentTimeMillis();
-            delay_ambient_sound = FXGLMath.random(Constant.AMBIENT_SOUND_DELAY_MIN, Constant.AMBIENT_SOUND_DELAY_MAX);
+            delay_ambient_sound = FXGLMath.random(Settings.AMBIENT_SOUND_DELAY_MIN, Settings.AMBIENT_SOUND_DELAY_MAX);
         }
-        if (getGameScene().getContentRoot().getChildren().contains(playersUI))
-            showPlayersLivesAndScores();
 
-        run(() -> {
-            getGameWorld().getEntitiesByType(EntityType.ALIEN).forEach((alien) -> {
-                if (FXGLMath.randomBoolean(0.005)) { // LBF : dans le mode multijoeur (tir unidirectionnel)
-                    if (isServer && alien.getComponent(AlienComponent.class).getDirection() == Constant.Direction.DOWN) {
-                        alien.getComponent(AlienComponent.class).randomShoot(Constant.ALIEN_SHOOT_CHANCE);
-                    } else if (!isServer && alien.getComponent(AlienComponent.class).getDirection() == Constant.Direction.UP) {
-                        alien.getComponent(AlienComponent.class).randomShoot(Constant.ALIEN_SHOOT_CHANCE);
-                    }
-                }
-            });
-        }, Duration.seconds(Constant.random.nextDouble() * 10));
-    }
+        showPlayersLivesAndScores(getGameWorld(), getGameScene());
 
-    private void GameEndBroadcastLogic(String message){
-        Bundle bundle = new Bundle("Game End");
-        bundle.put("type", message);
-        if(isServer){
-            server.broadcast(bundle);
-        } else {
-            client.broadcast(bundle);
-        }
-    }
-
-    /**
-     * Affichage de l'écran de fin de partie
-     */
-    private void gameOverScreen() {
-        play(assetNames.sounds.DEFEAT_CLAIRON);
-        String message = "Game Over ! \n Scores are as follows : \n" +
-                "Player 1 : " + playerComponent1.getScore() + "\n";
-        if (playerComponent2 != null ) {
-            String player2 = "Player 2 : " + playerComponent2.getScore();
-            message += player2;
-        }
-        getDialogService().showMessageBox(message, () -> {
-            getDialogService().showConfirmationBox("Do you want to play again?", (yes) -> playAgain(yes));
-        });
-    }
-
-    /**
-     * Affichage de l'écran pour jouer une nouvelle partie
-     */
-    private void playAgain(Boolean yes) {
-        if (yes)
-            getGameController().startNewGame();
-        else
-            getGameController().gotoMainMenu();
-    }
-
-    /**
-     * Affichage de l'écran de victoire
-     */
-    private void winScreen() {
-        play(assetNames.sounds.VICTORY_CLAIRON);
-        String message = "You won ! \n Scores are as follows : \n" +
-                "Player 1 : " + playerComponent1.getScore() + "\n";
-        if (playerComponent2 != null) {
-            String player2 = "Player 2 : " + playerComponent2.getScore();
-            message += player2;
-        }
-        getDialogService().showMessageBox(message, () -> {
-            getDialogService().showConfirmationBox("Do you want to play again?", (yes) -> playAgain(yes));
-        });
-    }
-
-    /**
-     * Joue un son d'ambiance aléatoire parmi ceux disponibles
-     */
-    private void ambientSound() {
-        String ambientMusic = assetNames.sounds.AMBIENT_SOUNDS
-                .get(FXGLMath.random(0, Constant.NUMBER_OF_AMBIENT_SOUND - 1));
-        play(ambientMusic);
+        AlienFactory.aliensRandomlyShoot();
     }
 
     public static void main(String[] args) {

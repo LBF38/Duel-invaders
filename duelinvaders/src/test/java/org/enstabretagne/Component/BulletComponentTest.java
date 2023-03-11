@@ -5,6 +5,8 @@ import org.junit.jupiter.api.*;
 import static com.almasb.fxgl.dsl.FXGL.entityBuilder;
 import static org.junit.jupiter.api.Assertions.*;
 
+import org.enstabretagne.Utils.EntityType;
+
 public class BulletComponentTest {
     private BulletComponent bulletComponent;
     // private Double dy = 1.0;

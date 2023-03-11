@@ -1,4 +1,4 @@
-package org.enstabretagne.Core;
+package org.enstabretagne.Utils;
 
 import javafx.util.Duration;
 import java.util.Random;
@@ -11,7 +11,7 @@ import java.util.Random;
  * @author jufch, LBF38, MathieuDFS
  * @since 0.1.0
  */
-public class Constant {
+public class Settings {
     public static final Double GAME_WIDTH = 1366.0;
     public static final Double GAME_HEIGHT = 768.0;
 

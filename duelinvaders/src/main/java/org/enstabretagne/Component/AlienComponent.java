@@ -1,8 +1,8 @@
 package org.enstabretagne.Component;
 
-import org.enstabretagne.Core.Constant;
-import org.enstabretagne.Core.Constant.Direction;
+import org.enstabretagne.Utils.Settings;
 import org.enstabretagne.Utils.entityNames;
+import org.enstabretagne.Utils.Settings.Direction;
 
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.entity.Entity;
@@ -22,7 +22,7 @@ public class AlienComponent extends Component {
     private Direction movementDirection;
     private Direction globalDirection;
     private Double last_shot = 0.0;
-    private double limit_right = Constant.GAME_WIDTH;
+    private double limit_right = Settings.GAME_WIDTH;
     private double limit_left = 0.0;
 
     /**
@@ -54,12 +54,12 @@ public class AlienComponent extends Component {
      * Initialise l'alien
      * 
      */
-    public void initialize(Constant.Direction direction) {
+    public void initialize(Settings.Direction direction) {
         this.globalDirection = direction;
-        if (direction == Constant.Direction.UP) {
+        if (direction == Settings.Direction.UP) {
             entity.rotateBy(180);
             this.movementDirection = Direction.RIGHT;
-        } else if (direction == Constant.Direction.DOWN) {
+        } else if (direction == Settings.Direction.DOWN) {
             this.movementDirection = Direction.LEFT;
         }
 
@@ -72,7 +72,7 @@ public class AlienComponent extends Component {
      */
     @Override
     public void onUpdate(double tpf) {
-        dx = tpf * Constant.SPEED_ALIEN;
+        dx = tpf * Settings.SPEED_ALIEN;
         dy = entity.getHeight();
         this.move(dx);
     }
@@ -102,14 +102,15 @@ public class AlienComponent extends Component {
     public void moveRight(Double dx) {
         if (this.entity.getRightX() + dx <= limit_right) {
             this.entity.translateX(dx);
-        } else {
-            if (this.globalDirection == Constant.Direction.DOWN) {
-                this.entity.translateY(dy);
-            } else if (this.globalDirection == Constant.Direction.UP) {
-                this.entity.translateY(-dy);
-            }
-            this.movementDirection = Direction.LEFT;
+            return;
         }
+
+        if (this.globalDirection == Settings.Direction.DOWN) {
+            this.entity.translateY(dy);
+        } else if (this.globalDirection == Settings.Direction.UP) {
+            this.entity.translateY(-dy);
+        }
+        this.movementDirection = Direction.LEFT;
     }
 
     /**
@@ -120,19 +121,20 @@ public class AlienComponent extends Component {
     public void moveLeft(Double dx) {
         if (this.entity.getX() - dx >= limit_left) {
             this.entity.translateX(-dx);
-        } else {
-            if (this.globalDirection == Constant.Direction.DOWN) {
-                this.entity.translateY(dy);
-            } else if (this.globalDirection == Constant.Direction.UP) {
-                this.entity.translateY(-dy);
-            }
-            this.movementDirection = Direction.RIGHT;
+            return;
         }
+
+        if (this.globalDirection == Settings.Direction.DOWN) {
+            this.entity.translateY(dy);
+        } else if (this.globalDirection == Settings.Direction.UP) {
+            this.entity.translateY(-dy);
+        }
+        this.movementDirection = Direction.RIGHT;
     }
 
     public void setAlienNumber(int AlienNumber) {
-        limit_right = Constant.GAME_WIDTH - (Constant.ALIEN_WIDTH * (Constant.ALIENS_NUMBER - AlienNumber - 1));
-        limit_left = 0.0 + (Constant.ALIEN_WIDTH * AlienNumber);
+        limit_right = Settings.GAME_WIDTH - (Settings.ALIEN_WIDTH * (Settings.ALIENS_NUMBER - AlienNumber - 1));
+        limit_left = 0.0 + (Settings.ALIEN_WIDTH * AlienNumber);
     }
 
     /**
@@ -150,13 +152,13 @@ public class AlienComponent extends Component {
      * L'alien tire un projectile à une cadence définie dans {@code}Constant{@code}.
      */
     public void shoot() {
-        Boolean canShoot = getGameTimer().getNow() - last_shot.doubleValue() >= Constant.RATE_ALIEN_SHOOT.doubleValue();
+        Boolean canShoot = getGameTimer().getNow() - last_shot.doubleValue() >= Settings.RATE_ALIEN_SHOOT.doubleValue();
         if (!canShoot)
             return;
 
         double x = this.entity.getX() + this.entity.getWidth() / 2;
         double y = this.entity.getY();
-        if (this.globalDirection == Constant.Direction.DOWN)
+        if (this.globalDirection == Settings.Direction.DOWN)
             y += this.entity.getHeight();
 
         spawn(entityNames.ECLAT, x, y);
