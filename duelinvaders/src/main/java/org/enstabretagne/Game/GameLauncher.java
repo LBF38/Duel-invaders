@@ -3,12 +3,10 @@ package org.enstabretagne.Game;
 import static com.almasb.fxgl.dsl.FXGL.getGameScene;
 import static com.almasb.fxgl.dsl.FXGL.getGameWorld;
 import static com.almasb.fxgl.dsl.FXGL.getPhysicsWorld;
-import static com.almasb.fxgl.dsl.FXGL.getb;
 import static com.almasb.fxgl.dsl.FXGL.loopBGM;
 import static com.almasb.fxgl.dsl.FXGL.onKey;
 import static com.almasb.fxgl.dsl.FXGL.play;
 import static com.almasb.fxgl.dsl.FXGL.spawn;
-import static org.enstabretagne.UI.UI_Factory.ambientSound;
 import static org.enstabretagne.UI.UI_Factory.showPlayersLivesAndScores;
 
 import java.util.Arrays;
@@ -22,7 +20,6 @@ import org.enstabretagne.Collision.BulletPlayerCollision;
 import org.enstabretagne.Collision.EnemyShootBulletCollision;
 import org.enstabretagne.Collision.EnemyShootPlayerCollision;
 import org.enstabretagne.Component.SpaceInvadersFactory;
-import org.enstabretagne.Game.GameModes.AlienFactory;
 import org.enstabretagne.Game.GameModes.ClassicGameMode;
 import org.enstabretagne.Game.GameModes.GameMode;
 import org.enstabretagne.Game.GameModes.GameModeTypes;
@@ -37,7 +34,6 @@ import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.app.MenuItem;
 import com.almasb.fxgl.app.scene.FXGLMenu;
 import com.almasb.fxgl.app.scene.SceneFactory;
-import com.almasb.fxgl.core.math.FXGLMath;
 
 import javafx.scene.input.KeyCode;
 
@@ -50,9 +46,6 @@ import javafx.scene.input.KeyCode;
  */
 public class GameLauncher extends GameApplication {
     private static GameMode game_mode = new ClassicGameMode();
-    private long last_ambient_sound = System.currentTimeMillis();
-    private int delay_ambient_sound = FXGLMath.random(Settings.AMBIENT_SOUND_DELAY_MIN,
-            Settings.AMBIENT_SOUND_DELAY_MAX);
 
     public static void setGameMode(GameMode gameMode) {
         game_mode = gameMode;
@@ -73,7 +66,7 @@ public class GameLauncher extends GameApplication {
         settings.setHeight(Settings.GAME_HEIGHT.intValue());
         settings.setTitle("Duel Invaders");
         settings.setAppIcon(assetNames.textures.APP_ICON);
-        settings.setVersion("0.2.0");
+        settings.setVersion("0.3.0");
         settings.setMainMenuEnabled(true);
         settings.setGameMenuEnabled(true);
         settings.setFullScreenAllowed(true);
@@ -185,19 +178,7 @@ public class GameLauncher extends GameApplication {
      */
     @Override
     protected void onUpdate(double tpf) {
-        if (getb(GameVariableNames.isGameOver) || getb(GameVariableNames.isGameWon)) {
-            game_mode.gameFinished();
-        }
-
-        if ((System.currentTimeMillis() - last_ambient_sound) > delay_ambient_sound) {
-            ambientSound();
-            last_ambient_sound = System.currentTimeMillis();
-            delay_ambient_sound = FXGLMath.random(Settings.AMBIENT_SOUND_DELAY_MIN, Settings.AMBIENT_SOUND_DELAY_MAX);
-        }
-
-        showPlayersLivesAndScores(getGameWorld(), getGameScene());
-
-        AlienFactory.aliensRandomlyShoot();
+        game_mode.onUpdate(tpf);
     }
 
     public static void main(String[] args) {
