@@ -11,4 +11,10 @@ package org.enstabretagne.Utils;
 public class GameVariableNames {
     public static final String isGameOver = "isGameOver";
     public static final String isGameWon = "isGameWon";
+
+    // LBF : dans le mode multi ??
+    // utile pour la synchro du lancement du multijoueur
+    public static boolean multiplayerGameInProgress = false;
+    public static boolean multiplayerGameWaiting = false;
+    public static boolean isShooting = false;
 }

@@ -77,6 +77,10 @@ public class AlienComponent extends Component {
         this.move(dx);
     }
 
+    public Direction getDirection() {
+        return globalDirection;
+    }
+
     /**
      * Déplacement de l'alien selon la direction et les limites du jeu.
      * L'alien se déplace de dx pixels.

@@ -16,5 +16,7 @@ public interface GameMode {
 
     public GameModeTypes getGameModeType();
 
+    public void onUpdate(double tpf);
+
     public void gameFinished();
 }
