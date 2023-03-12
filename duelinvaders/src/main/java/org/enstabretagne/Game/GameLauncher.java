@@ -66,7 +66,7 @@ public class GameLauncher extends GameApplication {
         settings.setHeight(Settings.GAME_HEIGHT.intValue());
         settings.setTitle("Duel Invaders");
         settings.setAppIcon(assetNames.textures.APP_ICON);
-        settings.setVersion("0.3.0");
+        settings.setVersion("0.3.1");
         settings.setMainMenuEnabled(true);
         settings.setGameMenuEnabled(true);
         settings.setFullScreenAllowed(true);
@@ -88,7 +88,7 @@ public class GameLauncher extends GameApplication {
                 "Sounds effect from:",
                 "https://universal-soundbank.com/"));
         settings.setEnabledMenuItems(EnumSet.of(MenuItem.EXTRA));
-        settings.setApplicationMode(ApplicationMode.DEBUG); // TODO: change to RELEASE
+        settings.setApplicationMode(ApplicationMode.RELEASE);
         settings.setSceneFactory(new SceneFactory() {
             @Override
             public FXGLMenu newMainMenu() {
@@ -137,8 +137,8 @@ public class GameLauncher extends GameApplication {
     protected void initGameVars(Map<String, Object> vars) {
         vars.put(GameVariableNames.isGameOver, false);
         vars.put(GameVariableNames.isGameWon, false);
-        GameVariableNames.multiplayerGameInProgress = false; // TODO: refactor
-        GameVariableNames.multiplayerGameWaiting = false; // TODO: refactor
+        GameVariableNames.multiplayerGameInProgress = false;
+        GameVariableNames.multiplayerGameWaiting = false;
     }
 
     /**
