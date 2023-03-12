@@ -32,10 +32,9 @@ public class MultiplayerGameMode extends TwoPlayerGameMode {
 
     private boolean isServer = false;
     private Server<Bundle> server;
-
     private Client<Bundle> client;
-    private int serverPort = 55555;
 
+    private int serverPort = 55555;
     private String serverIPaddress = "localhost";
 
     @Override
@@ -59,7 +58,7 @@ public class MultiplayerGameMode extends TwoPlayerGameMode {
     public PlayerComponent getPlayerComponent1() {
         if (!GameVariableNames.multiplayerGameInProgress) {
             // Pour éviter d'autoriser le joueur 2 à jouer avant le début de la partie
-            return new PlayerComponent();
+            // TODO: à revoir
         }
         if (GameVariableNames.isShooting) {
             onShootBroadcastLogic();
@@ -81,6 +80,18 @@ public class MultiplayerGameMode extends TwoPlayerGameMode {
             if (!isServer && GameVariableNames.multiplayerGameWaiting) {
                 client.broadcast(new Bundle("Client Connected"));
             }
+        }
+    }
+
+    @Override
+    public void gameFinished() {
+        if (getb(GameVariableNames.isGameOver)) {
+            GameEndBroadcastLogic("Game Over");
+            gameOverScreen("");
+        }
+        if (getb(GameVariableNames.isGameWon)) {
+            GameEndBroadcastLogic("Game Win");
+            winScreen("");
         }
     }
 
@@ -121,23 +132,12 @@ public class MultiplayerGameMode extends TwoPlayerGameMode {
         }
     }
 
-    @Override
-    public void gameFinished() {
-        if (getb(GameVariableNames.isGameOver)) {
-            GameEndBroadcastLogic("Game Over");
-            gameOverScreen("");
-        }
-        if (getb(GameVariableNames.isGameWon)) {
-            GameEndBroadcastLogic("Game Win");
-            winScreen("");
-        }
-    }
-
     private PauseTransition dialogQueue() {
         Map<DialogType, String> dialogQueueMessages = new HashMap<>();
         dialogQueueMessages.put(DialogType.SERVER_CHOICE, "Voulez-vous être le serveur ?");
         dialogQueueMessages.put(DialogType.PORT_CHOICE, "Entrez le port (ex:55555)");
-        dialogQueueMessages.put(DialogType.IP_CHOICE, "Entrez l'adresse IP du serveur (format:255.255.255.255)");
+        dialogQueueMessages.put(DialogType.IP_CHOICE,
+                "Entrez l'adresse IP du serveur (format:255.255.255.255 ou localhost)");
         PauseTransition pause = new PauseTransition(Duration.seconds(2));
         pause.setOnFinished(event -> {
             showConfirm(dialogQueueMessages.get(DialogType.SERVER_CHOICE),
@@ -149,30 +149,6 @@ public class MultiplayerGameMode extends TwoPlayerGameMode {
         return pause;
     }
 
-    private void showPortInput(Map<DialogType, String> dialogQueueMessages) {
-        getDialogService().showInputBox(dialogQueueMessages.get(DialogType.PORT_CHOICE), (port) -> {
-            selectPort(port);
-            if (!isServer) {
-                getDialogService().showInputBox(dialogQueueMessages.get(DialogType.IP_CHOICE),
-                        (IPaddress) -> {
-                            selectIPaddress(IPaddress);
-                            initializePlayers();
-                        });
-            } else {
-                initializePlayers();
-            }
-        });
-    }
-
-    private void initializePlayers() {
-        if (isServer) {
-            initializeServer();
-            return;
-        }
-        // selectIPaddress();
-        initializeClient();
-    }
-
     /**
      * Choix utilisateur pour héberger/rejoindre une partie multijoueur
      */
@@ -180,6 +156,21 @@ public class MultiplayerGameMode extends TwoPlayerGameMode {
         isServer = yes;
         Logger.get(getClass()).info("Are you the server ? : " + isServer);
         return isServer;
+    }
+
+    private void showPortInput(Map<DialogType, String> dialogQueueMessages) {
+        getDialogService().showInputBox(dialogQueueMessages.get(DialogType.PORT_CHOICE), (port) -> {
+            selectPort(port);
+            if (isServer) {
+                initializePlayers();
+                return;
+            }
+            getDialogService().showInputBox(dialogQueueMessages.get(DialogType.IP_CHOICE),
+                    (IPaddress) -> {
+                        selectIPaddress(IPaddress);
+                        initializePlayers();
+                    });
+        });
     }
 
     /**
@@ -192,32 +183,6 @@ public class MultiplayerGameMode extends TwoPlayerGameMode {
             serverPort = 55555;
         }
         Logger.get(getClass()).info("Port : " + serverPort);
-    }
-
-    /**
-     * Logique d'envoi des données à chaque frame
-     */
-    private void onUpdateBroadcastLogic() {
-        if (isServer) {
-            Player1Broadcast();
-        } else {
-            Player2Broadcast();
-        } // Ne sert à rien pour le moment mais utile si plus de choses à transférer
-          // chaque frame
-    }
-
-    /**
-     * Initialisation du serveur
-     */
-    private void initializeServer() {
-        Logger.get(getClass()).info("Server starting...");
-        getNotificationService().pushNotification("You are the server on the following address : " + serverIPaddress
-                + " on port : " + serverPort);
-        server = getNetService().newTCPServer(serverPort);
-        onReceiveMessageServer();
-        server.startAsync();
-        GameVariableNames.multiplayerGameWaiting = true;
-        Logger.get(getClass()).info("Server started on port : " + serverPort);
     }
 
     /**
@@ -240,57 +205,32 @@ public class MultiplayerGameMode extends TwoPlayerGameMode {
         Logger.get(getClass()).info("IP : " + serverIPaddress);
     }
 
+    private void initializePlayers() {
+        if (isServer) {
+            initializeServer();
+            return;
+        }
+        initializeClient();
+    }
+
     /**
-     * Initialisation du client
+     * Initialisation du serveur
      */
-    private void initializeClient() {
-        Logger.get(getClass()).info("Client starting...");
-        getNotificationService()
-                .pushNotification("You are connecting to the server on the following address : " + serverIPaddress
-                        + " on port : " + serverPort);
-        client = getNetService().newTCPClient(serverIPaddress, serverPort);
-        onReceiveMessageClient();
-        client.connectAsync();
+    private void initializeServer() {
+        Logger.get(getClass()).info("Server starting...");
+        getNotificationService().pushNotification("You are the server on the following address : " + serverIPaddress
+                + " on port : " + serverPort);
+        server = getNetService().newTCPServer(serverPort);
+        onReceiveMessageServer();
+        server.startAsync();
         GameVariableNames.multiplayerGameWaiting = true;
-        Logger.get(getClass()).info("Client connected to server !");
-    }
-
-    private void startMultiGame() {
-        long startGameTime = System.currentTimeMillis();
-        System.out.println("startGameTime : " + startGameTime);
-        AlienFactory.makeAlienBlock();
-    }
-
-    /**
-     * Envoie des données du joueur 1 du serveur vers le client
-     */
-    private void Player1Broadcast() {
-        Bundle bundle = new Bundle("Player1");
-        bundle.put("type", "Player1");
-        bundle.put("x", player1.getX());
-        bundle.put("y", player1.getY());
-        bundle.put("score", playerComponent1.getScore());
-        bundle.put("life", playerComponent1.getLife());
-        server.broadcast(bundle);
-    }
-
-    /**
-     * Envoie des données du joueur 2 du client vers le serveur
-     */
-    private void Player2Broadcast() {
-        Bundle bundle = new Bundle("Player2");
-        bundle.put("type", "Player2");
-        bundle.put("x", player2.getX());
-        bundle.put("y", player2.getY());
-        bundle.put("score", playerComponent2.getScore());
-        bundle.put("life", playerComponent2.getLife());
-        client.broadcast(bundle);
+        Logger.get(getClass()).info("Server started on port : " + serverPort);
     }
 
     /**
      * Logique lors de la réception des données du client par le serveur
      */
-    private void onReceiveMessageServer() {
+    private void onReceiveMessageServer() { // TODO: refactor this
         server.setOnConnected(connection -> {
             connection.addMessageHandlerFX((conn, message) -> {
                 if (message.getName().equals("Player2")) {
@@ -321,9 +261,24 @@ public class MultiplayerGameMode extends TwoPlayerGameMode {
     }
 
     /**
+     * Initialisation du client
+     */
+    private void initializeClient() {
+        Logger.get(getClass()).info("Client starting...");
+        getNotificationService()
+                .pushNotification("You are connecting to the server on the following address : " + serverIPaddress
+                        + " on port : " + serverPort);
+        client = getNetService().newTCPClient(serverIPaddress, serverPort);
+        onReceiveMessageClient();
+        client.connectAsync();
+        GameVariableNames.multiplayerGameWaiting = true;
+        Logger.get(getClass()).info("Client connected to server !");
+    }
+
+    /**
      * Logique lors de la réception des données du serveur par le client
      */
-    private void onReceiveMessageClient() {
+    private void onReceiveMessageClient() {// TODO: refactor this
         client.setOnConnected(connection -> {
             connection.addMessageHandlerFX((conn, message) -> {
                 if (message.getName().equals("Player1")) {
@@ -356,6 +311,56 @@ public class MultiplayerGameMode extends TwoPlayerGameMode {
                 }
             });
         });
+    }
+
+    /**
+     * Logique d'envoi des données à chaque frame
+     */
+    private void onUpdateBroadcastLogic() {
+        if (isServer) {
+            Bundle bundle = createPlayerInfosBundle(player1, playerComponent1, "Player1", "Player1");
+            server.broadcast(bundle);
+        } else {
+            Bundle bundle = createPlayerInfosBundle(player2, playerComponent2, "Player2", "Player2");
+            client.broadcast(bundle);
+        }
+    }
+
+    /**
+     * Création d'un bundle contenant les données du joueur
+     * 
+     * Informations transmises :
+     * <ul>
+     * <li>type : type de joueur</li>
+     * <li>x : position x du joueur</li>
+     * <li>y : position y du joueur</li>
+     * <li>score : score du joueur</li>
+     * <li>life : vie du joueur</li>
+     * </ul>
+     * 
+     * @param player
+     * @param playerComponent
+     * @param bundleName
+     * @param bundleType
+     * @return bundle contenant les données du joueur
+     * 
+     * @author LBF38
+     */
+    private Bundle createPlayerInfosBundle(Entity player, PlayerComponent playerComponent, String bundleName,
+            String bundleType) {
+        Bundle bundle = new Bundle(bundleName);
+        bundle.put("type", bundleType);
+        bundle.put("x", player.getX());
+        bundle.put("y", player.getY());
+        bundle.put("score", playerComponent.getScore());
+        bundle.put("life", playerComponent.getLife());
+        return bundle;
+    }
+
+    private void startMultiGame() {
+        long startGameTime = System.currentTimeMillis();
+        System.out.println("startGameTime : " + startGameTime);
+        AlienFactory.makeAlienBlock();
     }
 
     /**
