@@ -173,7 +173,8 @@ public class PlayerComponent extends Component {
     }
 
     /**
-     * @param score
+     * 
+     * @param newScore
      */
     public void setScore(int newScore) {
         score = Math.max(0, newScore);
@@ -198,7 +199,8 @@ public class PlayerComponent extends Component {
     }
 
     /**
-     * @param life
+     * 
+     * @param newLife
      */
     public void setLife(int newLife) {
         life = Math.max(0, newLife);
