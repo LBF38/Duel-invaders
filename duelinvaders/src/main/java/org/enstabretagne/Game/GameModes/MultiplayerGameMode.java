@@ -1,7 +1,15 @@
 package org.enstabretagne.Game.GameModes;
 
-import static com.almasb.fxgl.dsl.FXGL.*;
-import static org.enstabretagne.UI.UI_Factory.*;
+import static com.almasb.fxgl.dsl.FXGL.getDialogService;
+import static com.almasb.fxgl.dsl.FXGL.getGameController;
+import static com.almasb.fxgl.dsl.FXGL.getGameWorld;
+import static com.almasb.fxgl.dsl.FXGL.getNetService;
+import static com.almasb.fxgl.dsl.FXGL.getNotificationService;
+import static com.almasb.fxgl.dsl.FXGL.getb;
+import static com.almasb.fxgl.dsl.FXGL.run;
+import static com.almasb.fxgl.dsl.FXGL.runOnce;
+import static com.almasb.fxgl.dsl.FXGL.showConfirm;
+import static org.enstabretagne.UI.UI_Factory.gameOverScreen;
 import static org.enstabretagne.UI.UI_Factory.winScreen;
 
 import java.util.HashMap;
@@ -13,7 +21,6 @@ import org.enstabretagne.Component.PlayerComponent;
 import org.enstabretagne.Utils.EntityType;
 import org.enstabretagne.Utils.GameVariableNames;
 import org.enstabretagne.Utils.Settings;
-import org.enstabretagne.Utils.entityNames;
 
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.serialization.Bundle;
@@ -38,10 +45,20 @@ public class MultiplayerGameMode extends TwoPlayerGameMode {
         public static final String LIFE = "life";
     }
 
+    private class BundleType {
+        public static final String PLAYER1 = "Player1";
+        public static final String PLAYER2 = "Player2";
+        public static final String PLAYER1_SHOOT = "Player1Shoot";
+        public static final String PLAYER2_SHOOT = "Player2Shoot";
+        public static final String CLIENT_CONNECTED = "Client Connected";
+        public static final String SERVER_START = "Server Start";
+        public static final String GAME_OVER = "Game Over";
+        public static final String GAME_WIN = "Game Win";
+    }
+
     private boolean isServer = false;
     private Server<Bundle> server;
     private Client<Bundle> client;
-
     private int serverPort = 55555;
     private String serverIPaddress = "localhost";
 
@@ -64,10 +81,6 @@ public class MultiplayerGameMode extends TwoPlayerGameMode {
 
     @Override
     public PlayerComponent getPlayerComponent1() {
-        if (!GameVariableNames.multiplayerGameInProgress) {
-            // Pour éviter d'autoriser le joueur 2 à jouer avant le début de la partie
-            // TODO: à revoir
-        }
         if (GameVariableNames.isShooting) {
             onShootBroadcastLogic();
         }
@@ -87,20 +100,62 @@ public class MultiplayerGameMode extends TwoPlayerGameMode {
         } else {
             // Synchronise le début de la partie entre les deux joueurs
             if (!isServer && GameVariableNames.multiplayerGameWaiting) {
-                client.broadcast(new Bundle("Client Connected"));
+                client.broadcast(new Bundle(BundleType.CLIENT_CONNECTED));
             }
+            runOnce(() -> waitingForConnection(), Duration.seconds(3));
         }
     }
 
     @Override
     public void gameFinished() {
         if (getb(GameVariableNames.isGameOver)) {
-            GameEndBroadcastLogic("Game Over");
-            gameOverScreen("");
+            GameEndBroadcastLogic(BundleType.GAME_OVER);
+            gameOverScreen(playerComponent1.getScore(), playerComponent2.getScore());
         }
         if (getb(GameVariableNames.isGameWon)) {
-            GameEndBroadcastLogic("Game Win");
-            winScreen("");
+            GameEndBroadcastLogic(BundleType.GAME_WIN);
+            winScreen(playerComponent1.getScore(), playerComponent2.getScore());
+        }
+    }
+
+    /**
+     * Logique d'envoi des données à chaque frame
+     */
+    private void onUpdateBroadcastLogic() {
+        if (isServer) {
+            Bundle bundle = createPlayerInfosBundle(player1, playerComponent1, BundleType.PLAYER1, BundleType.PLAYER1);
+            server.broadcast(bundle);
+        } else {
+            Bundle bundle = createPlayerInfosBundle(player2, playerComponent2, BundleType.PLAYER2, BundleType.PLAYER2);
+            client.broadcast(bundle);
+        }
+    }
+
+    /**
+     * Wait for a connexion to be established
+     */
+    private void waitingForConnection() {
+        if (isServer) {
+            if (server.getConnections().size() == 0) {
+                getDialogService().showConfirmationBox("En attente d'un joueur...\n"
+                        + "Voulez-vous quitter la partie ?", (yes) -> {
+                            if (yes) {
+                                server.stop();
+                                getGameController().gotoMainMenu();
+                            }
+                        });
+            }
+        }
+        if (client == null)
+            return;
+        if (client.getConnections().size() == 0) {
+            getDialogService().showConfirmationBox(
+                    "En attente de la connexion...\n" + "Voulez-vous quitter la partie ?", (yes) -> {
+                        if (yes) {
+                            client.disconnect();
+                            getGameController().gotoMainMenu();
+                        }
+                    });
         }
     }
 
@@ -121,13 +176,14 @@ public class MultiplayerGameMode extends TwoPlayerGameMode {
         }, Duration.seconds(Settings.random.nextDouble() * 10));
     }
 
-    private void GameEndBroadcastLogic(String message) {
-        Bundle bundle = new Bundle("Game End");
-        bundle.put("type", message);
+    private void GameEndBroadcastLogic(String bundleType) {
+        Bundle bundle = new Bundle(bundleType);
         if (isServer) {
             server.broadcast(bundle);
+            server.stop();
         } else {
             client.broadcast(bundle);
+            client.disconnect();
         }
     }
 
@@ -215,8 +271,8 @@ public class MultiplayerGameMode extends TwoPlayerGameMode {
      */
     private void initializeServer() {
         Logger.get(getClass()).info("Server starting...");
-        getNotificationService().pushNotification("You are the server on the following address : " + serverIPaddress
-                + " on port : " + serverPort);
+        getNotificationService().pushNotification("Server started at " + serverIPaddress
+                + ":" + serverPort);
         server = getNetService().newTCPServer(serverPort);
         onReceiveMessageServer();
         server.startAsync();
@@ -227,34 +283,51 @@ public class MultiplayerGameMode extends TwoPlayerGameMode {
     /**
      * Logique lors de la réception des données du client par le serveur
      */
-    private void onReceiveMessageServer() { // TODO: refactor this
+    private void onReceiveMessageServer() {
         server.setOnConnected(connection -> {
             connection.addMessageHandlerFX((conn, message) -> {
-                if (message.getName().equals("Player2")) {
-                    player2.setX(message.get("x"));
-                    player2.setY(message.get("y"));
-                    playerComponent2.setScore(message.get("score"));
-                    playerComponent2.setLife(message.get("life"));
-                } else if (message.getName().equals("Player2Shoot")) {
-                    playerComponent2.shoot();
-                } else if (message.getName().equals("Client Connected")) {
-                    if (!GameVariableNames.multiplayerGameInProgress) {
-                        server.broadcast(new Bundle("Server Start"));
-                        GameVariableNames.multiplayerGameInProgress = true;
-                        startMultiGame();
-                    }
-                } else if (message.getName().equals("Game End")) {
-                    System.out.println("Game End Received");
-                    if (message.get("type").equals("Game Over")) {
+                switch (message.getName()) {
+                    case BundleType.PLAYER2:
+                        updatePlayersInfos(player2, playerComponent2, message);
+                        break;
+                    case BundleType.PLAYER2_SHOOT:
+                        playerComponent2.shoot();
+                        break;
+                    case BundleType.CLIENT_CONNECTED:
+                        if (!GameVariableNames.multiplayerGameInProgress) {
+                            server.broadcast(new Bundle(BundleType.SERVER_START));
+                            GameVariableNames.multiplayerGameInProgress = true;
+                            startMultiGame();
+                        }
+                        break;
+                    case BundleType.GAME_OVER:
                         gameOverScreen(playerComponent1.getScore(), playerComponent2.getScore());
-                    } else if (message.get("type").equals("Game Win")) {
+                        server.stop();
+                        break;
+                    case BundleType.GAME_WIN:
                         winScreen(playerComponent1.getScore(), playerComponent2.getScore());
-                    }
-                } else {
-                    System.out.println("Message non reconnu");
+                        server.stop();
+                        break;
+                    default:
+                        Logger.get(getClass()).info("Server received unknown message: " + message);
+                        break;
                 }
             });
         });
+    }
+
+    /**
+     * Update the players infos from the bundle received (client or server)
+     * 
+     * @param player
+     * @param playerComponent
+     * @param bundle
+     */
+    private void updatePlayersInfos(Entity player, PlayerComponent playerComponent, Bundle bundle) {
+        player.setX(bundle.get(BundleKey.X));
+        player.setY(bundle.get(BundleKey.Y));
+        playerComponent.setScore(bundle.get(BundleKey.SCORE));
+        playerComponent.setLife(bundle.get(BundleKey.LIFE));
     }
 
     /**
@@ -263,64 +336,47 @@ public class MultiplayerGameMode extends TwoPlayerGameMode {
     private void initializeClient() {
         Logger.get(getClass()).info("Client starting...");
         getNotificationService()
-                .pushNotification("You are connecting to the server on the following address : " + serverIPaddress
-                        + " on port : " + serverPort);
+                .pushNotification("Connecting to the following server : " + serverIPaddress
+                        + ":" + serverPort);
         client = getNetService().newTCPClient(serverIPaddress, serverPort);
         onReceiveMessageClient();
         client.connectAsync();
         GameVariableNames.multiplayerGameWaiting = true;
         Logger.get(getClass()).info("Client connected to server !");
+        getNotificationService().pushNotification("Connected to the server !");
     }
 
     /**
      * Logique lors de la réception des données du serveur par le client
      */
-    private void onReceiveMessageClient() {// TODO: refactor this
+    private void onReceiveMessageClient() {
         client.setOnConnected(connection -> {
             connection.addMessageHandlerFX((conn, message) -> {
-                if (message.getName().equals("Player1")) {
-                    player1.setX(message.get("x"));
-                    player1.setY(message.get("y"));
-                    playerComponent1.setScore(message.get("score"));
-                    playerComponent1.setLife(message.get("life"));
-                } else if (message.getName().equals("Player1Shoot")) {
-                    playerComponent1.shoot();
-                } else if (message.getName().equals("AlienSpawn")) {
-                    if (message.get("direction") == Settings.Direction.DOWN) {
-                        Entity alien = spawn(entityNames.ALIEN, 0, Settings.GAME_HEIGHT / 2 - Settings.ALIEN_HEIGHT);
-                        alien.getComponent(AlienComponent.class).initialize(Settings.Direction.DOWN);
-                    } else {
-                        Entity alien = spawn(entityNames.ALIEN, 0, Settings.GAME_HEIGHT / 2 - Settings.ALIEN_HEIGHT);
-                        alien.getComponent(AlienComponent.class).initialize(Settings.Direction.UP);
-                    }
-                } else if (message.getName().equals("Server Start")) {
-                    GameVariableNames.multiplayerGameInProgress = true;
-                    startMultiGame();
-                } else if (message.getName().equals("Game End")) {
-                    System.out.println("Game End Received");
-                    if (message.get("type").equals("Game Over")) {
+                switch (message.getName()) {
+                    case BundleType.PLAYER1:
+                        updatePlayersInfos(player1, playerComponent1, message);
+                        break;
+                    case BundleType.PLAYER1_SHOOT:
+                        playerComponent1.shoot();
+                        break;
+                    case BundleType.SERVER_START:
+                        GameVariableNames.multiplayerGameInProgress = true;
+                        startMultiGame();
+                        break;
+                    case BundleType.GAME_OVER:
                         gameOverScreen(playerComponent1.getScore(), playerComponent2.getScore());
-                    } else if (message.get("type").equals("Game Win")) {
+                        client.disconnect();
+                        break;
+                    case BundleType.GAME_WIN:
                         winScreen(playerComponent1.getScore(), playerComponent2.getScore());
-                    }
-                } else {
-                    System.out.println("Message non reconnu");
+                        client.disconnect();
+                        break;
+                    default:
+                        Logger.get(getClass()).info("Client received unknown message: " + message);
+                        break;
                 }
             });
         });
-    }
-
-    /**
-     * Logique d'envoi des données à chaque frame
-     */
-    private void onUpdateBroadcastLogic() {
-        if (isServer) {
-            Bundle bundle = createPlayerInfosBundle(player1, playerComponent1, "Player1", "Player1");
-            server.broadcast(bundle);
-        } else {
-            Bundle bundle = createPlayerInfosBundle(player2, playerComponent2, "Player2", "Player2");
-            client.broadcast(bundle);
-        }
     }
 
     /**
@@ -365,9 +421,9 @@ public class MultiplayerGameMode extends TwoPlayerGameMode {
      */
     private void onShootBroadcastLogic() {
         if (isServer) {
-            server.broadcast(new Bundle("Player1Shoot"));
+            server.broadcast(new Bundle(BundleType.PLAYER1_SHOOT));
         } else {
-            client.broadcast(new Bundle("Player2Shoot"));
+            client.broadcast(new Bundle(BundleType.PLAYER2_SHOOT));
         }
     }
 
