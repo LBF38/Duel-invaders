@@ -5,7 +5,12 @@ import static com.almasb.fxgl.dsl.FXGL.getUIFactoryService;
 import static com.almasb.fxgl.dsl.FXGL.getWindowService;
 import static com.almasb.fxgl.dsl.FXGL.texture;
 
-import org.enstabretagne.Core.Constant;
+import org.enstabretagne.Game.GameModes.ClassicGameMode;
+import org.enstabretagne.Game.GameModes.InfinityGameMode;
+import org.enstabretagne.Game.GameModes.MultiplayerGameMode;
+import org.enstabretagne.Game.GameModes.MusicDemoGameMode;
+import org.enstabretagne.Game.GameModes.SoloGameMode;
+import org.enstabretagne.Utils.Settings;
 import org.enstabretagne.Utils.assetNames;
 
 import com.almasb.fxgl.app.scene.FXGLMenu;
@@ -44,7 +49,7 @@ public class NewMainMenu extends FXGLMenu {
         var titleBox = new HBox(title);
         titleBox.setAlignment(Pos.CENTER);
         titleBox.setTranslateY(100);
-        titleBox.setTranslateX(Constant.GAME_WIDTH / 2 - title.getLayoutBounds().getWidth() / 2);
+        titleBox.setTranslateX(Settings.GAME_WIDTH / 2 - title.getLayoutBounds().getWidth() / 2);
 
         var pauseText = getUIFactoryService().newText("PAUSE", Color.WHITE, 20);
         var pauseKey = new KeyView(KeyCode.ESCAPE, Color.BLUE, 20.0);
@@ -65,34 +70,39 @@ public class NewMainMenu extends FXGLMenu {
         VBox options = createOptions();
         FXGLTextFlow creditsText = createCredits();
 
-        SpaceButton buttonClassicMode = new SpaceButton("Play Classique", () -> {
-            GameLauncher.setGameMode(GameMode.CLASSIQUE);
+        SpaceButton buttonClassicMode = new SpaceButton("Play Classic", () -> {
+            GameLauncher.setGameMode(new ClassicGameMode());
             fireNewGame();
         });
 
         SpaceButton buttonInfinityMode = new SpaceButton("Play Infinity", () -> {
-            GameLauncher.setGameMode(GameMode.INFINITY_MODE);
+            GameLauncher.setGameMode(new InfinityGameMode());
             fireNewGame();
         });
 
         SpaceButton buttonSoloMode = new SpaceButton("Play Solo", () -> {
-            GameLauncher.setGameMode(GameMode.SOLO);
+            GameLauncher.setGameMode(new SoloGameMode());
+            fireNewGame();
+        });
+
+        SpaceButton buttonMultiMode = new SpaceButton("Play Multiplayer", () -> {
+            GameLauncher.setGameMode(new MultiplayerGameMode());
             fireNewGame();
         });
 
         SpaceButton buttonMusicDemo = new SpaceButton("Play Music Demo", () -> {
-            GameLauncher.setGameMode(GameMode.MUSIC_DEMO);
+            GameLauncher.setGameMode(new MusicDemoGameMode());
             fireNewGame();
         });
 
-        SpaceButton buttonOption = new SpaceButton("Option", () -> {
+        SpaceButton buttonOption = new SpaceButton("Options", () -> {
             if (!getContentRoot().getChildren().contains(options)) {
                 getWindowService().getCurrentScene().removeChild(creditsText);
                 getContentRoot().getChildren().add(options);
             }
         });
 
-        SpaceButton buttonCredit = new SpaceButton("Credit", () -> {
+        SpaceButton buttonCredit = new SpaceButton("Credits", () -> {
             if (!getContentRoot().getChildren().contains(creditsText)) {
                 getWindowService().getCurrentScene().removeChild(options);
                 getContentRoot().getChildren().add(creditsText);
@@ -105,6 +115,7 @@ public class NewMainMenu extends FXGLMenu {
                 buttonClassicMode,
                 buttonInfinityMode,
                 buttonSoloMode,
+                buttonMultiMode,
                 buttonMusicDemo,
                 buttonOption,
                 buttonCredit,
@@ -113,7 +124,7 @@ public class NewMainMenu extends FXGLMenu {
                 new Separator(Orientation.HORIZONTAL),
                 getUIFactoryService().newText("Select Game Mode", Color.WHITE, 22));
         box.setTranslateX(100);
-        box.setTranslateY(Constant.GAME_HEIGHT / 2);
+        box.setTranslateY(Settings.GAME_HEIGHT / 2);
         box.setAlignment(Pos.CENTER);
         return box;
     }
@@ -138,7 +149,7 @@ public class NewMainMenu extends FXGLMenu {
         var soundBox = new HBox(10, soundText, soundSlider);
         var box = new VBox(10, musicBox, soundBox);
         box.setTranslateX(getAppHeight() / 2 + 100);
-        box.setTranslateY(Constant.GAME_HEIGHT / 2);
+        box.setTranslateY(Settings.GAME_HEIGHT / 2);
         musicBox.setAlignment(Pos.CENTER);
         soundBox.setAlignment(Pos.CENTER);
         box.setAlignment(Pos.CENTER);
@@ -163,15 +174,13 @@ public class NewMainMenu extends FXGLMenu {
         FXGLTextFlow creditsText = getUIFactoryService().newTextFlow();
         creditsText.append(creditsString, Color.GRAY, 16);
         creditsText.setTranslateX(getAppHeight() / 2 + 100);
-        creditsText.setTranslateY(Constant.GAME_HEIGHT / 2);
+        creditsText.setTranslateY(Settings.GAME_HEIGHT / 2);
         return creditsText;
     }
 
     /**
      * Define the button
-     * 
-     * @param name
-     * @param action
+     *
      * @return SpaceButton
      * @see SpaceButton
      * @see StackPane

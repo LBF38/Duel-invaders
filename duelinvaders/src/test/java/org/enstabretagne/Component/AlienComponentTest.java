@@ -1,6 +1,7 @@
 package org.enstabretagne.Component;
 
-import org.enstabretagne.Core.Constant;
+import org.enstabretagne.Utils.EntityType;
+import org.enstabretagne.Utils.Settings;
 import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -12,7 +13,7 @@ public class AlienComponentTest {
 
     @BeforeEach
     public void setup() {
-        alienComponent = new AlienComponent(Constant.Direction.DOWN);
+        alienComponent = new AlienComponent(Settings.Direction.DOWN);
         entityBuilder()
                 .type(EntityType.ALIEN)
                 .at(0, 0)
