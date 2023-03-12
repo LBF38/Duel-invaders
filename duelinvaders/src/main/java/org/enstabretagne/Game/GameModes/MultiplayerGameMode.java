@@ -30,6 +30,14 @@ public class MultiplayerGameMode extends TwoPlayerGameMode {
         SERVER_CHOICE, PORT_CHOICE, IP_CHOICE
     }
 
+    private class BundleKey {
+        public static final String TYPE = "type";
+        public static final String X = "x";
+        public static final String Y = "y";
+        public static final String SCORE = "score";
+        public static final String LIFE = "life";
+    }
+
     private boolean isServer = false;
     private Server<Bundle> server;
     private Client<Bundle> client;
@@ -74,7 +82,8 @@ public class MultiplayerGameMode extends TwoPlayerGameMode {
     public void onUpdate(double tpf) {
         if (GameVariableNames.multiplayerGameInProgress) {
             onUpdateBroadcastLogic();
-            onUpdateCommon(tpf);
+            super.onUpdate(tpf);
+            aliensShootInPlayersDirection();
         } else {
             // Synchronise le début de la partie entre les deux joueurs
             if (!isServer && GameVariableNames.multiplayerGameWaiting) {
@@ -95,27 +104,17 @@ public class MultiplayerGameMode extends TwoPlayerGameMode {
         }
     }
 
-    private void onUpdateCommon(double tpf) {
-        if (getb(GameVariableNames.isGameOver) || getb(GameVariableNames.isGameWon)) {
-            gameFinished();
-        }
-
-        if ((System.currentTimeMillis() - last_ambient_sound) > delay_ambient_sound) {
-            ambientSound();
-            last_ambient_sound = System.currentTimeMillis();
-            delay_ambient_sound = FXGLMath.random(Settings.AMBIENT_SOUND_DELAY_MIN, Settings.AMBIENT_SOUND_DELAY_MAX);
-        }
-        showPlayersLivesAndScores(getGameWorld(), getGameScene());
-
+    private void aliensShootInPlayersDirection() {
         run(() -> {
             getGameWorld().getEntitiesByType(EntityType.ALIEN).forEach((alien) -> {
                 if (FXGLMath.randomBoolean(0.005)) {
+                    AlienComponent alienComponent = alien.getComponent(AlienComponent.class);
                     if (isServer
-                            && alien.getComponent(AlienComponent.class).getDirection() == Settings.Direction.DOWN) {
-                        alien.getComponent(AlienComponent.class).randomShoot(Settings.ALIEN_SHOOT_CHANCE);
+                            && alienComponent.getDirection() == Settings.Direction.DOWN) {
+                        alienComponent.randomShoot(Settings.ALIEN_SHOOT_CHANCE);
                     } else if (!isServer
-                            && alien.getComponent(AlienComponent.class).getDirection() == Settings.Direction.UP) {
-                        alien.getComponent(AlienComponent.class).randomShoot(Settings.ALIEN_SHOOT_CHANCE);
+                            && alienComponent.getDirection() == Settings.Direction.UP) {
+                        alienComponent.randomShoot(Settings.ALIEN_SHOOT_CHANCE);
                     }
                 }
             });
@@ -168,6 +167,7 @@ public class MultiplayerGameMode extends TwoPlayerGameMode {
             getDialogService().showInputBox(dialogQueueMessages.get(DialogType.IP_CHOICE),
                     (IPaddress) -> {
                         selectIPaddress(IPaddress);
+                        Logger.get(getClass()).info("IP : " + serverIPaddress);
                         initializePlayers();
                     });
         });
@@ -189,12 +189,10 @@ public class MultiplayerGameMode extends TwoPlayerGameMode {
      * Input box pour la sélection de l'adresse IP du serveur
      */
     private void selectIPaddress(String IPaddress) {
-        // TODO: improve IP address validation
         // Regex expression for validating IPv4
-        String regex_ipv4 = "(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])";
-
+        final String regex_ipv4 = "^\\d{1,3}.\\d{1,3}.\\d{1,3}.\\d{1,3}$";
         // Regex expression for validating IPv6
-        String regex_ipv6 = "((([0-9a-fA-F]){1,4})\\:){7}([0-9a-fA-F]){1,4}";
+        final String regex_ipv6 = "^([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}$";
         Pattern pattern_ipv4 = Pattern.compile(regex_ipv4);
         Pattern pattern_ipv6 = Pattern.compile(regex_ipv6);
         if (!pattern_ipv4.matcher(IPaddress).matches() && !pattern_ipv6.matcher(IPaddress).matches()) {
@@ -202,7 +200,6 @@ public class MultiplayerGameMode extends TwoPlayerGameMode {
             return;
         }
         serverIPaddress = IPaddress;
-        Logger.get(getClass()).info("IP : " + serverIPaddress);
     }
 
     private void initializePlayers() {
@@ -349,17 +346,17 @@ public class MultiplayerGameMode extends TwoPlayerGameMode {
     private Bundle createPlayerInfosBundle(Entity player, PlayerComponent playerComponent, String bundleName,
             String bundleType) {
         Bundle bundle = new Bundle(bundleName);
-        bundle.put("type", bundleType);
-        bundle.put("x", player.getX());
-        bundle.put("y", player.getY());
-        bundle.put("score", playerComponent.getScore());
-        bundle.put("life", playerComponent.getLife());
+        bundle.put(BundleKey.TYPE, bundleType);
+        bundle.put(BundleKey.X, player.getX());
+        bundle.put(BundleKey.Y, player.getY());
+        bundle.put(BundleKey.SCORE, playerComponent.getScore());
+        bundle.put(BundleKey.LIFE, playerComponent.getLife());
         return bundle;
     }
 
     private void startMultiGame() {
         long startGameTime = System.currentTimeMillis();
-        System.out.println("startGameTime : " + startGameTime);
+        Logger.get(getClass()).info("startGameTime : " + startGameTime);
         AlienFactory.makeAlienBlock();
     }
 

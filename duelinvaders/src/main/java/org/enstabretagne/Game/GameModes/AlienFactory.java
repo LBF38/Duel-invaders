@@ -63,12 +63,16 @@ public class AlienFactory {
         alien.getComponent(AlienComponent.class).initialize(direction);
     }
 
-    public static void aliensRandomlyShoot() {
+    public static void aliensRandomlyShoot(double shootingChance) {
         run(() -> {
             getGameWorld().getEntitiesByType(EntityType.ALIEN).forEach((alien) -> {
-                if (FXGLMath.randomBoolean(0.01))
+                if (FXGLMath.randomBoolean(shootingChance))
                     alien.getComponent(AlienComponent.class).randomShoot(Settings.ALIEN_SHOOT_CHANCE);
             });
         }, Duration.seconds(Settings.random.nextDouble() * 10));
+    }
+
+    public static void aliensRandomlyShoot() {
+        aliensRandomlyShoot(0.005);
     }
 }

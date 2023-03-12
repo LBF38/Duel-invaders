@@ -66,7 +66,8 @@ public abstract class OnePlayerGameMode implements GameMode {
 
         showPlayersLivesAndScores(getGameWorld(), getGameScene());
 
-        AlienFactory.aliensRandomlyShoot();
+        if (getGameModeType() != GameModeTypes.MULTIPLAYER)
+            AlienFactory.aliensRandomlyShoot();
 
     }
 
