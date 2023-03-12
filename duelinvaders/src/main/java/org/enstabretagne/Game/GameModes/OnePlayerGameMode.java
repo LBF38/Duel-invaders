@@ -17,8 +17,8 @@ import com.almasb.fxgl.entity.Entity;
 public abstract class OnePlayerGameMode implements GameMode {
     protected Entity player1;
     protected PlayerComponent playerComponent1;
-    private long last_ambient_sound = System.currentTimeMillis();
-    private int delay_ambient_sound = FXGLMath.random(Settings.AMBIENT_SOUND_DELAY_MIN,
+    protected long last_ambient_sound = System.currentTimeMillis();
+    protected int delay_ambient_sound = FXGLMath.random(Settings.AMBIENT_SOUND_DELAY_MIN,
             Settings.AMBIENT_SOUND_DELAY_MAX);
 
     @Override

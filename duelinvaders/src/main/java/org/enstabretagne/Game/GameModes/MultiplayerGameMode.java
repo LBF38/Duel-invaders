@@ -1,11 +1,7 @@
 package org.enstabretagne.Game.GameModes;
 
-import static com.almasb.fxgl.dsl.FXGL.getDialogService;
-import static com.almasb.fxgl.dsl.FXGL.getNetService;
-import static com.almasb.fxgl.dsl.FXGL.getNotificationService;
-import static com.almasb.fxgl.dsl.FXGL.showConfirm;
 import static com.almasb.fxgl.dsl.FXGL.*;
-import static org.enstabretagne.UI.UI_Factory.gameOverScreen;
+import static org.enstabretagne.UI.UI_Factory.*;
 import static org.enstabretagne.UI.UI_Factory.winScreen;
 
 import java.util.HashMap;
@@ -14,10 +10,12 @@ import java.util.regex.Pattern;
 
 import org.enstabretagne.Component.AlienComponent;
 import org.enstabretagne.Component.PlayerComponent;
+import org.enstabretagne.Utils.EntityType;
 import org.enstabretagne.Utils.GameVariableNames;
 import org.enstabretagne.Utils.Settings;
 import org.enstabretagne.Utils.entityNames;
 
+import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.serialization.Bundle;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.logging.Logger;
@@ -71,13 +69,64 @@ public class MultiplayerGameMode extends TwoPlayerGameMode {
 
     @Override
     public void onUpdate(double tpf) {
-        // TODO: make the game logic too.
+        if (GameVariableNames.multiplayerGameInProgress) {
+            onUpdateBroadcastLogic();
+            onUpdateCommon(tpf);
+        } else {
+            // Synchronise le début de la partie entre les deux joueurs
+            if (!isServer && GameVariableNames.multiplayerGameWaiting) {
+                client.broadcast(new Bundle("Client Connected"));
+            }
+        }
+    }
+
+    private void onUpdateCommon(double tpf) {
+        if (getb(GameVariableNames.isGameOver) || getb(GameVariableNames.isGameWon)) {
+            gameFinished();
+        }
+        
+        if ((System.currentTimeMillis() - last_ambient_sound) > delay_ambient_sound) {
+            ambientSound();
+            last_ambient_sound = System.currentTimeMillis();
+            delay_ambient_sound = FXGLMath.random(Settings.AMBIENT_SOUND_DELAY_MIN, Settings.AMBIENT_SOUND_DELAY_MAX);
+        }
+        showPlayersLivesAndScores(getGameWorld(), getGameScene());
+
+        run(() -> {
+            getGameWorld().getEntitiesByType(EntityType.ALIEN).forEach((alien) -> {
+                if (FXGLMath.randomBoolean(0.005)) {
+                    if (isServer
+                            && alien.getComponent(AlienComponent.class).getDirection() == Settings.Direction.DOWN) {
+                        alien.getComponent(AlienComponent.class).randomShoot(Settings.ALIEN_SHOOT_CHANCE);
+                    } else if (!isServer
+                            && alien.getComponent(AlienComponent.class).getDirection() == Settings.Direction.UP) {
+                        alien.getComponent(AlienComponent.class).randomShoot(Settings.ALIEN_SHOOT_CHANCE);
+                    }
+                }
+            });
+        }, Duration.seconds(Settings.random.nextDouble() * 10));
+    }
+
+    private void GameEndBroadcastLogic(String message) {
+        Bundle bundle = new Bundle("Game End");
+        bundle.put("type", message);
+        if (isServer) {
+            server.broadcast(bundle);
+        } else {
+            client.broadcast(bundle);
+        }
     }
 
     @Override
     public void gameFinished() {
-        // TODO: clean server/client connection.
-        super.gameFinished();
+        if (getb(GameVariableNames.isGameOver)) {
+            GameEndBroadcastLogic("Game Over");
+            gameOverScreen("");
+        }
+        if (getb(GameVariableNames.isGameWon)) {
+            GameEndBroadcastLogic("Game Win");
+            winScreen("");
+        }
     }
 
     private PauseTransition dialogQueue() {
@@ -141,18 +190,17 @@ public class MultiplayerGameMode extends TwoPlayerGameMode {
         Logger.get(getClass()).info("Port : " + serverPort);
     }
 
-    // /**
-    // * Logique d'envoi des données à chaque frame
-    // */
-    // private void onUpdateBroadcastLogic() {
-    // if (isServer) {
-    // Player1Broadcast();
-    // } else {
-    // Player2Broadcast();
-    // } // Ne sert à rien pour le moment mais utile si plus de choses à transférer
-    // à
-    // // chaque frame
-    // }
+    /**
+     * Logique d'envoi des données à chaque frame
+     */
+    private void onUpdateBroadcastLogic() {
+        if (isServer) {
+            Player1Broadcast();
+        } else {
+            Player2Broadcast();
+        } // Ne sert à rien pour le moment mais utile si plus de choses à transférer
+          // chaque frame
+    }
 
     /**
      * Initialisation du serveur
