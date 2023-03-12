@@ -51,15 +51,19 @@ public class MultiplayerGameMode extends TwoPlayerGameMode {
 
     @Override
     public PlayerComponent getPlayerComponent2() {
-        if (isServer) {
-            return playerComponent1;
-        } else {
-            return playerComponent2;
-        }
+        // Même logique car mode multijoueur
+        return getPlayerComponent1();
     }
 
     @Override
     public PlayerComponent getPlayerComponent1() {
+        if (!GameVariableNames.multiplayerGameInProgress) {
+            // Pour éviter d'autoriser le joueur 2 à jouer avant le début de la partie
+            return new PlayerComponent();
+        }
+        if (GameVariableNames.isShooting) {
+            onShootBroadcastLogic();
+        }
         if (isServer) {
             return playerComponent1;
         } else {
@@ -84,7 +88,7 @@ public class MultiplayerGameMode extends TwoPlayerGameMode {
         if (getb(GameVariableNames.isGameOver) || getb(GameVariableNames.isGameWon)) {
             gameFinished();
         }
-        
+
         if ((System.currentTimeMillis() - last_ambient_sound) > delay_ambient_sound) {
             ambientSound();
             last_ambient_sound = System.currentTimeMillis();

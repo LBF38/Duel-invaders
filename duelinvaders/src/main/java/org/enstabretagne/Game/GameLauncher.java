@@ -109,9 +109,15 @@ public class GameLauncher extends GameApplication {
             game_mode.getPlayerComponent1().moveRight();
         });
         onKey(KeyCode.SPACE, () -> {
+            if (game_mode.getGameModeType().equals(GameModeTypes.MULTIPLAYER)) {
+                GameVariableNames.isShooting = true;
+            }
             game_mode.getPlayerComponent1().shoot();
         });
         onKey(KeyCode.ENTER, () -> {
+            if (game_mode.getGameModeType().equals(GameModeTypes.MULTIPLAYER)) {
+                GameVariableNames.isShooting = true;
+            }
             game_mode.getPlayerComponent2().shoot();
         });
         onKey(KeyCode.LEFT, () -> {
