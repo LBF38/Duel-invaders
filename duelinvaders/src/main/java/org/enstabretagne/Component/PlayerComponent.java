@@ -30,12 +30,27 @@ public class PlayerComponent extends Component {
     private Direction side_shoot = Direction.LEFT;
     private Settings.Direction direction = Settings.Direction.UP;
     private int id;
-    private static int counter = 1;
+    private static int counter;
     private int score = 0;
     private int life = 5;
 
+    /**
+     * Permet de récupérer l'identifiant du composant
+     * 
+     * @return un entier quelconque
+     */
     public int getId() {
         return id;
+    }
+
+    /**
+     * Permet de récupérer le numéro du joueur (1 ou 2), quelque soit l'id du
+     * composant.
+     * 
+     * @return 1 ou 2, en fonction de l'id du composant
+     */
+    public int getPlayerId() {
+        return id % 2 + 1;
     }
 
     public PlayerComponent() {

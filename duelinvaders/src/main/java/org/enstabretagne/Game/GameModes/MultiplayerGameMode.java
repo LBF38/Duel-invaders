@@ -7,7 +7,6 @@ import static com.almasb.fxgl.dsl.FXGL.getNetService;
 import static com.almasb.fxgl.dsl.FXGL.getNotificationService;
 import static com.almasb.fxgl.dsl.FXGL.getb;
 import static com.almasb.fxgl.dsl.FXGL.run;
-import static com.almasb.fxgl.dsl.FXGL.runOnce;
 import static com.almasb.fxgl.dsl.FXGL.showConfirm;
 import static org.enstabretagne.UI.UI_Factory.gameOverScreen;
 import static org.enstabretagne.UI.UI_Factory.winScreen;
@@ -57,6 +56,9 @@ public class MultiplayerGameMode extends TwoPlayerGameMode {
     }
 
     private boolean isServer = false;
+    private boolean newGame = true;
+    private long clientConnectionAttempt = System.currentTimeMillis();
+    private int clientConnectionWaitingTime = 15000;
     private Server<Bundle> server;
     private Client<Bundle> client;
     private int serverPort = 55555;
@@ -65,7 +67,6 @@ public class MultiplayerGameMode extends TwoPlayerGameMode {
     @Override
     public void initGameMode() {
         super.initTwoPlayerGameMode();
-        dialogQueue().play();
     }
 
     @Override
@@ -81,7 +82,7 @@ public class MultiplayerGameMode extends TwoPlayerGameMode {
 
     @Override
     public PlayerComponent getPlayerComponent1() {
-        if (GameVariableNames.isShooting) {
+        if (GameVariableNames.isShooting && GameVariableNames.multiplayerGameInProgress) {
             onShootBroadcastLogic();
         }
         if (isServer) {
@@ -93,16 +94,38 @@ public class MultiplayerGameMode extends TwoPlayerGameMode {
 
     @Override
     public void onUpdate(double tpf) {
+        if (newGame) {
+            dialogQueue().play();
+            newGame = false;
+        }
         if (GameVariableNames.multiplayerGameInProgress) {
             onUpdateBroadcastLogic();
             super.onUpdate(tpf);
             aliensShootInPlayersDirection();
-        } else {
-            // Synchronise le début de la partie entre les deux joueurs
-            if (!isServer && GameVariableNames.multiplayerGameWaiting) {
-                client.broadcast(new Bundle(BundleType.CLIENT_CONNECTED));
+            return;
+        }
+        // Synchronise le début de la partie entre les deux joueurs
+        if (!isServer && GameVariableNames.multiplayerGameWaiting) {
+            client.broadcast(new Bundle(BundleType.CLIENT_CONNECTED));
+            boolean isConnectionAttempt = System.currentTimeMillis()
+                    - clientConnectionAttempt > clientConnectionWaitingTime;
+            if (client.getConnections().size() == 0
+                    && isConnectionAttempt) {
+                clientConnectionAttempt = System.currentTimeMillis();
+                Logger.get(getClass()).warning("Client failed to connect to server ! ");
+                getNotificationService().pushNotification("Client failed to connect to server ! ");
+                getDialogService().showConfirmationBox("Connection failed !\nDo you want to try again ?",
+                        (yes) -> {
+                            if (yes) {
+                                client.connectAsync();
+                                getGameController().gotoPlay();
+                            } else
+                                getGameController().gotoMainMenu();
+                        });
+            } else if (isConnectionAttempt) {
+                Logger.get(getClass()).info("Client connected to server !");
+                getNotificationService().pushNotification("Connected to the server !");
             }
-            runOnce(() -> waitingForConnection(), Duration.seconds(3));
         }
     }
 
@@ -116,6 +139,7 @@ public class MultiplayerGameMode extends TwoPlayerGameMode {
             GameEndBroadcastLogic(BundleType.GAME_WIN);
             winScreen(playerComponent1.getScore(), playerComponent2.getScore());
         }
+        newGame = true;
     }
 
     /**
@@ -128,34 +152,6 @@ public class MultiplayerGameMode extends TwoPlayerGameMode {
         } else {
             Bundle bundle = createPlayerInfosBundle(player2, playerComponent2, BundleType.PLAYER2, BundleType.PLAYER2);
             client.broadcast(bundle);
-        }
-    }
-
-    /**
-     * Wait for a connexion to be established
-     */
-    private void waitingForConnection() {
-        if (isServer) {
-            if (server.getConnections().size() == 0) {
-                getDialogService().showConfirmationBox("En attente d'un joueur...\n"
-                        + "Voulez-vous quitter la partie ?", (yes) -> {
-                            if (yes) {
-                                server.stop();
-                                getGameController().gotoMainMenu();
-                            }
-                        });
-            }
-        }
-        if (client == null)
-            return;
-        if (client.getConnections().size() == 0) {
-            getDialogService().showConfirmationBox(
-                    "En attente de la connexion...\n" + "Voulez-vous quitter la partie ?", (yes) -> {
-                        if (yes) {
-                            client.disconnect();
-                            getGameController().gotoMainMenu();
-                        }
-                    });
         }
     }
 
@@ -342,8 +338,6 @@ public class MultiplayerGameMode extends TwoPlayerGameMode {
         onReceiveMessageClient();
         client.connectAsync();
         GameVariableNames.multiplayerGameWaiting = true;
-        Logger.get(getClass()).info("Client connected to server !");
-        getNotificationService().pushNotification("Connected to the server !");
     }
 
     /**

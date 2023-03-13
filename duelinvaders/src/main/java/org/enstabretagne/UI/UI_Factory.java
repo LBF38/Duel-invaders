@@ -3,6 +3,7 @@ package org.enstabretagne.UI;
 import static com.almasb.fxgl.dsl.FXGL.*;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -25,17 +26,17 @@ import javafx.scene.text.Text;
 public class UI_Factory {
     private static VBox playersUI = new VBox();
 
-    public static VBox showPlayersLivesAndScores(GameWorld gameWorld,GameScene gameScene) {
+    public static VBox showPlayersLivesAndScores(GameWorld gameWorld, GameScene gameScene) {
         if (getGameScene().getContentRoot().getChildren().contains(playersUI))
             getGameScene().removeChild(playersUI);
-        // System.out.println("Players Lives and Scores");
 
         List<HBox> playersViews = new ArrayList<>();
         List<PlayerComponent> players = gameWorld.getEntitiesByType(EntityType.PLAYER).stream()
                 .map(player -> player.getComponent(PlayerComponent.class)).collect(Collectors.toList());
+        players.sort(Comparator.comparing(PlayerComponent::getPlayerId));
         for (PlayerComponent playerComponent : players) {
-            HBox scoreUI = createScoreUI(playerComponent.getScore(), playerComponent.getId());
-            scoreUI.setTranslateY(scoreUI.getHeight() * playerComponent.getId());
+            HBox scoreUI = createScoreUI(playerComponent.getScore(), playerComponent.getPlayerId());
+            scoreUI.setTranslateY(scoreUI.getHeight() * playerComponent.getPlayerId());
             HBox lifeUI = createLifeUI(playerComponent.getLife());
             var playerUI = new HBox(30, scoreUI, lifeUI);
             playersViews.add(playerUI);
