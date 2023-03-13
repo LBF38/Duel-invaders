@@ -81,7 +81,7 @@ public class MultiplayerGameMode extends TwoPlayerGameMode {
 
     @Override
     public PlayerComponent getPlayerComponent1() {
-        if (GameVariableNames.isShooting) {
+        if (GameVariableNames.isShooting && GameVariableNames.multiplayerGameInProgress) {
             onShootBroadcastLogic();
         }
         if (isServer) {
@@ -193,7 +193,7 @@ public class MultiplayerGameMode extends TwoPlayerGameMode {
         dialogQueueMessages.put(DialogType.PORT_CHOICE, "Entrez le port (ex:55555)");
         dialogQueueMessages.put(DialogType.IP_CHOICE,
                 "Entrez l'adresse IP du serveur (format:255.255.255.255 ou localhost)");
-        PauseTransition pause = new PauseTransition(Duration.seconds(2));
+        PauseTransition pause = new PauseTransition(Duration.seconds(5));
         pause.setOnFinished(event -> {
             showConfirm(dialogQueueMessages.get(DialogType.SERVER_CHOICE),
                     (yes) -> {
