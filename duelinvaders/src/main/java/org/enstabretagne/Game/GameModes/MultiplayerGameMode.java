@@ -102,7 +102,6 @@ public class MultiplayerGameMode extends TwoPlayerGameMode {
             if (!isServer && GameVariableNames.multiplayerGameWaiting) {
                 client.broadcast(new Bundle(BundleType.CLIENT_CONNECTED));
             }
-//            runOnce(() -> waitingForConnection(), Duration.seconds(3));
         }
     }
 
@@ -128,34 +127,6 @@ public class MultiplayerGameMode extends TwoPlayerGameMode {
         } else {
             Bundle bundle = createPlayerInfosBundle(player2, playerComponent2, BundleType.PLAYER2, BundleType.PLAYER2);
             client.broadcast(bundle);
-        }
-    }
-
-    /**
-     * Wait for a connexion to be established
-     */
-    private void waitingForConnection() {
-        if (isServer) {
-            if (server.getConnections().size() == 0) {
-                getDialogService().showConfirmationBox("En attente d'un joueur...\n"
-                        + "Voulez-vous quitter la partie ?", (yes) -> {
-                            if (yes) {
-                                server.stop();
-                                getGameController().gotoMainMenu();
-                            }
-                        });
-            }
-        }
-        if (client == null)
-            return;
-        if (client.getConnections().size() == 0) {
-            getDialogService().showConfirmationBox(
-                    "En attente de la connexion...\n" + "Voulez-vous quitter la partie ?", (yes) -> {
-                        if (yes) {
-                            client.disconnect();
-                            getGameController().gotoMainMenu();
-                        }
-                    });
         }
     }
 
