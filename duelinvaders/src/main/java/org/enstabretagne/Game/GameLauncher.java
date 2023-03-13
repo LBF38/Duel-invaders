@@ -66,7 +66,7 @@ public class GameLauncher extends GameApplication {
         settings.setHeight(Settings.GAME_HEIGHT.intValue());
         settings.setTitle("Duel Invaders");
         settings.setAppIcon(assetNames.textures.APP_ICON);
-        settings.setVersion("1.0.0");
+        settings.setVersion("1.0.1");
         settings.setMainMenuEnabled(true);
         settings.setGameMenuEnabled(true);
         settings.setFullScreenAllowed(true);
