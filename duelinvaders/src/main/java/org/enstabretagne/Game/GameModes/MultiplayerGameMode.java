@@ -102,7 +102,7 @@ public class MultiplayerGameMode extends TwoPlayerGameMode {
             if (!isServer && GameVariableNames.multiplayerGameWaiting) {
                 client.broadcast(new Bundle(BundleType.CLIENT_CONNECTED));
             }
-            runOnce(() -> waitingForConnection(), Duration.seconds(3));
+//            runOnce(() -> waitingForConnection(), Duration.seconds(3));
         }
     }
 
