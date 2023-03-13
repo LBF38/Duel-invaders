@@ -7,7 +7,6 @@ import static com.almasb.fxgl.dsl.FXGL.getNetService;
 import static com.almasb.fxgl.dsl.FXGL.getNotificationService;
 import static com.almasb.fxgl.dsl.FXGL.getb;
 import static com.almasb.fxgl.dsl.FXGL.run;
-import static com.almasb.fxgl.dsl.FXGL.runOnce;
 import static com.almasb.fxgl.dsl.FXGL.showConfirm;
 import static org.enstabretagne.UI.UI_Factory.gameOverScreen;
 import static org.enstabretagne.UI.UI_Factory.winScreen;
@@ -57,6 +56,9 @@ public class MultiplayerGameMode extends TwoPlayerGameMode {
     }
 
     private boolean isServer = false;
+    private boolean newGame = true;
+    private long clientConnectionAttempt = System.currentTimeMillis();
+    private int clientConnectionWaitingTime = 15000;
     private Server<Bundle> server;
     private Client<Bundle> client;
     private int serverPort = 55555;
@@ -65,7 +67,6 @@ public class MultiplayerGameMode extends TwoPlayerGameMode {
     @Override
     public void initGameMode() {
         super.initTwoPlayerGameMode();
-        dialogQueue().play();
     }
 
     @Override
@@ -93,14 +94,37 @@ public class MultiplayerGameMode extends TwoPlayerGameMode {
 
     @Override
     public void onUpdate(double tpf) {
+        if (newGame) {
+            dialogQueue().play();
+            newGame = false;
+        }
         if (GameVariableNames.multiplayerGameInProgress) {
             onUpdateBroadcastLogic();
             super.onUpdate(tpf);
             aliensShootInPlayersDirection();
-        } else {
-            // Synchronise le début de la partie entre les deux joueurs
-            if (!isServer && GameVariableNames.multiplayerGameWaiting) {
-                client.broadcast(new Bundle(BundleType.CLIENT_CONNECTED));
+            return;
+        }
+        // Synchronise le début de la partie entre les deux joueurs
+        if (!isServer && GameVariableNames.multiplayerGameWaiting) {
+            client.broadcast(new Bundle(BundleType.CLIENT_CONNECTED));
+            boolean isConnectionAttempt = System.currentTimeMillis()
+                    - clientConnectionAttempt > clientConnectionWaitingTime;
+            if (client.getConnections().size() == 0
+                    && isConnectionAttempt) {
+                clientConnectionAttempt = System.currentTimeMillis();
+                Logger.get(getClass()).warning("Client failed to connect to server ! ");
+                getNotificationService().pushNotification("Client failed to connect to server ! ");
+                getDialogService().showConfirmationBox("Connection failed !\nDo you want to try again ?",
+                        (yes) -> {
+                            if (yes) {
+                                client.connectAsync();
+                                getGameController().gotoPlay();
+                            } else
+                                getGameController().gotoMainMenu();
+                        });
+            } else if (isConnectionAttempt) {
+                Logger.get(getClass()).info("Client connected to server !");
+                getNotificationService().pushNotification("Connected to the server !");
             }
         }
     }
@@ -115,6 +139,7 @@ public class MultiplayerGameMode extends TwoPlayerGameMode {
             GameEndBroadcastLogic(BundleType.GAME_WIN);
             winScreen(playerComponent1.getScore(), playerComponent2.getScore());
         }
+        newGame = true;
     }
 
     /**
@@ -164,7 +189,7 @@ public class MultiplayerGameMode extends TwoPlayerGameMode {
         dialogQueueMessages.put(DialogType.PORT_CHOICE, "Entrez le port (ex:55555)");
         dialogQueueMessages.put(DialogType.IP_CHOICE,
                 "Entrez l'adresse IP du serveur (format:255.255.255.255 ou localhost)");
-        PauseTransition pause = new PauseTransition(Duration.seconds(5));
+        PauseTransition pause = new PauseTransition(Duration.seconds(2));
         pause.setOnFinished(event -> {
             showConfirm(dialogQueueMessages.get(DialogType.SERVER_CHOICE),
                     (yes) -> {
@@ -313,8 +338,6 @@ public class MultiplayerGameMode extends TwoPlayerGameMode {
         onReceiveMessageClient();
         client.connectAsync();
         GameVariableNames.multiplayerGameWaiting = true;
-        Logger.get(getClass()).info("Client connected to server !");
-        getNotificationService().pushNotification("Connected to the server !");
     }
 
     /**
