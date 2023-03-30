@@ -21,7 +21,7 @@
 
         <!-- Dependencies -->
         <junit.jupiter.version>5.9.2</junit.jupiter.version>
-        <fxgl.version>11.17</fxgl.version>
+        <fxgl.version>17.3</fxgl.version>
         <testfx.version>4.0.16-alpha</testfx.version>
     </properties>
 
