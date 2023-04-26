@@ -20,7 +20,7 @@
         <maven.javadoc.version>3.4.1</maven.javadoc.version>
 
         <!-- Dependencies -->
-        <junit.jupiter.version>5.9.2</junit.jupiter.version>
+        <junit.jupiter.version>5.9.3</junit.jupiter.version>
         <fxgl.version>11.17</fxgl.version>
         <testfx.version>4.0.16-alpha</testfx.version>
     </properties>
